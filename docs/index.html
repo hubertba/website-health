@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Website Health — 2026-08-15</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --text: #1a1d26;
+      --muted: #5c6578;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --ok: #059669;
+      --ok-bg: #ecfdf5;
+      --down: #dc2626;
+      --down-bg: #fef2f2;
+      --shadow: 0 1px 3px rgba(0,0,0,.08);
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1419;
+        --surface: #1a2332;
+        --text: #e8edf5;
+        --muted: #94a3b8;
+        --border: #2d3a4f;
+        --accent: #60a5fa;
+        --ok-bg: #064e3b33;
+        --down-bg: #7f1d1d33;
+        --shadow: 0 1px 3px rgba(0,0,0,.3);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 1rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header.page-header {
+      margin-bottom: 1.5rem;
+    }
+    header.page-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .75rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 480px) {
+      .summary-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .stat-card .value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .stat-card .label {
+      font-size: .75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .stat-card.ok .value { color: var(--ok); }
+    .stat-card.down .value { color: var(--down); }
+    .verdict {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      margin-bottom: 1.5rem;
+      font-size: .95rem;
+    }
+    .verdict.warn {
+      border-color: var(--down);
+      background: var(--down-bg);
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 480px) {
+      .controls { flex-direction: row; flex-wrap: wrap; }
+    }
+    .controls input, .controls select {
+      flex: 1;
+      min-width: 0;
+      padding: .6rem .75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1rem;
+    }
+    section { margin-bottom: 2rem; }
+    section h2 {
+      font-size: 1.1rem;
+      margin-bottom: .75rem;
+      padding-bottom: .35rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .site-list {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+    .site-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .85rem 1rem;
+      box-shadow: var(--shadow);
+    }
+    .site-card.down {
+      border-left: 4px solid var(--down);
+      background: var(--down-bg);
+    }
+    .site-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      margin-bottom: .35rem;
+    }
+    .domain {
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .domain:hover { text-decoration: underline; }
+    .status-pill {
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .2rem .5rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .status-pill.ok {
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+    .status-pill.down {
+      background: var(--down-bg);
+      color: var(--down);
+    }
+    .site-meta {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .badge {
+      display: inline-block;
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: .1rem .4rem;
+      border-radius: 4px;
+      margin-right: .25rem;
+    }
+    .badge-docker { background: #dbeafe; color: #1e40af; }
+    .badge-static { background: #fef3c7; color: #92400e; }
+    .badge-redirect { background: #ede9fe; color: #5b21b6; }
+    .badge-proxy { background: #fce7f3; color: #9d174d; }
+    @media (prefers-color-scheme: dark) {
+      .badge-docker { background: #1e3a5f; color: #93c5fd; }
+      .badge-static { background: #78350f; color: #fde68a; }
+      .badge-redirect { background: #4c1d95; color: #c4b5fd; }
+      .badge-proxy { background: #831843; color: #f9a8d4; }
+    }
+    .aliases {
+      margin-top: .4rem;
+      padding-left: 1.2rem;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+    .fix-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      margin-bottom: .75rem;
+    }
+    .fix-block h3 {
+      font-size: .9rem;
+      margin-bottom: .5rem;
+    }
+    pre {
+      overflow-x: auto;
+      font-size: .75rem;
+      background: var(--bg);
+      padding: .5rem;
+      border-radius: 6px;
+    }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: .75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Website Health Report</h1>
+    <p class="subtitle">
+      Checked <strong>2026-08-15</strong> ·
+      <code>web.chilicode.com</code> (37.16.72.137) ·
+      36 containers running
+    </p>
+  </header>
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="value">55</div>
+      <div class="label">Total</div>
+    </div>
+    <div class="stat-card ok">
+      <div class="value">51</div>
+      <div class="label">OK</div>
+    </div>
+    <div class="stat-card down">
+      <div class="value">4</div>
+      <div class="label">Down</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">41</div>
+      <div class="label">Docker</div>
+    </div>
+  </div>
+
+  <div class="verdict warn">
+    4 site(s) need attention
+  </div>
+
+  <section id='down-section'><h2>Sites that are down</h2><div class='site-list'>
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="fairspeisen.com">
+      <header class="site-header">
+        <a class="domain" href="https://fairspeisen.com" target="_blank" rel="noopener">fairspeisen.com</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4026 · fairspeisen · docker-compose.yml.off — container not running
+      </div>
+      <ul class="aliases"><li>www.fairspeisen.com</li></ul>
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="ff-burgau-burgauberg.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://ff-burgau-burgauberg.chilicode.at" target="_blank" rel="noopener">ff-burgau-burgauberg.chilicode.at</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4016 · ffburgau-historisch · ffburgau-historisch-joomla-1 + DB exited (~2 months) · Joomla staging
+      </div>
+      <ul class="aliases"><li>www.ff-burgau-burgauberg.chilicode.at</li></ul>
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="historisch.ff-burgau-burgauberg.at">
+      <header class="site-header">
+        <a class="domain" href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4016 · ffburgau-historisch · ffburgau-historisch-joomla-1 + DB exited (~2 months) · Joomla
+      </div>
+      
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="shophelfer.at">
+      <header class="site-header">
+        <a class="domain" href="https://shophelfer.at" target="_blank" rel="noopener">shophelfer.at</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4039 · shophelfer · docker-compose.yml.off — container not running
+      </div>
+      <ul class="aliases"><li>www.shophelfer.at</li></ul>
+    </article>
+    </div></section>
+
+  <section>
+    <h2>All websites</h2>
+    <div class="controls">
+      <input type="search" id="search" placeholder="Search domain…" autocomplete="off">
+      <select id="filter-status">
+        <option value="all">All statuses</option>
+        <option value="ok">OK only</option>
+        <option value="down">Down only</option>
+      </select>
+      <select id="filter-type">
+        <option value="all">All types</option>
+        <option value="docker">Docker</option>
+        <option value="static">Static</option>
+        <option value="redirect">Redirect</option>
+        <option value="proxy">Proxy</option>
+      </select>
+    </div>
+    <div class="site-list" id="all-sites">
+      
+    <article class="site-card ok" data-status="ok" data-type="static" data-domain="360demo.chilicode.com">
+      <header class="site-header">
+        <a class="domain" href="https://360demo.chilicode.com" target="_blank" rel="noopener">360demo.chilicode.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-static">static</span>
+        /var/www/vhosts/360demochilicodecom/htdocs
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="andibruckner.com">
+      <header class="site-header">
+        <a class="domain" href="https://andibruckner.com" target="_blank" rel="noopener">andibruckner.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4023 · andibruckner
+      </div>
+      <ul class="aliases"><li>www.andibruckner.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="astro-lernstern.at">
+      <header class="site-header">
+        <a class="domain" href="https://astro-lernstern.at" target="_blank" rel="noopener">astro-lernstern.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4033 · lernstern
+      </div>
+      <ul class="aliases"><li>www.astro-lernstern.at</li><li>astro-lernstern.de</li><li>www.astro-lernstern.de</li><li>astro-lernstern.com</li><li>www.astro-lernstern.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="bayer.cc">
+      <header class="site-header">
+        <a class="domain" href="https://bayer.cc" target="_blank" rel="noopener">bayer.cc</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4030 · bayer
+      </div>
+      <ul class="aliases"><li>www.bayer.cc</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="capro.cc">
+      <header class="site-header">
+        <a class="domain" href="https://capro.cc" target="_blank" rel="noopener">capro.cc</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4020 · capro
+      </div>
+      <ul class="aliases"><li>www.capro.cc</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="chilicode.com">
+      <header class="site-header">
+        <a class="domain" href="https://chilicode.com" target="_blank" rel="noopener">chilicode.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4040 · chilicode
+      </div>
+      <ul class="aliases"><li>www.chilicode.com</li><li>chilicode.at</li><li>www.chilicode.at</li><li>itsnotrocketscience.at</li><li>www.itsnotrocketscience.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="der-bioimker.at">
+      <header class="site-header">
+        <a class="domain" href="https://der-bioimker.at" target="_blank" rel="noopener">der-bioimker.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4003 · bioimker
+      </div>
+      <ul class="aliases"><li>www.der-bioimker.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="derschimmelimhaus.at">
+      <header class="site-header">
+        <a class="domain" href="https://derschimmelimhaus.at" target="_blank" rel="noopener">derschimmelimhaus.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        → timschoeberl.at · Schimmel article
+      </div>
+      <ul class="aliases"><li>www.derschimmelimhaus.at</li><li>derschimmelimhaus.com</li><li>www.derschimmelimhaus.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="diefugenlosedusche.at">
+      <header class="site-header">
+        <a class="domain" href="https://diefugenlosedusche.at" target="_blank" rel="noopener">diefugenlosedusche.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        → timschoeberl.at · Fugenlose Bäder
+      </div>
+      <ul class="aliases"><li>www.diefugenlosedusche.at</li><li>diefugenlosedusche.com</li><li>www.diefugenlosedusche.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="drobits.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://drobits.chilicode.at" target="_blank" rel="noopener">drobits.chilicode.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4045 · drobits
+      </div>
+      <ul class="aliases"><li>www.drobits.chilicode.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="eisenbergklassik.at">
+      <header class="site-header">
+        <a class="domain" href="https://eisenbergklassik.at" target="_blank" rel="noopener">eisenbergklassik.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        → weinbau-schiefer.at
+      </div>
+      <ul class="aliases"><li>www.eisenbergklassik.at</li><li>eisenbergklassik.eu</li><li>www.eisenbergklassik.eu</li><li>xn--blaufrnkisch-lcb.eu</li><li>www.xn--blaufrnkisch-lcb.eu</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="fairkleiden.at">
+      <header class="site-header">
+        <a class="domain" href="https://fairkleiden.at" target="_blank" rel="noopener">fairkleiden.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4042 · fairkleiden
+      </div>
+      <ul class="aliases"><li>www.fairkleiden.at</li></ul>
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="fairspeisen.com">
+      <header class="site-header">
+        <a class="domain" href="https://fairspeisen.com" target="_blank" rel="noopener">fairspeisen.com</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4026 · fairspeisen · docker-compose.yml.off — container not running
+      </div>
+      <ul class="aliases"><li>www.fairspeisen.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="fenzpr.com">
+      <header class="site-header">
+        <a class="domain" href="https://fenzpr.com" target="_blank" rel="noopener">fenzpr.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4021 · fenzpr
+      </div>
+      <ul class="aliases"><li>www.fenzpr.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="feuerwehr-oberwart.at">
+      <header class="site-header">
+        <a class="domain" href="https://feuerwehr-oberwart.at" target="_blank" rel="noopener">feuerwehr-oberwart.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4015 · ffoberwart
+      </div>
+      <ul class="aliases"><li>www.feuerwehr-oberwart.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="ff-burgau-burgauberg.at">
+      <header class="site-header">
+        <a class="domain" href="https://ff-burgau-burgauberg.at" target="_blank" rel="noopener">ff-burgau-burgauberg.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4014 · ffburgau
+      </div>
+      <ul class="aliases"><li>www.ff-burgau-burgauberg.at</li></ul>
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="ff-burgau-burgauberg.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://ff-burgau-burgauberg.chilicode.at" target="_blank" rel="noopener">ff-burgau-burgauberg.chilicode.at</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4016 · ffburgau-historisch · ffburgau-historisch-joomla-1 + DB exited (~2 months) · Joomla staging
+      </div>
+      <ul class="aliases"><li>www.ff-burgau-burgauberg.chilicode.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="ffoberwart.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://ffoberwart.chilicode.at" target="_blank" rel="noopener">ffoberwart.chilicode.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        Port 4015 · → feuerwehr-oberwart.at · redirect/proxy
+      </div>
+      <ul class="aliases"><li>www.ffoberwart.chilicode.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="foto.fotobruckner.com">
+      <header class="site-header">
+        <a class="domain" href="https://foto.fotobruckner.com" target="_blank" rel="noopener">foto.fotobruckner.com</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        → fotobruckner.com
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="fotobruckner.com">
+      <header class="site-header">
+        <a class="domain" href="https://fotobruckner.com" target="_blank" rel="noopener">fotobruckner.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4024 · fotobruckner
+      </div>
+      <ul class="aliases"><li>www.fotobruckner.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="getsgo.at">
+      <header class="site-header">
+        <a class="domain" href="https://getsgo.at" target="_blank" rel="noopener">getsgo.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4009 · getsgo
+      </div>
+      <ul class="aliases"><li>www.getsgo.at</li></ul>
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="historisch.ff-burgau-burgauberg.at">
+      <header class="site-header">
+        <a class="domain" href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4016 · ffburgau-historisch · ffburgau-historisch-joomla-1 + DB exited (~2 months) · Joomla
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="static" data-domain="historisch.umiz.at">
+      <header class="site-header">
+        <a class="domain" href="https://historisch.umiz.at" target="_blank" rel="noopener">historisch.umiz.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-static">static</span>
+        /var/www/vhosts/historischumizat/htdocs
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="hochzeit.fotobruckner.com">
+      <header class="site-header">
+        <a class="domain" href="https://hochzeit.fotobruckner.com" target="_blank" rel="noopener">hochzeit.fotobruckner.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4019 · hochzeitandi
+      </div>
+      <ul class="aliases"><li>www.hochzeit.fotobruckner.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="hochzeitandi.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://hochzeitandi.chilicode.at" target="_blank" rel="noopener">hochzeitandi.chilicode.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        → hochzeit.fotobruckner.com
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="hoerist-kollmann.at">
+      <header class="site-header">
+        <a class="domain" href="https://hoerist-kollmann.at" target="_blank" rel="noopener">hoerist-kollmann.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4001 · hörist-kollmann.at · redirects to IDN variant
+      </div>
+      <ul class="aliases"><li>www.hoerist-kollmann.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="im-hundegluecksraum.at">
+      <header class="site-header">
+        <a class="domain" href="https://im-hundegluecksraum.at" target="_blank" rel="noopener">im-hundegluecksraum.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4031 · hunderaum
+      </div>
+      <ul class="aliases"><li>www.im-hundegluecksraum.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="kopfensteiner.at">
+      <header class="site-header">
+        <a class="domain" href="https://kopfensteiner.at" target="_blank" rel="noopener">kopfensteiner.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4006 · kopfensteiner · Public DNS (8.8.8.8) points here; local resolver was flaky during check
+      </div>
+      <ul class="aliases"><li>www.kopfensteiner.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="kunstraum-rotenturm.at">
+      <header class="site-header">
+        <a class="domain" href="https://kunstraum-rotenturm.at" target="_blank" rel="noopener">kunstraum-rotenturm.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4038 · kunstraum
+      </div>
+      <ul class="aliases"><li>www.kunstraum-rotenturm.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="loranth.at">
+      <header class="site-header">
+        <a class="domain" href="https://loranth.at" target="_blank" rel="noopener">loranth.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4022 · loranth
+      </div>
+      <ul class="aliases"><li>www.loranth.at</li><li>loranth.digital</li><li>www.loranth.digital</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="static" data-domain="proksch-maler.at">
+      <header class="site-header">
+        <a class="domain" href="https://proksch-maler.at" target="_blank" rel="noopener">proksch-maler.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-static">static</span>
+        shared with pinkafeld vhost dir
+      </div>
+      <ul class="aliases"><li>www.proksch-maler.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="static" data-domain="proksch-pinkafeld.at">
+      <header class="site-header">
+        <a class="domain" href="https://proksch-pinkafeld.at" target="_blank" rel="noopener">proksch-pinkafeld.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-static">static</span>
+        /var/www/vhosts/proksch-pinkafeldat/htdocs
+      </div>
+      <ul class="aliases"><li>www.proksch-pinkafeld.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="raumplanungzt.at">
+      <header class="site-header">
+        <a class="domain" href="https://raumplanungzt.at" target="_blank" rel="noopener">raumplanungzt.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4028 · raumplanungzt
+      </div>
+      <ul class="aliases"><li>www.raumplanungzt.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="riser-riser.at">
+      <header class="site-header">
+        <a class="domain" href="https://riser-riser.at" target="_blank" rel="noopener">riser-riser.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4025 · riser
+      </div>
+      <ul class="aliases"><li>www.riser-riser.at</li><li>im-gluecksraum.at</li><li>www.im-gluecksraum.at</li><li>yope-trainer.at</li><li>www.yope-trainer.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="schneckenchecker.at">
+      <header class="site-header">
+        <a class="domain" href="https://schneckenchecker.at" target="_blank" rel="noopener">schneckenchecker.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4034 · schneckenchecker
+      </div>
+      <ul class="aliases"><li>www.schneckenchecker.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="static" data-domain="schwartz-arch.at">
+      <header class="site-header">
+        <a class="domain" href="https://schwartz-arch.at" target="_blank" rel="noopener">schwartz-arch.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-static">static</span>
+        Port 4043 · /var/www/vhosts/schwartz-archat/htdocs · compose off, served static
+      </div>
+      <ul class="aliases"><li>www.schwartz-arch.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="shop-de.sonnenmulde.at">
+      <header class="site-header">
+        <a class="domain" href="https://shop-de.sonnenmulde.at" target="_blank" rel="noopener">shop-de.sonnenmulde.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4013 · sonnenmulde
+      </div>
+      <ul class="aliases"><li>www.shop-de.sonnenmulde.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="shop-en.sonnenmulde.at">
+      <header class="site-header">
+        <a class="domain" href="https://shop-en.sonnenmulde.at" target="_blank" rel="noopener">shop-en.sonnenmulde.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4017 · sonnenmulde_en
+      </div>
+      <ul class="aliases"><li>www.shop-en.sonnenmulde.at</li></ul>
+    </article>
+    
+    <article class="site-card down" data-status="down" data-type="docker" data-domain="shophelfer.at">
+      <header class="site-header">
+        <a class="domain" href="https://shophelfer.at" target="_blank" rel="noopener">shophelfer.at</a>
+        <span class="status-pill down">DOWN 503</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4039 · shophelfer · docker-compose.yml.off — container not running
+      </div>
+      <ul class="aliases"><li>www.shophelfer.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="stadtkapelle.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://stadtkapelle.chilicode.at" target="_blank" rel="noopener">stadtkapelle.chilicode.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4046 · stadtkapelle_oberwart
+      </div>
+      <ul class="aliases"><li>www.stadtkapelle.chilicode.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="strametz-juranek.at">
+      <header class="site-header">
+        <a class="domain" href="https://strametz-juranek.at" target="_blank" rel="noopener">strametz-juranek.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4002 · jsj
+      </div>
+      <ul class="aliases"><li>www.strametz-juranek.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="suesseshandwerk.at">
+      <header class="site-header">
+        <a class="domain" href="https://suesseshandwerk.at" target="_blank" rel="noopener">suesseshandwerk.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4037 · suesses
+      </div>
+      <ul class="aliases"><li>www.suesseshandwerk.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="tader.co.at">
+      <header class="site-header">
+        <a class="domain" href="https://tader.co.at" target="_blank" rel="noopener">tader.co.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4005 · tader
+      </div>
+      <ul class="aliases"><li>www.tader.co.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="timschoeberl.at">
+      <header class="site-header">
+        <a class="domain" href="https://timschoeberl.at" target="_blank" rel="noopener">timschoeberl.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4027 · timschoeberl
+      </div>
+      <ul class="aliases"><li>www.timschoeberl.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="umiz.at">
+      <header class="site-header">
+        <a class="domain" href="https://umiz.at" target="_blank" rel="noopener">umiz.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4004 · umiz
+      </div>
+      <ul class="aliases"><li>www.umiz.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="vermessungehrlich.at">
+      <header class="site-header">
+        <a class="domain" href="https://vermessungehrlich.at" target="_blank" rel="noopener">vermessungehrlich.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4029 · pongo
+      </div>
+      <ul class="aliases"><li>www.vermessungehrlich.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="viaquintaas.com">
+      <header class="site-header">
+        <a class="domain" href="https://viaquintaas.com" target="_blank" rel="noopener">viaquintaas.com</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4018 · viaquintaas
+      </div>
+      <ul class="aliases"><li>www.viaquintaas.com</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="vs-unterwart.at">
+      <header class="site-header">
+        <a class="domain" href="https://vs-unterwart.at" target="_blank" rel="noopener">vs-unterwart.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4007 · vsunterwart
+      </div>
+      <ul class="aliases"><li>www.vs-unterwart.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="proxy" data-domain="web.chilicode.com">
+      <header class="site-header">
+        <a class="domain" href="https://web.chilicode.com" target="_blank" rel="noopener">web.chilicode.com</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-proxy">proxy</span>
+        Port 4042 · currently follows to fairkleiden
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="weinbau-schiefer.at">
+      <header class="site-header">
+        <a class="domain" href="https://weinbau-schiefer.at" target="_blank" rel="noopener">weinbau-schiefer.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4011 · schiefer
+      </div>
+      <ul class="aliases"><li>www.weinbau-schiefer.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="static" data-domain="weltreise.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://weltreise.chilicode.at" target="_blank" rel="noopener">weltreise.chilicode.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-static">static</span>
+        Port 4036 · /var/www/vhosts/weltreisechilicodeat/htdocs · compose off, served static
+      </div>
+      
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="wiegeilistdasdenn.at">
+      <header class="site-header">
+        <a class="domain" href="https://wiegeilistdasdenn.at" target="_blank" rel="noopener">wiegeilistdasdenn.at</a>
+        <span class="status-pill ok">OK 301→200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-redirect">redirect</span>
+        Port 4044 · → chilicode.com
+      </div>
+      <ul class="aliases"><li>www.wiegeilistdasdenn.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="wvb-thermenland.at">
+      <header class="site-header">
+        <a class="domain" href="https://wvb-thermenland.at" target="_blank" rel="noopener">wvb-thermenland.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4035 · thermenland
+      </div>
+      <ul class="aliases"><li>www.wvb-thermenland.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="wvsb.at">
+      <header class="site-header">
+        <a class="domain" href="https://wvsb.at" target="_blank" rel="noopener">wvsb.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4032 · wvsb
+      </div>
+      <ul class="aliases"><li>www.wvsb.at</li></ul>
+    </article>
+    
+    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="xn--hrist-kollmann-vpb.at">
+      <header class="site-header">
+        <a class="domain" href="https://xn--hrist-kollmann-vpb.at" target="_blank" rel="noopener">xn--hrist-kollmann-vpb.at</a>
+        <span class="status-pill ok">OK 200</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-docker">docker</span>
+        Port 4001 · hörist-kollmann.at · IDN for hörist-kollmann
+      </div>
+      <ul class="aliases"><li>www.xn--hrist-kollmann-vpb.at</li></ul>
+    </article>
+    
+    </div>
+  </section>
+
+  <section><h2>Suggested fixes</h2>
+    <div class="fix-block">
+      <h3>fairspeisen.com</h3>
+      <pre><code>cd /var/www/pages/fairspeisen &amp;&amp; mv docker-compose.yml.off docker-compose.yml &amp;&amp; docker compose up -d</code></pre>
+    </div>
+    
+    <div class="fix-block">
+      <h3>shophelfer.at</h3>
+      <pre><code>cd /var/www/pages/shophelfer &amp;&amp; mv docker-compose.yml.off docker-compose.yml &amp;&amp; docker compose up -d</code></pre>
+    </div>
+    
+    <div class="fix-block">
+      <h3>historisch.ff-burgau-burgauberg.at</h3>
+      <pre><code>cd /var/www/pages/ffburgau-historisch &amp;&amp; docker compose up -d</code></pre>
+    </div>
+    
+    <div class="fix-block">
+      <h3>ff-burgau-burgauberg.chilicode.at</h3>
+      <pre><code>cd /var/www/pages/ffburgau-historisch &amp;&amp; docker compose up -d</code></pre>
+    </div>
+    </section>
+
+  <footer>
+    Generated 2026-08-15 12:54 UTC from <code>websites.yaml</code>
+  </footer>
+
+  <script>
+    const search = document.getElementById('search');
+    const filterStatus = document.getElementById('filter-status');
+    const filterType = document.getElementById('filter-type');
+    const cards = document.querySelectorAll('#all-sites .site-card');
+
+    function applyFilters() {
+      const q = search.value.toLowerCase().trim();
+      const st = filterStatus.value;
+      const ty = filterType.value;
+      cards.forEach(card => {
+        const domain = card.dataset.domain || '';
+        const matchQ = !q || domain.includes(q);
+        const matchSt = st === 'all' || card.dataset.status === st;
+        const matchTy = ty === 'all' || card.dataset.type === ty;
+        card.classList.toggle('hidden', !(matchQ && matchSt && matchTy));
+      });
+    }
+    search.addEventListener('input', applyFilters);
+    filterStatus.addEventListener('change', applyFilters);
+    filterType.addEventListener('change', applyFilters);
+  </script>
+</body>
+</html>
