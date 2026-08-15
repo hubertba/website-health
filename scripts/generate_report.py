@@ -21,7 +21,39 @@ def load_data(path: Path) -> dict:
         return yaml.safe_load(f)
 
 
+def normalize_data(data: dict) -> dict:
+    """Support legacy single-server YAML and multi-server format."""
+    if "servers" in data:
+        return data
+
+    meta = data.get("meta", {})
+    return {
+        "meta": {"checked_at": meta.get("checked_at", "")},
+        "servers": [
+            {
+                "id": "web",
+                "hostname": meta.get("server_hostname", "unknown"),
+                "ip": meta.get("server_ip", ""),
+                "role": "Web hosting",
+                "apache_status": meta.get("apache_status"),
+                "running_containers": meta.get("running_containers"),
+                "sources": meta.get("sources", []),
+                "summary": data.get("summary", {}),
+                "websites": data.get("websites", []),
+                "fixes": data.get("fixes", []),
+            }
+        ],
+    }
+
+
+def site_url(site: dict) -> str:
+    scheme = "http" if site.get("http_only") else "https"
+    return f"{scheme}://{site['domain']}"
+
+
 def status_label(site: dict) -> str:
+    if site.get("probed") is False:
+        return "inventory"
     status = site.get("status", "unknown")
     code = site.get("http_status")
     if status == "down":
@@ -34,6 +66,10 @@ def status_label(site: dict) -> str:
 
 
 def status_class(site: dict) -> str:
+    if site.get("probed") is False:
+        return "inventory"
+    if site.get("http_only") and site.get("status") != "down":
+        return "warn"
     return "down" if site.get("status") == "down" else "ok"
 
 
@@ -43,18 +79,36 @@ def type_badge(site_type: str) -> str:
         "static": "badge-static",
         "redirect": "badge-redirect",
         "proxy": "badge-proxy",
+        "mail": "badge-mail",
+        "app": "badge-app",
     }
     return colors.get(site_type, "badge-default")
 
 
-def render_site_card(site: dict) -> str:
+def server_summary(server: dict) -> dict:
+    sites = server.get("websites", [])
+    explicit = server.get("summary", {})
+    down = [s for s in sites if s.get("status") == "down"]
+    ok = [s for s in sites if s.get("status") != "down"]
+    return {
+        "total": explicit.get("total", len(sites)),
+        "ok": explicit.get("ok", len(ok)),
+        "down": explicit.get("down", len(down)),
+        "inventory": sum(1 for s in sites if s.get("probed") is False),
+    }
+
+
+def render_site_card(site: dict, server_id: str) -> str:
     domain = html.escape(site["domain"])
     site_type = html.escape(site.get("type", "unknown"))
     badge_cls = type_badge(site.get("type", ""))
     st_cls = status_class(site)
     label = html.escape(status_label(site))
+    url = html.escape(site_url(site))
 
     details: list[str] = []
+    if category := site.get("category"):
+        details.append(html.escape(category))
     if port := site.get("port"):
         details.append(f"Port {port}")
     if folder := site.get("folder"):
@@ -75,9 +129,9 @@ def render_site_card(site: dict) -> str:
         alias_html = f'<ul class="aliases">{alias_items}</ul>'
 
     return f"""
-    <article class="site-card {st_cls}" data-status="{st_cls}" data-type="{site_type}" data-domain="{domain.lower()}">
+    <article class="site-card {st_cls}" data-status="{st_cls}" data-type="{site_type}" data-server="{html.escape(server_id)}" data-domain="{domain.lower()}">
       <header class="site-header">
-        <a class="domain" href="https://{domain}" target="_blank" rel="noopener">{domain}</a>
+        <a class="domain" href="{url}" target="_blank" rel="noopener">{domain}</a>
         <span class="status-pill {st_cls}">{label}</span>
       </header>
       <div class="site-meta">
@@ -85,6 +139,38 @@ def render_site_card(site: dict) -> str:
         {" · ".join(details) if details else ""}
       </div>
       {alias_html}
+    </article>
+    """
+
+
+def render_service_card(service: dict) -> str:
+    name = html.escape(service.get("name", "Service"))
+    svc_type = html.escape(service.get("type", "backend"))
+    port = service.get("port", "")
+    path = html.escape(service.get("path", ""))
+    bind = html.escape(service.get("bind", ""))
+    notes = html.escape(service.get("notes", ""))
+
+    details = []
+    if bind:
+        details.append(bind)
+    elif port:
+        details.append(f"Port {port}")
+    if path:
+        details.append(path)
+    if notes:
+        details.append(notes)
+
+    return f"""
+    <article class="site-card inventory service-card">
+      <header class="site-header">
+        <span class="domain">{name}</span>
+        <span class="status-pill inventory">backend</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-api">{svc_type}</span>
+        {" · ".join(details) if details else ""}
+      </div>
     </article>
     """
 
@@ -101,28 +187,109 @@ def render_fix(fix: dict) -> str:
     """
 
 
-def generate_html(data: dict) -> str:
-    meta = data.get("meta", {})
-    summary = data.get("summary", {})
-    sites: list[dict] = data.get("websites", [])
-    fixes: list[dict] = data.get("fixes", [])
+def render_server_section(server: dict) -> str:
+    server_id = server.get("id", "unknown")
+    hostname = html.escape(server.get("hostname", server_id))
+    role = html.escape(server.get("role", ""))
+    ip = html.escape(str(server.get("ip", "")))
+    summary = server_summary(server)
+    sites = server.get("websites", [])
+    services = server.get("services", [])
+    fixes = server.get("fixes", [])
+
+    extras: list[str] = []
+    if containers := server.get("running_containers"):
+        extras.append(f"{containers} Docker containers")
+    if server.get("docker_containers") == 0:
+        extras.append("no Docker web containers")
+    if apache := server.get("apache_vhosts"):
+        extras.append(f"{apache} Apache vhosts")
+    extra_line = " · ".join(extras)
 
     down_sites = [s for s in sites if s.get("status") == "down"]
-    ok_count = summary.get("ok", sum(1 for s in sites if s.get("status") != "down"))
-    down_count = summary.get("down", len(down_sites))
-    total = summary.get("total", len(sites))
-    generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-
-    down_cards = "".join(render_site_card(s) for s in down_sites)
-    all_cards = "".join(render_site_card(s) for s in sites)
+    down_cards = "".join(render_site_card(s, server_id) for s in down_sites)
+    all_cards = "".join(render_site_card(s, server_id) for s in sites)
+    service_cards = "".join(render_service_card(s) for s in services)
     fix_blocks = "".join(render_fix(f) for f in fixes)
 
-    checked = html.escape(str(meta.get("checked_at", "")))
-    server = html.escape(str(meta.get("server_hostname", "")))
-    server_ip = html.escape(str(meta.get("server_ip", "")))
-    containers = meta.get("running_containers", "—")
+    down_section = ""
+    if down_sites:
+        down_section = f"""
+        <div class="server-subsection">
+          <h3>Sites that are down</h3>
+          <div class="site-list">{down_cards}</div>
+        </div>
+        """
 
-    verdict = "All sites healthy" if down_count == 0 else f"{down_count} site(s) need attention"
+    services_section = ""
+    if services:
+        services_section = f"""
+        <div class="server-subsection">
+          <h3>Backend services (not Apache)</h3>
+          <div class="site-list">{service_cards}</div>
+        </div>
+        """
+
+    fixes_section = ""
+    if fixes:
+        fixes_section = f"""
+        <div class="server-subsection">
+          <h3>Suggested fixes</h3>
+          {fix_blocks}
+        </div>
+        """
+
+    return f"""
+    <section class="server-section" id="server-{html.escape(server_id)}" data-server="{html.escape(server_id)}">
+      <div class="server-header">
+        <h2>{hostname}</h2>
+        <p class="server-meta">{role}{f" · {ip}" if ip else ""}{f" · {extra_line}" if extra_line else ""}</p>
+        <div class="summary-grid server-stats">
+          <div class="stat-card"><div class="value">{summary['total']}</div><div class="label">Sites</div></div>
+          <div class="stat-card ok"><div class="value">{summary['ok']}</div><div class="label">OK</div></div>
+          <div class="stat-card down"><div class="value">{summary['down']}</div><div class="label">Down</div></div>
+          <div class="stat-card"><div class="value">{summary['inventory']}</div><div class="label">Inventory</div></div>
+        </div>
+      </div>
+      {down_section}
+      <div class="server-subsection">
+        <h3>All sites</h3>
+        <div class="site-list server-sites">{all_cards}</div>
+      </div>
+      {services_section}
+      {fixes_section}
+    </section>
+    """
+
+
+def aggregate_summary(servers: list[dict]) -> dict:
+    totals = {"total": 0, "ok": 0, "down": 0, "inventory": 0, "servers": len(servers)}
+    for server in servers:
+        s = server_summary(server)
+        totals["total"] += s["total"]
+        totals["ok"] += s["ok"]
+        totals["down"] += s["down"]
+        totals["inventory"] += s["inventory"]
+    return totals
+
+
+def generate_html(data: dict) -> str:
+    data = normalize_data(data)
+    meta = data.get("meta", {})
+    servers: list[dict] = data.get("servers", [])
+    generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    checked = html.escape(str(meta.get("checked_at", "")))
+    agg = aggregate_summary(servers)
+
+    server_sections = "".join(render_server_section(s) for s in servers)
+    server_options = "".join(
+        f'<option value="{html.escape(s.get("id", ""))}">{html.escape(s.get("hostname", s.get("id", "")))}</option>'
+        for s in servers
+    )
+
+    verdict = "All probed sites healthy" if agg["down"] == 0 else f"{agg['down']} site(s) need attention"
+    if agg["inventory"]:
+        verdict += f" · {agg['inventory']} inventory-only (not probed)"
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -130,7 +297,7 @@ def generate_html(data: dict) -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>Website Health — {checked}</title>
+  <title>Hosted Services — {checked}</title>
   <style>
     :root {{
       --bg: #f4f6f9;
@@ -143,6 +310,10 @@ def generate_html(data: dict) -> str:
       --ok-bg: #ecfdf5;
       --down: #dc2626;
       --down-bg: #fef2f2;
+      --warn: #d97706;
+      --warn-bg: #fffbeb;
+      --inv: #6366f1;
+      --inv-bg: #eef2ff;
       --shadow: 0 1px 3px rgba(0,0,0,.08);
       --radius: 12px;
     }}
@@ -156,6 +327,8 @@ def generate_html(data: dict) -> str:
         --accent: #60a5fa;
         --ok-bg: #064e3b33;
         --down-bg: #7f1d1d33;
+        --warn-bg: #78350f33;
+        --inv-bg: #312e8133;
         --shadow: 0 1px 3px rgba(0,0,0,.3);
       }}
     }}
@@ -169,46 +342,27 @@ def generate_html(data: dict) -> str:
       max-width: 960px;
       margin: 0 auto;
     }}
-    header.page-header {{
-      margin-bottom: 1.5rem;
-    }}
-    header.page-header h1 {{
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: .25rem;
-    }}
-    .subtitle {{
-      color: var(--muted);
-      font-size: .9rem;
-    }}
+    header.page-header {{ margin-bottom: 1.5rem; }}
+    header.page-header h1 {{ font-size: 1.5rem; font-weight: 700; margin-bottom: .25rem; }}
+    .subtitle {{ color: var(--muted); font-size: .9rem; }}
     .summary-grid {{
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: .75rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }}
-    @media (min-width: 480px) {{
-      .summary-grid {{ grid-template-columns: repeat(4, 1fr); }}
-    }}
+    @media (min-width: 480px) {{ .summary-grid {{ grid-template-columns: repeat(5, 1fr); }} }}
+    .server-stats {{ margin-top: .75rem; }}
     .stat-card {{
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1rem;
+      padding: .75rem;
       text-align: center;
       box-shadow: var(--shadow);
     }}
-    .stat-card .value {{
-      font-size: 1.75rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }}
-    .stat-card .label {{
-      font-size: .75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }}
+    .stat-card .value {{ font-size: 1.5rem; font-weight: 700; line-height: 1.2; }}
+    .stat-card .label {{ font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }}
     .stat-card.ok .value {{ color: var(--ok); }}
     .stat-card.down .value {{ color: var(--down); }}
     .verdict {{
@@ -219,22 +373,22 @@ def generate_html(data: dict) -> str:
       margin-bottom: 1.5rem;
       font-size: .95rem;
     }}
-    .verdict.warn {{
-      border-color: var(--down);
-      background: var(--down-bg);
-    }}
+    .verdict.warn {{ border-color: var(--down); background: var(--down-bg); }}
     .controls {{
       display: flex;
       flex-direction: column;
       gap: .5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      padding: .5rem 0;
     }}
-    @media (min-width: 480px) {{
-      .controls {{ flex-direction: row; flex-wrap: wrap; }}
-    }}
+    @media (min-width: 480px) {{ .controls {{ flex-direction: row; flex-wrap: wrap; }} }}
     .controls input, .controls select {{
       flex: 1;
-      min-width: 0;
+      min-width: 8rem;
       padding: .6rem .75rem;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -242,18 +396,21 @@ def generate_html(data: dict) -> str:
       color: var(--text);
       font-size: 1rem;
     }}
-    section {{ margin-bottom: 2rem; }}
-    section h2 {{
-      font-size: 1.1rem;
-      margin-bottom: .75rem;
-      padding-bottom: .35rem;
+    .server-section {{
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
       border-bottom: 2px solid var(--border);
     }}
-    .site-list {{
-      display: flex;
-      flex-direction: column;
-      gap: .6rem;
+    .server-section:last-of-type {{ border-bottom: none; }}
+    .server-header h2 {{ font-size: 1.2rem; margin-bottom: .2rem; }}
+    .server-meta {{ color: var(--muted); font-size: .85rem; margin-bottom: .5rem; }}
+    .server-subsection {{ margin-top: 1.25rem; }}
+    .server-subsection h3 {{
+      font-size: 1rem;
+      margin-bottom: .6rem;
+      color: var(--muted);
     }}
+    .site-list {{ display: flex; flex-direction: column; gap: .6rem; }}
     .site-card {{
       background: var(--surface);
       border: 1px solid var(--border);
@@ -261,10 +418,9 @@ def generate_html(data: dict) -> str:
       padding: .85rem 1rem;
       box-shadow: var(--shadow);
     }}
-    .site-card.down {{
-      border-left: 4px solid var(--down);
-      background: var(--down-bg);
-    }}
+    .site-card.down {{ border-left: 4px solid var(--down); background: var(--down-bg); }}
+    .site-card.warn {{ border-left: 4px solid var(--warn); background: var(--warn-bg); }}
+    .site-card.inventory {{ border-left: 4px solid var(--inv); }}
     .site-header {{
       display: flex;
       flex-wrap: wrap;
@@ -273,13 +429,8 @@ def generate_html(data: dict) -> str:
       gap: .5rem;
       margin-bottom: .35rem;
     }}
-    .domain {{
-      font-weight: 600;
-      color: var(--accent);
-      text-decoration: none;
-      word-break: break-all;
-    }}
-    .domain:hover {{ text-decoration: underline; }}
+    .domain {{ font-weight: 600; color: var(--accent); text-decoration: none; word-break: break-all; }}
+    a.domain:hover {{ text-decoration: underline; }}
     .status-pill {{
       font-size: .7rem;
       font-weight: 700;
@@ -287,18 +438,11 @@ def generate_html(data: dict) -> str:
       border-radius: 999px;
       white-space: nowrap;
     }}
-    .status-pill.ok {{
-      background: var(--ok-bg);
-      color: var(--ok);
-    }}
-    .status-pill.down {{
-      background: var(--down-bg);
-      color: var(--down);
-    }}
-    .site-meta {{
-      font-size: .8rem;
-      color: var(--muted);
-    }}
+    .status-pill.ok {{ background: var(--ok-bg); color: var(--ok); }}
+    .status-pill.down {{ background: var(--down-bg); color: var(--down); }}
+    .status-pill.warn {{ background: var(--warn-bg); color: var(--warn); }}
+    .status-pill.inventory {{ background: var(--inv-bg); color: var(--inv); }}
+    .site-meta {{ font-size: .8rem; color: var(--muted); }}
     .badge {{
       display: inline-block;
       font-size: .65rem;
@@ -312,18 +456,19 @@ def generate_html(data: dict) -> str:
     .badge-static {{ background: #fef3c7; color: #92400e; }}
     .badge-redirect {{ background: #ede9fe; color: #5b21b6; }}
     .badge-proxy {{ background: #fce7f3; color: #9d174d; }}
+    .badge-mail {{ background: #d1fae5; color: #065f46; }}
+    .badge-app {{ background: #e0e7ff; color: #3730a3; }}
+    .badge-api {{ background: #f3e8ff; color: #6b21a8; }}
     @media (prefers-color-scheme: dark) {{
       .badge-docker {{ background: #1e3a5f; color: #93c5fd; }}
       .badge-static {{ background: #78350f; color: #fde68a; }}
       .badge-redirect {{ background: #4c1d95; color: #c4b5fd; }}
       .badge-proxy {{ background: #831843; color: #f9a8d4; }}
+      .badge-mail {{ background: #064e3b; color: #6ee7b7; }}
+      .badge-app {{ background: #312e81; color: #a5b4fc; }}
+      .badge-api {{ background: #581c87; color: #d8b4fe; }}
     }}
-    .aliases {{
-      margin-top: .4rem;
-      padding-left: 1.2rem;
-      font-size: .75rem;
-      color: var(--muted);
-    }}
+    .aliases {{ margin-top: .4rem; padding-left: 1.2rem; font-size: .75rem; color: var(--muted); }}
     .fix-block {{
       background: var(--surface);
       border: 1px solid var(--border);
@@ -331,17 +476,8 @@ def generate_html(data: dict) -> str:
       padding: .75rem 1rem;
       margin-bottom: .75rem;
     }}
-    .fix-block h3 {{
-      font-size: .9rem;
-      margin-bottom: .5rem;
-    }}
-    pre {{
-      overflow-x: auto;
-      font-size: .75rem;
-      background: var(--bg);
-      padding: .5rem;
-      border-radius: 6px;
-    }}
+    .fix-block h3 {{ font-size: .9rem; margin-bottom: .5rem; }}
+    pre {{ overflow-x: auto; font-size: .75rem; background: var(--bg); padding: .5rem; border-radius: 6px; }}
     footer {{
       margin-top: 2rem;
       padding-top: 1rem;
@@ -355,92 +491,103 @@ def generate_html(data: dict) -> str:
 </head>
 <body>
   <header class="page-header">
-    <h1>Website Health Report</h1>
-    <p class="subtitle">
-      Checked <strong>{checked}</strong> ·
-      <code>{server}</code> ({server_ip}) ·
-      {containers} containers running
-    </p>
+    <h1>Hosted Services Report</h1>
+    <p class="subtitle">Checked <strong>{checked}</strong> · {agg['servers']} servers · {agg['total']} sites</p>
   </header>
 
   <div class="summary-grid">
-    <div class="stat-card">
-      <div class="value">{total}</div>
-      <div class="label">Total</div>
-    </div>
-    <div class="stat-card ok">
-      <div class="value">{ok_count}</div>
-      <div class="label">OK</div>
-    </div>
-    <div class="stat-card down">
-      <div class="value">{down_count}</div>
-      <div class="label">Down</div>
-    </div>
-    <div class="stat-card">
-      <div class="value">{len([s for s in sites if s.get('type') == 'docker'])}</div>
-      <div class="label">Docker</div>
-    </div>
+    <div class="stat-card"><div class="value">{agg['total']}</div><div class="label">Total</div></div>
+    <div class="stat-card ok"><div class="value">{agg['ok']}</div><div class="label">OK</div></div>
+    <div class="stat-card down"><div class="value">{agg['down']}</div><div class="label">Down</div></div>
+    <div class="stat-card"><div class="value">{agg['inventory']}</div><div class="label">Inventory</div></div>
+    <div class="stat-card"><div class="value">{agg['servers']}</div><div class="label">Servers</div></div>
   </div>
 
-  <div class="verdict{" warn" if down_count else ""}">
+  <div class="verdict{" warn" if agg['down'] else ""}">
     {html.escape(verdict)}
   </div>
 
-  {"<section id='down-section'><h2>Sites that are down</h2><div class='site-list'>" + down_cards + "</div></section>" if down_sites else ""}
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search domain…" autocomplete="off">
+    <select id="filter-server">
+      <option value="all">All servers</option>
+      {server_options}
+    </select>
+    <select id="filter-status">
+      <option value="all">All statuses</option>
+      <option value="ok">OK / probed</option>
+      <option value="down">Down</option>
+      <option value="inventory">Inventory only</option>
+      <option value="warn">HTTP-only / warnings</option>
+    </select>
+    <select id="filter-type">
+      <option value="all">All types</option>
+      <option value="docker">Docker</option>
+      <option value="static">Static</option>
+      <option value="redirect">Redirect</option>
+      <option value="proxy">Proxy</option>
+      <option value="mail">Mail webmail</option>
+      <option value="app">App / admin</option>
+    </select>
+  </div>
 
-  <section>
-    <h2>All websites</h2>
-    <div class="controls">
-      <input type="search" id="search" placeholder="Search domain…" autocomplete="off">
-      <select id="filter-status">
-        <option value="all">All statuses</option>
-        <option value="ok">OK only</option>
-        <option value="down">Down only</option>
-      </select>
-      <select id="filter-type">
-        <option value="all">All types</option>
-        <option value="docker">Docker</option>
-        <option value="static">Static</option>
-        <option value="redirect">Redirect</option>
-        <option value="proxy">Proxy</option>
-      </select>
-    </div>
-    <div class="site-list" id="all-sites">
-      {all_cards}
-    </div>
-  </section>
+  {server_sections}
 
-  {"<section><h2>Suggested fixes</h2>" + fix_blocks + "</section>" if fixes else ""}
-
-  <footer>
-    Generated {generated} from <code>websites.yaml</code>
-  </footer>
+  <footer>Generated {generated} from <code>websites.yaml</code></footer>
 
   <script>
     const search = document.getElementById('search');
+    const filterServer = document.getElementById('filter-server');
     const filterStatus = document.getElementById('filter-status');
     const filterType = document.getElementById('filter-type');
-    const cards = document.querySelectorAll('#all-sites .site-card');
+    const cards = document.querySelectorAll('.site-card[data-domain]');
+    const sections = document.querySelectorAll('.server-section');
 
     function applyFilters() {{
       const q = search.value.toLowerCase().trim();
+      const srv = filterServer.value;
       const st = filterStatus.value;
       const ty = filterType.value;
+
       cards.forEach(card => {{
         const domain = card.dataset.domain || '';
         const matchQ = !q || domain.includes(q);
+        const matchSrv = srv === 'all' || card.dataset.server === srv;
         const matchSt = st === 'all' || card.dataset.status === st;
         const matchTy = ty === 'all' || card.dataset.type === ty;
-        card.classList.toggle('hidden', !(matchQ && matchSt && matchTy));
+        card.classList.toggle('hidden', !(matchQ && matchSrv && matchSt && matchTy));
+      }});
+
+      sections.forEach(section => {{
+        if (srv !== 'all' && section.dataset.server !== srv) {{
+          section.classList.add('hidden');
+          return;
+        }}
+        section.classList.remove('hidden');
+        const visible = section.querySelectorAll('.site-card[data-domain]:not(.hidden)');
+        const subs = section.querySelectorAll('.server-subsection');
+        subs.forEach(sub => {{
+          const subCards = sub.querySelectorAll('.site-card[data-domain]');
+          if (!subCards.length) return;
+          const anyVisible = [...subCards].some(c => !c.classList.contains('hidden'));
+          sub.classList.toggle('hidden', !anyVisible);
+        }});
       }});
     }}
-    search.addEventListener('input', applyFilters);
-    filterStatus.addEventListener('change', applyFilters);
-    filterType.addEventListener('change', applyFilters);
+
+    [search, filterServer, filterStatus, filterType].forEach(el =>
+      el.addEventListener('input', applyFilters));
+    [filterServer, filterStatus, filterType].forEach(el =>
+      el.addEventListener('change', applyFilters));
   </script>
 </body>
 </html>
 """
+
+
+def count_sites(data: dict) -> int:
+    data = normalize_data(data)
+    return sum(len(s.get("websites", [])) for s in data.get("servers", []))
 
 
 def main() -> int:
@@ -458,7 +605,7 @@ def main() -> int:
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(html_out, encoding="utf-8")
-    print(f"Wrote {args.output} ({len(data.get('websites', []))} sites)")
+    print(f"Wrote {args.output} ({count_sites(data)} sites across {len(normalize_data(data).get('servers', []))} servers)")
     return 0
 
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>Website Health — 2026-08-15</title>
+  <title>Hosted Services — 2026-08-15</title>
   <style>
     :root {
       --bg: #f4f6f9;
@@ -17,6 +17,10 @@
       --ok-bg: #ecfdf5;
       --down: #dc2626;
       --down-bg: #fef2f2;
+      --warn: #d97706;
+      --warn-bg: #fffbeb;
+      --inv: #6366f1;
+      --inv-bg: #eef2ff;
       --shadow: 0 1px 3px rgba(0,0,0,.08);
       --radius: 12px;
     }
@@ -30,6 +34,8 @@
         --accent: #60a5fa;
         --ok-bg: #064e3b33;
         --down-bg: #7f1d1d33;
+        --warn-bg: #78350f33;
+        --inv-bg: #312e8133;
         --shadow: 0 1px 3px rgba(0,0,0,.3);
       }
     }
@@ -43,46 +49,27 @@
       max-width: 960px;
       margin: 0 auto;
     }
-    header.page-header {
-      margin-bottom: 1.5rem;
-    }
-    header.page-header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: .25rem;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: .9rem;
-    }
+    header.page-header { margin-bottom: 1.5rem; }
+    header.page-header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: .25rem; }
+    .subtitle { color: var(--muted); font-size: .9rem; }
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: .75rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
-    @media (min-width: 480px) {
-      .summary-grid { grid-template-columns: repeat(4, 1fr); }
-    }
+    @media (min-width: 480px) { .summary-grid { grid-template-columns: repeat(5, 1fr); } }
+    .server-stats { margin-top: .75rem; }
     .stat-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1rem;
+      padding: .75rem;
       text-align: center;
       box-shadow: var(--shadow);
     }
-    .stat-card .value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-    .stat-card .label {
-      font-size: .75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+    .stat-card .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
     .stat-card.ok .value { color: var(--ok); }
     .stat-card.down .value { color: var(--down); }
     .verdict {
@@ -93,22 +80,22 @@
       margin-bottom: 1.5rem;
       font-size: .95rem;
     }
-    .verdict.warn {
-      border-color: var(--down);
-      background: var(--down-bg);
-    }
+    .verdict.warn { border-color: var(--down); background: var(--down-bg); }
     .controls {
       display: flex;
       flex-direction: column;
       gap: .5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      padding: .5rem 0;
     }
-    @media (min-width: 480px) {
-      .controls { flex-direction: row; flex-wrap: wrap; }
-    }
+    @media (min-width: 480px) { .controls { flex-direction: row; flex-wrap: wrap; } }
     .controls input, .controls select {
       flex: 1;
-      min-width: 0;
+      min-width: 8rem;
       padding: .6rem .75rem;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -116,18 +103,21 @@
       color: var(--text);
       font-size: 1rem;
     }
-    section { margin-bottom: 2rem; }
-    section h2 {
-      font-size: 1.1rem;
-      margin-bottom: .75rem;
-      padding-bottom: .35rem;
+    .server-section {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
       border-bottom: 2px solid var(--border);
     }
-    .site-list {
-      display: flex;
-      flex-direction: column;
-      gap: .6rem;
+    .server-section:last-of-type { border-bottom: none; }
+    .server-header h2 { font-size: 1.2rem; margin-bottom: .2rem; }
+    .server-meta { color: var(--muted); font-size: .85rem; margin-bottom: .5rem; }
+    .server-subsection { margin-top: 1.25rem; }
+    .server-subsection h3 {
+      font-size: 1rem;
+      margin-bottom: .6rem;
+      color: var(--muted);
     }
+    .site-list { display: flex; flex-direction: column; gap: .6rem; }
     .site-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -135,10 +125,9 @@
       padding: .85rem 1rem;
       box-shadow: var(--shadow);
     }
-    .site-card.down {
-      border-left: 4px solid var(--down);
-      background: var(--down-bg);
-    }
+    .site-card.down { border-left: 4px solid var(--down); background: var(--down-bg); }
+    .site-card.warn { border-left: 4px solid var(--warn); background: var(--warn-bg); }
+    .site-card.inventory { border-left: 4px solid var(--inv); }
     .site-header {
       display: flex;
       flex-wrap: wrap;
@@ -147,13 +136,8 @@
       gap: .5rem;
       margin-bottom: .35rem;
     }
-    .domain {
-      font-weight: 600;
-      color: var(--accent);
-      text-decoration: none;
-      word-break: break-all;
-    }
-    .domain:hover { text-decoration: underline; }
+    .domain { font-weight: 600; color: var(--accent); text-decoration: none; word-break: break-all; }
+    a.domain:hover { text-decoration: underline; }
     .status-pill {
       font-size: .7rem;
       font-weight: 700;
@@ -161,18 +145,11 @@
       border-radius: 999px;
       white-space: nowrap;
     }
-    .status-pill.ok {
-      background: var(--ok-bg);
-      color: var(--ok);
-    }
-    .status-pill.down {
-      background: var(--down-bg);
-      color: var(--down);
-    }
-    .site-meta {
-      font-size: .8rem;
-      color: var(--muted);
-    }
+    .status-pill.ok { background: var(--ok-bg); color: var(--ok); }
+    .status-pill.down { background: var(--down-bg); color: var(--down); }
+    .status-pill.warn { background: var(--warn-bg); color: var(--warn); }
+    .status-pill.inventory { background: var(--inv-bg); color: var(--inv); }
+    .site-meta { font-size: .8rem; color: var(--muted); }
     .badge {
       display: inline-block;
       font-size: .65rem;
@@ -186,18 +163,19 @@
     .badge-static { background: #fef3c7; color: #92400e; }
     .badge-redirect { background: #ede9fe; color: #5b21b6; }
     .badge-proxy { background: #fce7f3; color: #9d174d; }
+    .badge-mail { background: #d1fae5; color: #065f46; }
+    .badge-app { background: #e0e7ff; color: #3730a3; }
+    .badge-api { background: #f3e8ff; color: #6b21a8; }
     @media (prefers-color-scheme: dark) {
       .badge-docker { background: #1e3a5f; color: #93c5fd; }
       .badge-static { background: #78350f; color: #fde68a; }
       .badge-redirect { background: #4c1d95; color: #c4b5fd; }
       .badge-proxy { background: #831843; color: #f9a8d4; }
+      .badge-mail { background: #064e3b; color: #6ee7b7; }
+      .badge-app { background: #312e81; color: #a5b4fc; }
+      .badge-api { background: #581c87; color: #d8b4fe; }
     }
-    .aliases {
-      margin-top: .4rem;
-      padding-left: 1.2rem;
-      font-size: .75rem;
-      color: var(--muted);
-    }
+    .aliases { margin-top: .4rem; padding-left: 1.2rem; font-size: .75rem; color: var(--muted); }
     .fix-block {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -205,17 +183,8 @@
       padding: .75rem 1rem;
       margin-bottom: .75rem;
     }
-    .fix-block h3 {
-      font-size: .9rem;
-      margin-bottom: .5rem;
-    }
-    pre {
-      overflow-x: auto;
-      font-size: .75rem;
-      background: var(--bg);
-      padding: .5rem;
-      border-radius: 6px;
-    }
+    .fix-block h3 { font-size: .9rem; margin-bottom: .5rem; }
+    pre { overflow-x: auto; font-size: .75rem; background: var(--bg); padding: .5rem; border-radius: 6px; }
     footer {
       margin-top: 2rem;
       padding-top: 1rem;
@@ -229,39 +198,63 @@
 </head>
 <body>
   <header class="page-header">
-    <h1>Website Health Report</h1>
-    <p class="subtitle">
-      Checked <strong>2026-08-15</strong> ·
-      <code>web.chilicode.com</code> (37.16.72.137) ·
-      36 containers running
-    </p>
+    <h1>Hosted Services Report</h1>
+    <p class="subtitle">Checked <strong>2026-08-15</strong> · 2 servers · 92 sites</p>
   </header>
 
   <div class="summary-grid">
-    <div class="stat-card">
-      <div class="value">55</div>
-      <div class="label">Total</div>
-    </div>
-    <div class="stat-card ok">
-      <div class="value">51</div>
-      <div class="label">OK</div>
-    </div>
-    <div class="stat-card down">
-      <div class="value">4</div>
-      <div class="label">Down</div>
-    </div>
-    <div class="stat-card">
-      <div class="value">41</div>
-      <div class="label">Docker</div>
-    </div>
+    <div class="stat-card"><div class="value">92</div><div class="label">Total</div></div>
+    <div class="stat-card ok"><div class="value">88</div><div class="label">OK</div></div>
+    <div class="stat-card down"><div class="value">4</div><div class="label">Down</div></div>
+    <div class="stat-card"><div class="value">37</div><div class="label">Inventory</div></div>
+    <div class="stat-card"><div class="value">2</div><div class="label">Servers</div></div>
   </div>
 
   <div class="verdict warn">
-    4 site(s) need attention
+    4 site(s) need attention · 37 inventory-only (not probed)
   </div>
 
-  <section id='down-section'><h2>Sites that are down</h2><div class='site-list'>
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="fairspeisen.com">
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search domain…" autocomplete="off">
+    <select id="filter-server">
+      <option value="all">All servers</option>
+      <option value="web">web.chilicode.com</option><option value="mail">mail.chilicode.com</option>
+    </select>
+    <select id="filter-status">
+      <option value="all">All statuses</option>
+      <option value="ok">OK / probed</option>
+      <option value="down">Down</option>
+      <option value="inventory">Inventory only</option>
+      <option value="warn">HTTP-only / warnings</option>
+    </select>
+    <select id="filter-type">
+      <option value="all">All types</option>
+      <option value="docker">Docker</option>
+      <option value="static">Static</option>
+      <option value="redirect">Redirect</option>
+      <option value="proxy">Proxy</option>
+      <option value="mail">Mail webmail</option>
+      <option value="app">App / admin</option>
+    </select>
+  </div>
+
+  
+    <section class="server-section" id="server-web" data-server="web">
+      <div class="server-header">
+        <h2>web.chilicode.com</h2>
+        <p class="server-meta">Web hosting · 37.16.72.137 · 36 Docker containers</p>
+        <div class="summary-grid server-stats">
+          <div class="stat-card"><div class="value">55</div><div class="label">Sites</div></div>
+          <div class="stat-card ok"><div class="value">51</div><div class="label">OK</div></div>
+          <div class="stat-card down"><div class="value">4</div><div class="label">Down</div></div>
+          <div class="stat-card"><div class="value">0</div><div class="label">Inventory</div></div>
+        </div>
+      </div>
+      
+        <div class="server-subsection">
+          <h3>Sites that are down</h3>
+          <div class="site-list">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="fairspeisen.com">
       <header class="site-header">
         <a class="domain" href="https://fairspeisen.com" target="_blank" rel="noopener">fairspeisen.com</a>
         <span class="status-pill down">DOWN 503</span>
@@ -273,7 +266,7 @@
       <ul class="aliases"><li>www.fairspeisen.com</li></ul>
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="ff-burgau-burgauberg.chilicode.at">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="ff-burgau-burgauberg.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://ff-burgau-burgauberg.chilicode.at" target="_blank" rel="noopener">ff-burgau-burgauberg.chilicode.at</a>
         <span class="status-pill down">DOWN 503</span>
@@ -285,7 +278,7 @@
       <ul class="aliases"><li>www.ff-burgau-burgauberg.chilicode.at</li></ul>
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="historisch.ff-burgau-burgauberg.at">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="historisch.ff-burgau-burgauberg.at">
       <header class="site-header">
         <a class="domain" href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a>
         <span class="status-pill down">DOWN 503</span>
@@ -297,7 +290,7 @@
       
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="shophelfer.at">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="shophelfer.at">
       <header class="site-header">
         <a class="domain" href="https://shophelfer.at" target="_blank" rel="noopener">shophelfer.at</a>
         <span class="status-pill down">DOWN 503</span>
@@ -308,28 +301,13 @@
       </div>
       <ul class="aliases"><li>www.shophelfer.at</li></ul>
     </article>
-    </div></section>
-
-  <section>
-    <h2>All websites</h2>
-    <div class="controls">
-      <input type="search" id="search" placeholder="Search domain…" autocomplete="off">
-      <select id="filter-status">
-        <option value="all">All statuses</option>
-        <option value="ok">OK only</option>
-        <option value="down">Down only</option>
-      </select>
-      <select id="filter-type">
-        <option value="all">All types</option>
-        <option value="docker">Docker</option>
-        <option value="static">Static</option>
-        <option value="redirect">Redirect</option>
-        <option value="proxy">Proxy</option>
-      </select>
     </div>
-    <div class="site-list" id="all-sites">
-      
-    <article class="site-card ok" data-status="ok" data-type="static" data-domain="360demo.chilicode.com">
+        </div>
+        
+      <div class="server-subsection">
+        <h3>All sites</h3>
+        <div class="site-list server-sites">
+    <article class="site-card ok" data-status="ok" data-type="static" data-server="web" data-domain="360demo.chilicode.com">
       <header class="site-header">
         <a class="domain" href="https://360demo.chilicode.com" target="_blank" rel="noopener">360demo.chilicode.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -341,7 +319,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="andibruckner.com">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="andibruckner.com">
       <header class="site-header">
         <a class="domain" href="https://andibruckner.com" target="_blank" rel="noopener">andibruckner.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -353,7 +331,7 @@
       <ul class="aliases"><li>www.andibruckner.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="astro-lernstern.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="astro-lernstern.at">
       <header class="site-header">
         <a class="domain" href="https://astro-lernstern.at" target="_blank" rel="noopener">astro-lernstern.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -365,7 +343,7 @@
       <ul class="aliases"><li>www.astro-lernstern.at</li><li>astro-lernstern.de</li><li>www.astro-lernstern.de</li><li>astro-lernstern.com</li><li>www.astro-lernstern.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="bayer.cc">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="bayer.cc">
       <header class="site-header">
         <a class="domain" href="https://bayer.cc" target="_blank" rel="noopener">bayer.cc</a>
         <span class="status-pill ok">OK 200</span>
@@ -377,7 +355,7 @@
       <ul class="aliases"><li>www.bayer.cc</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="capro.cc">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="capro.cc">
       <header class="site-header">
         <a class="domain" href="https://capro.cc" target="_blank" rel="noopener">capro.cc</a>
         <span class="status-pill ok">OK 200</span>
@@ -389,7 +367,7 @@
       <ul class="aliases"><li>www.capro.cc</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="chilicode.com">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="chilicode.com">
       <header class="site-header">
         <a class="domain" href="https://chilicode.com" target="_blank" rel="noopener">chilicode.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -401,7 +379,7 @@
       <ul class="aliases"><li>www.chilicode.com</li><li>chilicode.at</li><li>www.chilicode.at</li><li>itsnotrocketscience.at</li><li>www.itsnotrocketscience.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="der-bioimker.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="der-bioimker.at">
       <header class="site-header">
         <a class="domain" href="https://der-bioimker.at" target="_blank" rel="noopener">der-bioimker.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -413,7 +391,7 @@
       <ul class="aliases"><li>www.der-bioimker.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="derschimmelimhaus.at">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="derschimmelimhaus.at">
       <header class="site-header">
         <a class="domain" href="https://derschimmelimhaus.at" target="_blank" rel="noopener">derschimmelimhaus.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -425,7 +403,7 @@
       <ul class="aliases"><li>www.derschimmelimhaus.at</li><li>derschimmelimhaus.com</li><li>www.derschimmelimhaus.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="diefugenlosedusche.at">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="diefugenlosedusche.at">
       <header class="site-header">
         <a class="domain" href="https://diefugenlosedusche.at" target="_blank" rel="noopener">diefugenlosedusche.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -437,7 +415,7 @@
       <ul class="aliases"><li>www.diefugenlosedusche.at</li><li>diefugenlosedusche.com</li><li>www.diefugenlosedusche.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="drobits.chilicode.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="drobits.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://drobits.chilicode.at" target="_blank" rel="noopener">drobits.chilicode.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -449,7 +427,7 @@
       <ul class="aliases"><li>www.drobits.chilicode.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="eisenbergklassik.at">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="eisenbergklassik.at">
       <header class="site-header">
         <a class="domain" href="https://eisenbergklassik.at" target="_blank" rel="noopener">eisenbergklassik.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -461,7 +439,7 @@
       <ul class="aliases"><li>www.eisenbergklassik.at</li><li>eisenbergklassik.eu</li><li>www.eisenbergklassik.eu</li><li>xn--blaufrnkisch-lcb.eu</li><li>www.xn--blaufrnkisch-lcb.eu</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="fairkleiden.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="fairkleiden.at">
       <header class="site-header">
         <a class="domain" href="https://fairkleiden.at" target="_blank" rel="noopener">fairkleiden.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -473,7 +451,7 @@
       <ul class="aliases"><li>www.fairkleiden.at</li></ul>
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="fairspeisen.com">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="fairspeisen.com">
       <header class="site-header">
         <a class="domain" href="https://fairspeisen.com" target="_blank" rel="noopener">fairspeisen.com</a>
         <span class="status-pill down">DOWN 503</span>
@@ -485,7 +463,7 @@
       <ul class="aliases"><li>www.fairspeisen.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="fenzpr.com">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="fenzpr.com">
       <header class="site-header">
         <a class="domain" href="https://fenzpr.com" target="_blank" rel="noopener">fenzpr.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -497,7 +475,7 @@
       <ul class="aliases"><li>www.fenzpr.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="feuerwehr-oberwart.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="feuerwehr-oberwart.at">
       <header class="site-header">
         <a class="domain" href="https://feuerwehr-oberwart.at" target="_blank" rel="noopener">feuerwehr-oberwart.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -509,7 +487,7 @@
       <ul class="aliases"><li>www.feuerwehr-oberwart.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="ff-burgau-burgauberg.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="ff-burgau-burgauberg.at">
       <header class="site-header">
         <a class="domain" href="https://ff-burgau-burgauberg.at" target="_blank" rel="noopener">ff-burgau-burgauberg.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -521,7 +499,7 @@
       <ul class="aliases"><li>www.ff-burgau-burgauberg.at</li></ul>
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="ff-burgau-burgauberg.chilicode.at">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="ff-burgau-burgauberg.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://ff-burgau-burgauberg.chilicode.at" target="_blank" rel="noopener">ff-burgau-burgauberg.chilicode.at</a>
         <span class="status-pill down">DOWN 503</span>
@@ -533,7 +511,7 @@
       <ul class="aliases"><li>www.ff-burgau-burgauberg.chilicode.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="ffoberwart.chilicode.at">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="ffoberwart.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://ffoberwart.chilicode.at" target="_blank" rel="noopener">ffoberwart.chilicode.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -545,7 +523,7 @@
       <ul class="aliases"><li>www.ffoberwart.chilicode.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="foto.fotobruckner.com">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="foto.fotobruckner.com">
       <header class="site-header">
         <a class="domain" href="https://foto.fotobruckner.com" target="_blank" rel="noopener">foto.fotobruckner.com</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -557,7 +535,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="fotobruckner.com">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="fotobruckner.com">
       <header class="site-header">
         <a class="domain" href="https://fotobruckner.com" target="_blank" rel="noopener">fotobruckner.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -569,7 +547,7 @@
       <ul class="aliases"><li>www.fotobruckner.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="getsgo.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="getsgo.at">
       <header class="site-header">
         <a class="domain" href="https://getsgo.at" target="_blank" rel="noopener">getsgo.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -581,7 +559,7 @@
       <ul class="aliases"><li>www.getsgo.at</li></ul>
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="historisch.ff-burgau-burgauberg.at">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="historisch.ff-burgau-burgauberg.at">
       <header class="site-header">
         <a class="domain" href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a>
         <span class="status-pill down">DOWN 503</span>
@@ -593,7 +571,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="static" data-domain="historisch.umiz.at">
+    <article class="site-card ok" data-status="ok" data-type="static" data-server="web" data-domain="historisch.umiz.at">
       <header class="site-header">
         <a class="domain" href="https://historisch.umiz.at" target="_blank" rel="noopener">historisch.umiz.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -605,7 +583,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="hochzeit.fotobruckner.com">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="hochzeit.fotobruckner.com">
       <header class="site-header">
         <a class="domain" href="https://hochzeit.fotobruckner.com" target="_blank" rel="noopener">hochzeit.fotobruckner.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -617,7 +595,7 @@
       <ul class="aliases"><li>www.hochzeit.fotobruckner.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="hochzeitandi.chilicode.at">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="hochzeitandi.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://hochzeitandi.chilicode.at" target="_blank" rel="noopener">hochzeitandi.chilicode.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -629,7 +607,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="hoerist-kollmann.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="hoerist-kollmann.at">
       <header class="site-header">
         <a class="domain" href="https://hoerist-kollmann.at" target="_blank" rel="noopener">hoerist-kollmann.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -641,7 +619,7 @@
       <ul class="aliases"><li>www.hoerist-kollmann.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="im-hundegluecksraum.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="im-hundegluecksraum.at">
       <header class="site-header">
         <a class="domain" href="https://im-hundegluecksraum.at" target="_blank" rel="noopener">im-hundegluecksraum.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -653,7 +631,7 @@
       <ul class="aliases"><li>www.im-hundegluecksraum.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="kopfensteiner.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="kopfensteiner.at">
       <header class="site-header">
         <a class="domain" href="https://kopfensteiner.at" target="_blank" rel="noopener">kopfensteiner.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -665,7 +643,7 @@
       <ul class="aliases"><li>www.kopfensteiner.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="kunstraum-rotenturm.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="kunstraum-rotenturm.at">
       <header class="site-header">
         <a class="domain" href="https://kunstraum-rotenturm.at" target="_blank" rel="noopener">kunstraum-rotenturm.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -677,7 +655,7 @@
       <ul class="aliases"><li>www.kunstraum-rotenturm.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="loranth.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="loranth.at">
       <header class="site-header">
         <a class="domain" href="https://loranth.at" target="_blank" rel="noopener">loranth.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -689,7 +667,7 @@
       <ul class="aliases"><li>www.loranth.at</li><li>loranth.digital</li><li>www.loranth.digital</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="static" data-domain="proksch-maler.at">
+    <article class="site-card ok" data-status="ok" data-type="static" data-server="web" data-domain="proksch-maler.at">
       <header class="site-header">
         <a class="domain" href="https://proksch-maler.at" target="_blank" rel="noopener">proksch-maler.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -701,7 +679,7 @@
       <ul class="aliases"><li>www.proksch-maler.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="static" data-domain="proksch-pinkafeld.at">
+    <article class="site-card ok" data-status="ok" data-type="static" data-server="web" data-domain="proksch-pinkafeld.at">
       <header class="site-header">
         <a class="domain" href="https://proksch-pinkafeld.at" target="_blank" rel="noopener">proksch-pinkafeld.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -713,7 +691,7 @@
       <ul class="aliases"><li>www.proksch-pinkafeld.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="raumplanungzt.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="raumplanungzt.at">
       <header class="site-header">
         <a class="domain" href="https://raumplanungzt.at" target="_blank" rel="noopener">raumplanungzt.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -725,7 +703,7 @@
       <ul class="aliases"><li>www.raumplanungzt.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="riser-riser.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="riser-riser.at">
       <header class="site-header">
         <a class="domain" href="https://riser-riser.at" target="_blank" rel="noopener">riser-riser.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -737,7 +715,7 @@
       <ul class="aliases"><li>www.riser-riser.at</li><li>im-gluecksraum.at</li><li>www.im-gluecksraum.at</li><li>yope-trainer.at</li><li>www.yope-trainer.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="schneckenchecker.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="schneckenchecker.at">
       <header class="site-header">
         <a class="domain" href="https://schneckenchecker.at" target="_blank" rel="noopener">schneckenchecker.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -749,7 +727,7 @@
       <ul class="aliases"><li>www.schneckenchecker.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="static" data-domain="schwartz-arch.at">
+    <article class="site-card ok" data-status="ok" data-type="static" data-server="web" data-domain="schwartz-arch.at">
       <header class="site-header">
         <a class="domain" href="https://schwartz-arch.at" target="_blank" rel="noopener">schwartz-arch.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -761,7 +739,7 @@
       <ul class="aliases"><li>www.schwartz-arch.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="shop-de.sonnenmulde.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="shop-de.sonnenmulde.at">
       <header class="site-header">
         <a class="domain" href="https://shop-de.sonnenmulde.at" target="_blank" rel="noopener">shop-de.sonnenmulde.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -773,7 +751,7 @@
       <ul class="aliases"><li>www.shop-de.sonnenmulde.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="shop-en.sonnenmulde.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="shop-en.sonnenmulde.at">
       <header class="site-header">
         <a class="domain" href="https://shop-en.sonnenmulde.at" target="_blank" rel="noopener">shop-en.sonnenmulde.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -785,7 +763,7 @@
       <ul class="aliases"><li>www.shop-en.sonnenmulde.at</li></ul>
     </article>
     
-    <article class="site-card down" data-status="down" data-type="docker" data-domain="shophelfer.at">
+    <article class="site-card down" data-status="down" data-type="docker" data-server="web" data-domain="shophelfer.at">
       <header class="site-header">
         <a class="domain" href="https://shophelfer.at" target="_blank" rel="noopener">shophelfer.at</a>
         <span class="status-pill down">DOWN 503</span>
@@ -797,7 +775,7 @@
       <ul class="aliases"><li>www.shophelfer.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="stadtkapelle.chilicode.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="stadtkapelle.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://stadtkapelle.chilicode.at" target="_blank" rel="noopener">stadtkapelle.chilicode.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -809,7 +787,7 @@
       <ul class="aliases"><li>www.stadtkapelle.chilicode.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="strametz-juranek.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="strametz-juranek.at">
       <header class="site-header">
         <a class="domain" href="https://strametz-juranek.at" target="_blank" rel="noopener">strametz-juranek.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -821,7 +799,7 @@
       <ul class="aliases"><li>www.strametz-juranek.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="suesseshandwerk.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="suesseshandwerk.at">
       <header class="site-header">
         <a class="domain" href="https://suesseshandwerk.at" target="_blank" rel="noopener">suesseshandwerk.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -833,7 +811,7 @@
       <ul class="aliases"><li>www.suesseshandwerk.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="tader.co.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="tader.co.at">
       <header class="site-header">
         <a class="domain" href="https://tader.co.at" target="_blank" rel="noopener">tader.co.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -845,7 +823,7 @@
       <ul class="aliases"><li>www.tader.co.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="timschoeberl.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="timschoeberl.at">
       <header class="site-header">
         <a class="domain" href="https://timschoeberl.at" target="_blank" rel="noopener">timschoeberl.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -857,7 +835,7 @@
       <ul class="aliases"><li>www.timschoeberl.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="umiz.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="umiz.at">
       <header class="site-header">
         <a class="domain" href="https://umiz.at" target="_blank" rel="noopener">umiz.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -869,7 +847,7 @@
       <ul class="aliases"><li>www.umiz.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="vermessungehrlich.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="vermessungehrlich.at">
       <header class="site-header">
         <a class="domain" href="https://vermessungehrlich.at" target="_blank" rel="noopener">vermessungehrlich.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -881,7 +859,7 @@
       <ul class="aliases"><li>www.vermessungehrlich.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="viaquintaas.com">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="viaquintaas.com">
       <header class="site-header">
         <a class="domain" href="https://viaquintaas.com" target="_blank" rel="noopener">viaquintaas.com</a>
         <span class="status-pill ok">OK 200</span>
@@ -893,7 +871,7 @@
       <ul class="aliases"><li>www.viaquintaas.com</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="vs-unterwart.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="vs-unterwart.at">
       <header class="site-header">
         <a class="domain" href="https://vs-unterwart.at" target="_blank" rel="noopener">vs-unterwart.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -905,7 +883,7 @@
       <ul class="aliases"><li>www.vs-unterwart.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="proxy" data-domain="web.chilicode.com">
+    <article class="site-card ok" data-status="ok" data-type="proxy" data-server="web" data-domain="web.chilicode.com">
       <header class="site-header">
         <a class="domain" href="https://web.chilicode.com" target="_blank" rel="noopener">web.chilicode.com</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -917,7 +895,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="weinbau-schiefer.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="weinbau-schiefer.at">
       <header class="site-header">
         <a class="domain" href="https://weinbau-schiefer.at" target="_blank" rel="noopener">weinbau-schiefer.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -929,7 +907,7 @@
       <ul class="aliases"><li>www.weinbau-schiefer.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="static" data-domain="weltreise.chilicode.at">
+    <article class="site-card ok" data-status="ok" data-type="static" data-server="web" data-domain="weltreise.chilicode.at">
       <header class="site-header">
         <a class="domain" href="https://weltreise.chilicode.at" target="_blank" rel="noopener">weltreise.chilicode.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -941,7 +919,7 @@
       
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="redirect" data-domain="wiegeilistdasdenn.at">
+    <article class="site-card ok" data-status="ok" data-type="redirect" data-server="web" data-domain="wiegeilistdasdenn.at">
       <header class="site-header">
         <a class="domain" href="https://wiegeilistdasdenn.at" target="_blank" rel="noopener">wiegeilistdasdenn.at</a>
         <span class="status-pill ok">OK 301→200</span>
@@ -953,7 +931,7 @@
       <ul class="aliases"><li>www.wiegeilistdasdenn.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="wvb-thermenland.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="wvb-thermenland.at">
       <header class="site-header">
         <a class="domain" href="https://wvb-thermenland.at" target="_blank" rel="noopener">wvb-thermenland.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -965,7 +943,7 @@
       <ul class="aliases"><li>www.wvb-thermenland.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="wvsb.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="wvsb.at">
       <header class="site-header">
         <a class="domain" href="https://wvsb.at" target="_blank" rel="noopener">wvsb.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -977,7 +955,7 @@
       <ul class="aliases"><li>www.wvsb.at</li></ul>
     </article>
     
-    <article class="site-card ok" data-status="ok" data-type="docker" data-domain="xn--hrist-kollmann-vpb.at">
+    <article class="site-card ok" data-status="ok" data-type="docker" data-server="web" data-domain="xn--hrist-kollmann-vpb.at">
       <header class="site-header">
         <a class="domain" href="https://xn--hrist-kollmann-vpb.at" target="_blank" rel="noopener">xn--hrist-kollmann-vpb.at</a>
         <span class="status-pill ok">OK 200</span>
@@ -988,11 +966,13 @@
       </div>
       <ul class="aliases"><li>www.xn--hrist-kollmann-vpb.at</li></ul>
     </article>
-    
     </div>
-  </section>
-
-  <section><h2>Suggested fixes</h2>
+      </div>
+      
+      
+        <div class="server-subsection">
+          <h3>Suggested fixes</h3>
+          
     <div class="fix-block">
       <h3>fairspeisen.com</h3>
       <pre><code>cd /var/www/pages/fairspeisen &amp;&amp; mv docker-compose.yml.off docker-compose.yml &amp;&amp; docker compose up -d</code></pre>
@@ -1012,33 +992,538 @@
       <h3>ff-burgau-burgauberg.chilicode.at</h3>
       <pre><code>cd /var/www/pages/ffburgau-historisch &amp;&amp; docker compose up -d</code></pre>
     </div>
+    
+        </div>
+        
     </section>
+    
+    <section class="server-section" id="server-mail" data-server="mail">
+      <div class="server-header">
+        <h2>mail.chilicode.com</h2>
+        <p class="server-meta">Mail, webmail &amp; apps · no Docker web containers · 37 Apache vhosts</p>
+        <div class="summary-grid server-stats">
+          <div class="stat-card"><div class="value">37</div><div class="label">Sites</div></div>
+          <div class="stat-card ok"><div class="value">37</div><div class="label">OK</div></div>
+          <div class="stat-card down"><div class="value">0</div><div class="label">Down</div></div>
+          <div class="stat-card"><div class="value">37</div><div class="label">Inventory</div></div>
+        </div>
+      </div>
+      
+      <div class="server-subsection">
+        <h3>All sites</h3>
+        <div class="site-list server-sites">
+    <article class="site-card inventory" data-status="inventory" data-type="app" data-server="mail" data-domain="app.trustlens.tech">
+      <header class="site-header">
+        <a class="domain" href="https://app.trustlens.tech" target="_blank" rel="noopener">app.trustlens.tech</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-app">app</span>
+        admin · Default vhost
+      </div>
+      <ul class="aliases"><li>trustlens.tech (HTTPS alias)</li></ul>
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="app" data-server="mail" data-domain="trustlens.tech">
+      <header class="site-header">
+        <a class="domain" href="http://trustlens.tech" target="_blank" rel="noopener">trustlens.tech</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-app">app</span>
+        admin · HTTP only (separate vhost)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="app" data-server="mail" data-domain="postfixadmin.chilicode.com">
+      <header class="site-header">
+        <a class="domain" href="https://postfixadmin.chilicode.com" target="_blank" rel="noopener">postfixadmin.chilicode.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-app">app</span>
+        admin · PostfixAdmin
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.albertwieder.com">
+      <header class="site-header">
+        <a class="domain" href="https://mail.albertwieder.com" target="_blank" rel="noopener">mail.albertwieder.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.andibruckner.com">
+      <header class="site-header">
+        <a class="domain" href="https://mail.andibruckner.com" target="_blank" rel="noopener">mail.andibruckner.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.archneubauer.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.archneubauer.at" target="_blank" rel="noopener">mail.archneubauer.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.astro-lernstern.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.astro-lernstern.at" target="_blank" rel="noopener">mail.astro-lernstern.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.bayer.cc">
+      <header class="site-header">
+        <a class="domain" href="https://mail.bayer.cc" target="_blank" rel="noopener">mail.bayer.cc</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.capro.cc">
+      <header class="site-header">
+        <a class="domain" href="https://mail.capro.cc" target="_blank" rel="noopener">mail.capro.cc</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.chilicode.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.chilicode.at" target="_blank" rel="noopener">mail.chilicode.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.chilicode.com">
+      <header class="site-header">
+        <a class="domain" href="https://mail.chilicode.com" target="_blank" rel="noopener">mail.chilicode.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.fairkleiden.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.fairkleiden.at" target="_blank" rel="noopener">mail.fairkleiden.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.fenzpr.com">
+      <header class="site-header">
+        <a class="domain" href="https://mail.fenzpr.com" target="_blank" rel="noopener">mail.fenzpr.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.ff-burgau-burgauberg.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.ff-burgau-burgauberg.at" target="_blank" rel="noopener">mail.ff-burgau-burgauberg.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.fotobruckner.com">
+      <header class="site-header">
+        <a class="domain" href="https://mail.fotobruckner.com" target="_blank" rel="noopener">mail.fotobruckner.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.getsgo.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.getsgo.at" target="_blank" rel="noopener">mail.getsgo.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.hoerist-kollmann.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.hoerist-kollmann.at" target="_blank" rel="noopener">mail.hoerist-kollmann.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.hubertbaumgartner.com">
+      <header class="site-header">
+        <a class="domain" href="https://mail.hubertbaumgartner.com" target="_blank" rel="noopener">mail.hubertbaumgartner.com</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.im-gluecksraum.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.im-gluecksraum.at" target="_blank" rel="noopener">mail.im-gluecksraum.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.im-hundegluecksraum.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.im-hundegluecksraum.at" target="_blank" rel="noopener">mail.im-hundegluecksraum.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.kunstraum-rotenturm.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.kunstraum-rotenturm.at" target="_blank" rel="noopener">mail.kunstraum-rotenturm.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.mobilboxmanager.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.mobilboxmanager.at" target="_blank" rel="noopener">mail.mobilboxmanager.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.proksch-maler.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.proksch-maler.at" target="_blank" rel="noopener">mail.proksch-maler.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.proksch-pinkafeld.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.proksch-pinkafeld.at" target="_blank" rel="noopener">mail.proksch-pinkafeld.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.raumplanungzt.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.raumplanungzt.at" target="_blank" rel="noopener">mail.raumplanungzt.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.riser-riser.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.riser-riser.at" target="_blank" rel="noopener">mail.riser-riser.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.schneckenchecker.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.schneckenchecker.at" target="_blank" rel="noopener">mail.schneckenchecker.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.schwartz-arch.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.schwartz-arch.at" target="_blank" rel="noopener">mail.schwartz-arch.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.shophelfer.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.shophelfer.at" target="_blank" rel="noopener">mail.shophelfer.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.strametz-juranek.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.strametz-juranek.at" target="_blank" rel="noopener">mail.strametz-juranek.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.suesseshandwerk.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.suesseshandwerk.at" target="_blank" rel="noopener">mail.suesseshandwerk.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.tader.co.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.tader.co.at" target="_blank" rel="noopener">mail.tader.co.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.timschoeberl.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.timschoeberl.at" target="_blank" rel="noopener">mail.timschoeberl.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.top-learning.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.top-learning.at" target="_blank" rel="noopener">mail.top-learning.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.vermessungehrlich.at">
+      <header class="site-header">
+        <a class="domain" href="http://mail.vermessungehrlich.at" target="_blank" rel="noopener">mail.vermessungehrlich.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · HTTP only — no SSL vhost
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.weinbau-schiefer.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.weinbau-schiefer.at" target="_blank" rel="noopener">mail.weinbau-schiefer.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    
+    <article class="site-card inventory" data-status="inventory" data-type="mail" data-server="mail" data-domain="mail.weingut-schuetzenhof.at">
+      <header class="site-header">
+        <a class="domain" href="https://mail.weingut-schuetzenhof.at" target="_blank" rel="noopener">mail.weingut-schuetzenhof.at</a>
+        <span class="status-pill inventory">inventory</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-mail">mail</span>
+        webmail · Roundcube-style webmail · Apache vhost (80 + 443)
+      </div>
+      
+    </article>
+    </div>
+      </div>
+      
+        <div class="server-subsection">
+          <h3>Backend services (not Apache)</h3>
+          <div class="site-list">
+    <article class="site-card inventory service-card">
+      <header class="site-header">
+        <span class="domain">TrustLens API</span>
+        <span class="status-pill inventory">backend</span>
+      </header>
+      <div class="site-meta">
+        <span class="badge badge-api">node</span>
+        0.0.0.0:3001 · ~/trustlens-app · Not served by Apache
+      </div>
+    </article>
+    </div>
+        </div>
+        
+      
+    </section>
+    
 
-  <footer>
-    Generated 2026-08-15 12:54 UTC from <code>websites.yaml</code>
-  </footer>
+  <footer>Generated 2026-08-15 12:57 UTC from <code>websites.yaml</code></footer>
 
   <script>
     const search = document.getElementById('search');
+    const filterServer = document.getElementById('filter-server');
     const filterStatus = document.getElementById('filter-status');
     const filterType = document.getElementById('filter-type');
-    const cards = document.querySelectorAll('#all-sites .site-card');
+    const cards = document.querySelectorAll('.site-card[data-domain]');
+    const sections = document.querySelectorAll('.server-section');
 
     function applyFilters() {
       const q = search.value.toLowerCase().trim();
+      const srv = filterServer.value;
       const st = filterStatus.value;
       const ty = filterType.value;
+
       cards.forEach(card => {
         const domain = card.dataset.domain || '';
         const matchQ = !q || domain.includes(q);
+        const matchSrv = srv === 'all' || card.dataset.server === srv;
         const matchSt = st === 'all' || card.dataset.status === st;
         const matchTy = ty === 'all' || card.dataset.type === ty;
-        card.classList.toggle('hidden', !(matchQ && matchSt && matchTy));
+        card.classList.toggle('hidden', !(matchQ && matchSrv && matchSt && matchTy));
+      });
+
+      sections.forEach(section => {
+        if (srv !== 'all' && section.dataset.server !== srv) {
+          section.classList.add('hidden');
+          return;
+        }
+        section.classList.remove('hidden');
+        const visible = section.querySelectorAll('.site-card[data-domain]:not(.hidden)');
+        const subs = section.querySelectorAll('.server-subsection');
+        subs.forEach(sub => {
+          const subCards = sub.querySelectorAll('.site-card[data-domain]');
+          if (!subCards.length) return;
+          const anyVisible = [...subCards].some(c => !c.classList.contains('hidden'));
+          sub.classList.toggle('hidden', !anyVisible);
+        });
       });
     }
-    search.addEventListener('input', applyFilters);
-    filterStatus.addEventListener('change', applyFilters);
-    filterType.addEventListener('change', applyFilters);
+
+    [search, filterServer, filterStatus, filterType].forEach(el =>
+      el.addEventListener('input', applyFilters));
+    [filterServer, filterStatus, filterType].forEach(el =>
+      el.addEventListener('change', applyFilters));
   </script>
 </body>
 </html>
