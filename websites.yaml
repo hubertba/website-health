@@ -1,0 +1,512 @@
+# Hosted websites inventory — edit this file and re-run generate_report.py
+# Last checked from web.chilicode.com (37.16.72.137)
+
+meta:
+  checked_at: "2026-08-15"
+  server_hostname: web.chilicode.com
+  server_ip: 37.16.72.137
+  apache_status: active
+  running_containers: 36
+  sources:
+    - Apache sites-enabled (apachectl -S)
+    - /var/www/pages/sites.txt
+    - Running Docker containers
+    - HTTPS probes
+
+summary:
+  total: 55
+  ok: 51
+  down: 4
+
+websites:
+  - domain: 360demo.chilicode.com
+    type: static
+    path: /var/www/vhosts/360demochilicodecom/htdocs
+    status: ok
+    http_status: 200
+    aliases: []
+
+  - domain: andibruckner.com
+    type: docker
+    port: 4023
+    folder: andibruckner
+    status: ok
+    http_status: 200
+    aliases: [www.andibruckner.com]
+
+  - domain: astro-lernstern.at
+    type: docker
+    port: 4033
+    folder: lernstern
+    status: ok
+    http_status: 200
+    aliases:
+      - www.astro-lernstern.at
+      - astro-lernstern.de
+      - www.astro-lernstern.de
+      - astro-lernstern.com
+      - www.astro-lernstern.com
+
+  - domain: bayer.cc
+    type: docker
+    port: 4030
+    folder: bayer
+    status: ok
+    http_status: 200
+    aliases: [www.bayer.cc]
+
+  - domain: capro.cc
+    type: docker
+    port: 4020
+    folder: capro
+    status: ok
+    http_status: 200
+    aliases: [www.capro.cc]
+
+  - domain: chilicode.com
+    type: docker
+    port: 4040
+    folder: chilicode
+    status: ok
+    http_status: 200
+    aliases:
+      - www.chilicode.com
+      - chilicode.at
+      - www.chilicode.at
+      - itsnotrocketscience.at
+      - www.itsnotrocketscience.at
+
+  - domain: der-bioimker.at
+    type: docker
+    port: 4003
+    folder: bioimker
+    status: ok
+    http_status: 200
+    aliases: [www.der-bioimker.at]
+
+  - domain: derschimmelimhaus.at
+    type: redirect
+    redirect_to: timschoeberl.at
+    notes: Schimmel article
+    status: ok
+    http_status: 301
+    aliases:
+      - www.derschimmelimhaus.at
+      - derschimmelimhaus.com
+      - www.derschimmelimhaus.com
+
+  - domain: diefugenlosedusche.at
+    type: redirect
+    redirect_to: timschoeberl.at
+    notes: Fugenlose Bäder
+    status: ok
+    http_status: 301
+    aliases:
+      - www.diefugenlosedusche.at
+      - diefugenlosedusche.com
+      - www.diefugenlosedusche.com
+
+  - domain: drobits.chilicode.at
+    type: docker
+    port: 4045
+    folder: drobits
+    status: ok
+    http_status: 200
+    aliases: [www.drobits.chilicode.at]
+
+  - domain: eisenbergklassik.at
+    type: redirect
+    redirect_to: weinbau-schiefer.at
+    status: ok
+    http_status: 301
+    aliases:
+      - www.eisenbergklassik.at
+      - eisenbergklassik.eu
+      - www.eisenbergklassik.eu
+      - xn--blaufrnkisch-lcb.eu
+      - www.xn--blaufrnkisch-lcb.eu
+
+  - domain: fairkleiden.at
+    type: docker
+    port: 4042
+    folder: fairkleiden
+    status: ok
+    http_status: 200
+    aliases: [www.fairkleiden.at]
+
+  - domain: fairspeisen.com
+    type: docker
+    port: 4026
+    folder: fairspeisen
+    backend: 127.0.0.1:4026
+    status: down
+    http_status: 503
+    issue: docker-compose.yml.off — container not running
+    aliases: [www.fairspeisen.com]
+
+  - domain: fenzpr.com
+    type: docker
+    port: 4021
+    folder: fenzpr
+    status: ok
+    http_status: 200
+    aliases: [www.fenzpr.com]
+
+  - domain: feuerwehr-oberwart.at
+    type: docker
+    port: 4015
+    folder: ffoberwart
+    status: ok
+    http_status: 200
+    aliases: [www.feuerwehr-oberwart.at]
+
+  - domain: ff-burgau-burgauberg.at
+    type: docker
+    port: 4014
+    folder: ffburgau
+    status: ok
+    http_status: 200
+    aliases: [www.ff-burgau-burgauberg.at]
+
+  - domain: ff-burgau-burgauberg.chilicode.at
+    type: docker
+    port: 4016
+    folder: ffburgau-historisch
+    backend: 127.0.0.1:4016
+    notes: Joomla staging
+    status: down
+    http_status: 503
+    issue: ffburgau-historisch-joomla-1 + DB exited (~2 months)
+    aliases: [www.ff-burgau-burgauberg.chilicode.at]
+
+  - domain: ffoberwart.chilicode.at
+    type: redirect
+    redirect_to: feuerwehr-oberwart.at
+    port: 4015
+    notes: redirect/proxy
+    status: ok
+    http_status: 301
+    aliases: [www.ffoberwart.chilicode.at]
+
+  - domain: foto.fotobruckner.com
+    type: redirect
+    redirect_to: fotobruckner.com
+    status: ok
+    http_status: 301
+    aliases: []
+
+  - domain: fotobruckner.com
+    type: docker
+    port: 4024
+    folder: fotobruckner
+    status: ok
+    http_status: 200
+    aliases: [www.fotobruckner.com]
+
+  - domain: getsgo.at
+    type: docker
+    port: 4009
+    folder: getsgo
+    status: ok
+    http_status: 200
+    aliases: [www.getsgo.at]
+
+  - domain: historisch.ff-burgau-burgauberg.at
+    type: docker
+    port: 4016
+    folder: ffburgau-historisch
+    backend: 127.0.0.1:4016
+    notes: Joomla
+    status: down
+    http_status: 503
+    issue: ffburgau-historisch-joomla-1 + DB exited (~2 months)
+    aliases: []
+
+  - domain: historisch.umiz.at
+    type: static
+    path: /var/www/vhosts/historischumizat/htdocs
+    status: ok
+    http_status: 200
+    aliases: []
+
+  - domain: hochzeit.fotobruckner.com
+    type: docker
+    port: 4019
+    folder: hochzeitandi
+    status: ok
+    http_status: 200
+    aliases: [www.hochzeit.fotobruckner.com]
+
+  - domain: hochzeitandi.chilicode.at
+    type: redirect
+    redirect_to: hochzeit.fotobruckner.com
+    status: ok
+    http_status: 301
+    aliases: []
+
+  - domain: hoerist-kollmann.at
+    type: docker
+    port: 4001
+    folder: hörist-kollmann.at
+    status: ok
+    http_status: 301
+    notes: redirects to IDN variant
+    aliases: [www.hoerist-kollmann.at]
+
+  - domain: im-hundegluecksraum.at
+    type: docker
+    port: 4031
+    folder: hunderaum
+    status: ok
+    http_status: 200
+    aliases: [www.im-hundegluecksraum.at]
+
+  - domain: kopfensteiner.at
+    type: docker
+    port: 4006
+    folder: kopfensteiner
+    status: ok
+    http_status: 200
+    notes: Public DNS (8.8.8.8) points here; local resolver was flaky during check
+    aliases: [www.kopfensteiner.at]
+
+  - domain: kunstraum-rotenturm.at
+    type: docker
+    port: 4038
+    folder: kunstraum
+    status: ok
+    http_status: 200
+    aliases: [www.kunstraum-rotenturm.at]
+
+  - domain: loranth.at
+    type: docker
+    port: 4022
+    folder: loranth
+    status: ok
+    http_status: 200
+    aliases:
+      - www.loranth.at
+      - loranth.digital
+      - www.loranth.digital
+
+  - domain: proksch-maler.at
+    type: static
+    notes: shared with pinkafeld vhost dir
+    status: ok
+    http_status: 200
+    aliases: [www.proksch-maler.at]
+
+  - domain: proksch-pinkafeld.at
+    type: static
+    path: /var/www/vhosts/proksch-pinkafeldat/htdocs
+    status: ok
+    http_status: 200
+    aliases: [www.proksch-pinkafeld.at]
+
+  - domain: raumplanungzt.at
+    type: docker
+    port: 4028
+    folder: raumplanungzt
+    status: ok
+    http_status: 200
+    aliases: [www.raumplanungzt.at]
+
+  - domain: riser-riser.at
+    type: docker
+    port: 4025
+    folder: riser
+    status: ok
+    http_status: 200
+    aliases:
+      - www.riser-riser.at
+      - im-gluecksraum.at
+      - www.im-gluecksraum.at
+      - yope-trainer.at
+      - www.yope-trainer.at
+
+  - domain: schneckenchecker.at
+    type: docker
+    port: 4034
+    folder: schneckenchecker
+    status: ok
+    http_status: 200
+    aliases: [www.schneckenchecker.at]
+
+  - domain: schwartz-arch.at
+    type: static
+    path: /var/www/vhosts/schwartz-archat/htdocs
+    port: 4043
+    notes: compose off, served static
+    status: ok
+    http_status: 200
+    aliases: [www.schwartz-arch.at]
+
+  - domain: shop-de.sonnenmulde.at
+    type: docker
+    port: 4013
+    folder: sonnenmulde
+    status: ok
+    http_status: 200
+    aliases: [www.shop-de.sonnenmulde.at]
+
+  - domain: shop-en.sonnenmulde.at
+    type: docker
+    port: 4017
+    folder: sonnenmulde_en
+    status: ok
+    http_status: 200
+    aliases: [www.shop-en.sonnenmulde.at]
+
+  - domain: shophelfer.at
+    type: docker
+    port: 4039
+    folder: shophelfer
+    backend: 127.0.0.1:4039
+    status: down
+    http_status: 503
+    issue: docker-compose.yml.off — container not running
+    aliases: [www.shophelfer.at]
+
+  - domain: stadtkapelle.chilicode.at
+    type: docker
+    port: 4046
+    folder: stadtkapelle_oberwart
+    status: ok
+    http_status: 200
+    aliases: [www.stadtkapelle.chilicode.at]
+
+  - domain: strametz-juranek.at
+    type: docker
+    port: 4002
+    folder: jsj
+    status: ok
+    http_status: 200
+    aliases: [www.strametz-juranek.at]
+
+  - domain: suesseshandwerk.at
+    type: docker
+    port: 4037
+    folder: suesses
+    status: ok
+    http_status: 200
+    aliases: [www.suesseshandwerk.at]
+
+  - domain: tader.co.at
+    type: docker
+    port: 4005
+    folder: tader
+    status: ok
+    http_status: 200
+    aliases: [www.tader.co.at]
+
+  - domain: timschoeberl.at
+    type: docker
+    port: 4027
+    folder: timschoeberl
+    status: ok
+    http_status: 200
+    aliases: [www.timschoeberl.at]
+
+  - domain: umiz.at
+    type: docker
+    port: 4004
+    folder: umiz
+    status: ok
+    http_status: 200
+    aliases: [www.umiz.at]
+
+  - domain: vermessungehrlich.at
+    type: docker
+    port: 4029
+    folder: pongo
+    status: ok
+    http_status: 200
+    aliases: [www.vermessungehrlich.at]
+
+  - domain: viaquintaas.com
+    type: docker
+    port: 4018
+    folder: viaquintaas
+    status: ok
+    http_status: 200
+    aliases: [www.viaquintaas.com]
+
+  - domain: vs-unterwart.at
+    type: docker
+    port: 4007
+    folder: vsunterwart
+    status: ok
+    http_status: 200
+    aliases: [www.vs-unterwart.at]
+
+  - domain: web.chilicode.com
+    type: proxy
+    port: 4042
+    notes: currently follows to fairkleiden
+    status: ok
+    http_status: 301
+    aliases: []
+
+  - domain: weinbau-schiefer.at
+    type: docker
+    port: 4011
+    folder: schiefer
+    status: ok
+    http_status: 200
+    aliases: [www.weinbau-schiefer.at]
+
+  - domain: weltreise.chilicode.at
+    type: static
+    path: /var/www/vhosts/weltreisechilicodeat/htdocs
+    port: 4036
+    notes: compose off, served static
+    status: ok
+    http_status: 200
+    aliases: []
+
+  - domain: wiegeilistdasdenn.at
+    type: redirect
+    redirect_to: chilicode.com
+    port: 4044
+    status: ok
+    http_status: 301
+    aliases: [www.wiegeilistdasdenn.at]
+
+  - domain: wvb-thermenland.at
+    type: docker
+    port: 4035
+    folder: thermenland
+    status: ok
+    http_status: 200
+    aliases: [www.wvb-thermenland.at]
+
+  - domain: wvsb.at
+    type: docker
+    port: 4032
+    folder: wvsb
+    status: ok
+    http_status: 200
+    aliases: [www.wvsb.at]
+
+  - domain: xn--hrist-kollmann-vpb.at
+    type: docker
+    port: 4001
+    folder: hörist-kollmann.at
+    notes: IDN for hörist-kollmann
+    status: ok
+    http_status: 200
+    aliases: [www.xn--hrist-kollmann-vpb.at]
+
+fixes:
+  - domain: fairspeisen.com
+    commands:
+      - cd /var/www/pages/fairspeisen && mv docker-compose.yml.off docker-compose.yml && docker compose up -d
+  - domain: shophelfer.at
+    commands:
+      - cd /var/www/pages/shophelfer && mv docker-compose.yml.off docker-compose.yml && docker compose up -d
+  - domain: historisch.ff-burgau-burgauberg.at
+    commands:
+      - cd /var/www/pages/ffburgau-historisch && docker compose up -d
+  - domain: ff-burgau-burgauberg.chilicode.at
+    commands:
+      - cd /var/www/pages/ffburgau-historisch && docker compose up -d
