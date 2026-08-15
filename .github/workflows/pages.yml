@@ -8,6 +8,8 @@ on:
       - scripts/**
       - .github/workflows/pages.yml
   workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
 
 permissions:
   contents: write
@@ -24,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Check domains (DNS, HTTP, SSL)
+        run: python3 scripts/check_domains.py
 
       - name: Generate report
         run: python3 scripts/generate_report.py

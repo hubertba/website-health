@@ -1,39 +1,16 @@
 # Website Health Report
 
-Mobile-friendly status dashboard for hosted services across multiple servers. Data lives in `websites.yaml`; a Python script builds static HTML for GitHub Pages.
-
-## Architecture
-
-```mermaid
-flowchart LR
-  YAML[websites.yaml] --> GEN[generate_report.py]
-  GEN --> HTML[docs/index.html]
-  HTML --> GHA[GitHub Actions]
-  GHA --> PAGES[GitHub Pages]
-```
-
-| Component | Purpose |
-|-----------|---------|
-| `websites.yaml` | Multi-server inventory (`servers[]` with sites, services, fixes) |
-| `scripts/generate_report.py` | Reads YAML, emits self-contained HTML with search/filter per server |
-| `.github/workflows/pages.yml` | Regenerates and deploys on push to `main` |
-| `docs/index.html` | Generated report (committed so it works before first CI run) |
+Domain overview with DNS, HTTP, and SSL checks. Inventory is a minimal YAML; checks run at build time.
 
 ## Quick start
 
 ```bash
 pip install -r requirements.txt
-python scripts/generate_report.py
-# Open docs/index.html in a browser
+python3 scripts/check_domains.py      # DNS + HTTP + SSL → check_results.json
+python3 scripts/generate_report.py  # → docs/index.html
 ```
 
-## Updating the inventory
-
-1. Edit `websites.yaml` (add/remove sites, change status, ports, issues).
-2. Regenerate: `python scripts/generate_report.py`
-3. Commit `websites.yaml` and `docs/index.html`, push to `main`.
-
-### YAML structure
+## `websites.yaml` (server + domains only)
 
 ```yaml
 meta:
@@ -42,77 +19,40 @@ meta:
 servers:
   - id: web
     hostname: web.chilicode.com
-    ip: 37.16.72.137
-    role: Web hosting
-    summary: { total: 55, ok: 51, down: 4 }
-    websites: [...]
-    fixes: [...]
+    ip: 37.16.72.137          # optional — flag DNS mismatches
+    domains:
+      - example.com
+      - another.example.com
 
   - id: mail
     hostname: mail.chilicode.com
-    role: Mail, webmail & apps
-    websites: [...]
-    services: [...]   # non-Apache backends
+    domains:
+      - mail.example.com
 ```
 
-### Site entry fields
+## Checks
 
-```yaml
-- domain: example.com          # required — canonical hostname
-  type: docker                 # docker | static | redirect | proxy | mail | app
-  port: 4020                   # backend port (docker/proxy)
-  folder: example              # /var/www/pages/<folder>
-  path: /var/www/vhosts/...    # static document root
-  redirect_to: other.com       # for redirects
-  status: ok                   # ok | down
-  http_status: 200             # last HTTPS probe result
-  probed: false                # inventory-only (no health check yet)
-  http_only: true              # no SSL vhost
-  issue: "container not running"  # shown when down
-  notes: "optional context"
-  aliases: [www.example.com]
-```
+| Check | What it does |
+|-------|----------------|
+| **DNS** | Resolves A/AAAA records; compares to server `ip` when set |
+| **HTTP** | Tries HTTPS first, falls back to HTTP; reports status code |
+| **SSL** | Certificate expiry, days remaining, issuer; warns &lt; 30 days |
 
-## GitHub Pages setup
+## Report views
 
-1. Repo **Settings → Pages → Build and deployment**: set source to **GitHub Actions**.
-2. Push to `main` (or run the workflow manually). The site is published at  
-   `https://<user>.github.io/website-health/` (repo name may vary).
+1. **All domains** — flat overview across servers (filter by name, server, status)
+2. **By server** — drill into `web.chilicode.com` or `mail.chilicode.com`
 
-## Current inventory (2026-08-15)
+## GitHub Pages
 
-| Server | Sites | OK | Down | Notes |
-|--------|------:|---:|-----:|-------|
-| `web.chilicode.com` | 55 | 51 | 4 | HTTPS probed · 36 Docker containers |
-| `mail.chilicode.com` | 37 | — | — | Inventory only (not probed) |
-| **Total** | **92** | | | |
+Workflow runs checks daily (06:00 UTC) and on push, then deploys `docs/` to `gh-pages`.
 
-### web.chilicode.com — down sites
+Enable Pages: **Settings → Pages → branch `gh-pages` / root**.
 
-`fairspeisen.com`, `shophelfer.at`, `historisch.ff-burgau-burgauberg.at`, `ff-burgau-burgauberg.chilicode.at`
+## Inventory
 
-### mail.chilicode.com
-
-- **Apps / admin:** `app.trustlens.tech`, `trustlens.tech` (HTTP only), `postfixadmin.chilicode.com`
-- **Backend:** TrustLens API on `0.0.0.0:3001` (Node, `~/trustlens-app`)
-- **Webmail:** 34 `mail.*` Apache vhosts (Roundcube-style); `mail.vermessungehrlich.at` is HTTP-only (no SSL vhost)
-- No Docker web containers running
-
-## Future enhancements
-
-- **Automated checks**: cron job or GitHub Action that curls each domain and updates `status` / `http_status` in YAML.
-- **Link checker integration**: ingest `*_link_check_*.txt` results from the host.
-- **DNS report**: merge output from `dns_report.py`.
-- **History**: commit dated YAML snapshots or a `history/` folder for trend charts.
-- **Notifications**: open a GitHub issue when `down` count increases.
-
-## Server-side data sources
-
-On `web.chilicode.com`, inventory is derived from:
-
-- `apachectl -S` (sites-enabled)
-- `/var/www/pages/sites.txt` (port map)
-- `docker ps` (running backends)
-- HTTPS probes (`curl -sI https://…`)
-
-See `all-websites.md` on the server for the full audit that seeded `websites.yaml`.
+| Server | Domains |
+|--------|--------:|
+| `web.chilicode.com` | 55 |
+| `mail.chilicode.com` | 37 |
+| **Total** | **92** |

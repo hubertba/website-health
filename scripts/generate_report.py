@@ -1,295 +1,188 @@
 #!/usr/bin/env python3
-"""Generate a mobile-friendly HTML status report from websites.yaml."""
+"""Generate a mobile-friendly HTML report from websites.yaml and check_results.json."""
 
 from __future__ import annotations
 
 import argparse
 import html
+import json
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INPUT = ROOT / "websites.yaml"
+DEFAULT_CHECKS = ROOT / "check_results.json"
 DEFAULT_OUTPUT = ROOT / "docs" / "index.html"
 
+STATUS_LABELS = {
+    "ok": "OK",
+    "down": "Down",
+    "dns_fail": "DNS fail",
+    "ssl_fail": "SSL fail",
+    "ssl_warn": "SSL expiring",
+    "http_only": "HTTP only",
+    "warn": "Warning",
+    "unchecked": "Not checked",
+}
 
-def load_data(path: Path) -> dict:
+
+def load_yaml(path: Path) -> dict:
     with path.open(encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
-def normalize_data(data: dict) -> dict:
-    """Support legacy single-server YAML and multi-server format."""
-    if "servers" in data:
-        return data
+def load_checks(path: Path) -> dict | None:
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
 
-    meta = data.get("meta", {})
+
+def status_class(status: str) -> str:
     return {
-        "meta": {"checked_at": meta.get("checked_at", "")},
-        "servers": [
-            {
-                "id": "web",
-                "hostname": meta.get("server_hostname", "unknown"),
-                "ip": meta.get("server_ip", ""),
-                "role": "Web hosting",
-                "apache_status": meta.get("apache_status"),
-                "running_containers": meta.get("running_containers"),
-                "sources": meta.get("sources", []),
-                "summary": data.get("summary", {}),
-                "websites": data.get("websites", []),
-                "fixes": data.get("fixes", []),
-            }
-        ],
-    }
+        "ok": "ok",
+        "http_only": "warn",
+        "ssl_warn": "warn",
+        "warn": "warn",
+        "unchecked": "inventory",
+    }.get(status, "down")
 
 
-def site_url(site: dict) -> str:
-    scheme = "http" if site.get("http_only") else "https"
-    return f"{scheme}://{site['domain']}"
+def fmt_dns(check: dict | None) -> str:
+    if not check:
+        return "—"
+    dns = check.get("dns", {})
+    if not dns.get("ok"):
+        return html.escape(dns.get("error") or "NXDOMAIN")
+    addrs = ", ".join(dns.get("addresses", []))
+    if dns.get("matches_server") is False:
+        return f'{html.escape(addrs)} <span class="tag warn">≠ server IP</span>'
+    return html.escape(addrs)
 
 
-def status_label(site: dict) -> str:
-    if site.get("probed") is False:
-        return "inventory"
-    status = site.get("status", "unknown")
-    code = site.get("http_status")
-    if status == "down":
-        return f"DOWN {code or ''}".strip()
-    if code == 301:
-        return "OK 301→200"
-    if code:
-        return f"OK {code}"
-    return status.upper()
+def fmt_http(check: dict | None) -> str:
+    if not check:
+        return "—"
+    http = check.get("http", {})
+    if not http.get("status"):
+        return html.escape(http.get("error") or "unreachable")
+    scheme = http.get("scheme", "https")
+    return f'{scheme.upper()} {http["status"]}'
 
 
-def status_class(site: dict) -> str:
-    if site.get("probed") is False:
-        return "inventory"
-    if site.get("http_only") and site.get("status") != "down":
-        return "warn"
-    return "down" if site.get("status") == "down" else "ok"
+def fmt_ssl(check: dict | None) -> str:
+    if not check:
+        return "—"
+    ssl_info = check.get("ssl", {})
+    if ssl_info.get("ok") is None:
+        return html.escape(ssl_info.get("error") or "n/a")
+    if not ssl_info.get("ok"):
+        return html.escape(ssl_info.get("error") or "invalid")
+    days = ssl_info.get("days_left")
+    expires = ssl_info.get("expires", "")
+    label = f'valid · {expires}'
+    if ssl_info.get("warn"):
+        return f'{html.escape(label)} <span class="tag warn">{days}d left</span>'
+    return html.escape(label)
 
 
-def type_badge(site_type: str) -> str:
-    colors = {
-        "docker": "badge-docker",
-        "static": "badge-static",
-        "redirect": "badge-redirect",
-        "proxy": "badge-proxy",
-        "mail": "badge-mail",
-        "app": "badge-app",
-    }
-    return colors.get(site_type, "badge-default")
-
-
-def server_summary(server: dict) -> dict:
-    sites = server.get("websites", [])
-    explicit = server.get("summary", {})
-    down = [s for s in sites if s.get("status") == "down"]
-    ok = [s for s in sites if s.get("status") != "down"]
-    return {
-        "total": explicit.get("total", len(sites)),
-        "ok": explicit.get("ok", len(ok)),
-        "down": explicit.get("down", len(down)),
-        "inventory": sum(1 for s in sites if s.get("probed") is False),
-    }
-
-
-def render_site_card(site: dict, server_id: str) -> str:
-    domain = html.escape(site["domain"])
-    site_type = html.escape(site.get("type", "unknown"))
-    badge_cls = type_badge(site.get("type", ""))
-    st_cls = status_class(site)
-    label = html.escape(status_label(site))
-    url = html.escape(site_url(site))
-
-    details: list[str] = []
-    if category := site.get("category"):
-        details.append(html.escape(category))
-    if port := site.get("port"):
-        details.append(f"Port {port}")
-    if folder := site.get("folder"):
-        details.append(html.escape(folder))
-    if path := site.get("path"):
-        details.append(html.escape(path))
-    if redirect := site.get("redirect_to"):
-        details.append(f"→ {html.escape(redirect)}")
-    if issue := site.get("issue"):
-        details.append(html.escape(issue))
-    if notes := site.get("notes"):
-        details.append(html.escape(notes))
-
-    aliases = site.get("aliases") or []
-    alias_html = ""
-    if aliases:
-        alias_items = "".join(f"<li>{html.escape(a)}</li>" for a in aliases)
-        alias_html = f'<ul class="aliases">{alias_items}</ul>'
+def domain_row(domain: str, server_id: str, check: dict | None) -> str:
+    status = check.get("status", "unchecked") if check else "unchecked"
+    st_cls = status_class(status)
+    label = STATUS_LABELS.get(status, status)
+    scheme = "https"
+    if check and check.get("http", {}).get("scheme") == "http":
+        scheme = "http"
 
     return f"""
-    <article class="site-card {st_cls}" data-status="{st_cls}" data-type="{site_type}" data-server="{html.escape(server_id)}" data-domain="{domain.lower()}">
-      <header class="site-header">
-        <a class="domain" href="{url}" target="_blank" rel="noopener">{domain}</a>
-        <span class="status-pill {st_cls}">{label}</span>
-      </header>
-      <div class="site-meta">
-        <span class="badge {badge_cls}">{site_type}</span>
-        {" · ".join(details) if details else ""}
-      </div>
-      {alias_html}
-    </article>
+    <tr class="domain-row {st_cls}" data-domain="{html.escape(domain.lower())}"
+        data-server="{html.escape(server_id)}" data-status="{st_cls}">
+      <td><a href="{scheme}://{html.escape(domain)}" target="_blank" rel="noopener">{html.escape(domain)}</a></td>
+      <td><code>{html.escape(server_id)}</code></td>
+      <td class="mono">{fmt_dns(check)}</td>
+      <td class="mono">{fmt_http(check)}</td>
+      <td class="mono">{fmt_ssl(check)}</td>
+      <td><span class="status-pill {st_cls}">{html.escape(label)}</span></td>
+    </tr>
     """
 
 
-def render_service_card(service: dict) -> str:
-    name = html.escape(service.get("name", "Service"))
-    svc_type = html.escape(service.get("type", "backend"))
-    port = service.get("port", "")
-    path = html.escape(service.get("path", ""))
-    bind = html.escape(service.get("bind", ""))
-    notes = html.escape(service.get("notes", ""))
-
-    details = []
-    if bind:
-        details.append(bind)
-    elif port:
-        details.append(f"Port {port}")
-    if path:
-        details.append(path)
-    if notes:
-        details.append(notes)
-
-    return f"""
-    <article class="site-card inventory service-card">
-      <header class="site-header">
-        <span class="domain">{name}</span>
-        <span class="status-pill inventory">backend</span>
-      </header>
-      <div class="site-meta">
-        <span class="badge badge-api">{svc_type}</span>
-        {" · ".join(details) if details else ""}
-      </div>
-    </article>
-    """
-
-
-def render_fix(fix: dict) -> str:
-    domain = html.escape(fix["domain"])
-    cmds = fix.get("commands", [])
-    cmd_html = "\n".join(html.escape(c) for c in cmds)
-    return f"""
-    <div class="fix-block">
-      <h3>{domain}</h3>
-      <pre><code>{cmd_html}</code></pre>
-    </div>
-    """
-
-
-def render_server_section(server: dict) -> str:
-    server_id = server.get("id", "unknown")
+def server_block(server: dict, checks: dict | None) -> str:
+    server_id = server.get("id", "")
     hostname = html.escape(server.get("hostname", server_id))
-    role = html.escape(server.get("role", ""))
-    ip = html.escape(str(server.get("ip", "")))
-    summary = server_summary(server)
-    sites = server.get("websites", [])
-    services = server.get("services", [])
-    fixes = server.get("fixes", [])
+    ip = server.get("ip")
+    domains = server.get("domains", [])
+    domain_checks = (checks or {}).get("domains", {})
 
-    extras: list[str] = []
-    if containers := server.get("running_containers"):
-        extras.append(f"{containers} Docker containers")
-    if server.get("docker_containers") == 0:
-        extras.append("no Docker web containers")
-    if apache := server.get("apache_vhosts"):
-        extras.append(f"{apache} Apache vhosts")
-    extra_line = " · ".join(extras)
+    rows = "".join(
+        domain_row(d, server_id, domain_checks.get(d)) for d in sorted(domains, key=str.lower)
+    )
 
-    down_sites = [s for s in sites if s.get("status") == "down"]
-    down_cards = "".join(render_site_card(s, server_id) for s in down_sites)
-    all_cards = "".join(render_site_card(s, server_id) for s in sites)
-    service_cards = "".join(render_service_card(s) for s in services)
-    fix_blocks = "".join(render_fix(f) for f in fixes)
+    stats = {"ok": 0, "issue": 0, "unchecked": 0}
+    for d in domains:
+        c = domain_checks.get(d)
+        if not c:
+            stats["unchecked"] += 1
+        elif c.get("status") == "ok":
+            stats["ok"] += 1
+        else:
+            stats["issue"] += 1
 
-    down_section = ""
-    if down_sites:
-        down_section = f"""
-        <div class="server-subsection">
-          <h3>Sites that are down</h3>
-          <div class="site-list">{down_cards}</div>
-        </div>
-        """
-
-    services_section = ""
-    if services:
-        services_section = f"""
-        <div class="server-subsection">
-          <h3>Backend services (not Apache)</h3>
-          <div class="site-list">{service_cards}</div>
-        </div>
-        """
-
-    fixes_section = ""
-    if fixes:
-        fixes_section = f"""
-        <div class="server-subsection">
-          <h3>Suggested fixes</h3>
-          {fix_blocks}
-        </div>
-        """
+    ip_line = f' · expected IP <code>{html.escape(ip)}</code>' if ip else ""
 
     return f"""
     <section class="server-section" id="server-{html.escape(server_id)}" data-server="{html.escape(server_id)}">
       <div class="server-header">
         <h2>{hostname}</h2>
-        <p class="server-meta">{role}{f" · {ip}" if ip else ""}{f" · {extra_line}" if extra_line else ""}</p>
-        <div class="summary-grid server-stats">
-          <div class="stat-card"><div class="value">{summary['total']}</div><div class="label">Sites</div></div>
-          <div class="stat-card ok"><div class="value">{summary['ok']}</div><div class="label">OK</div></div>
-          <div class="stat-card down"><div class="value">{summary['down']}</div><div class="label">Down</div></div>
-          <div class="stat-card"><div class="value">{summary['inventory']}</div><div class="label">Inventory</div></div>
-        </div>
+        <p class="server-meta"><code>{html.escape(server_id)}</code>{ip_line} · {len(domains)} domains · {stats['ok']} ok · {stats['issue']} issues</p>
       </div>
-      {down_section}
-      <div class="server-subsection">
-        <h3>All sites</h3>
-        <div class="site-list server-sites">{all_cards}</div>
+      <div class="table-wrap">
+        <table class="domain-table">
+          <thead>
+            <tr>
+              <th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
       </div>
-      {services_section}
-      {fixes_section}
     </section>
     """
 
 
-def aggregate_summary(servers: list[dict]) -> dict:
-    totals = {"total": 0, "ok": 0, "down": 0, "inventory": 0, "servers": len(servers)}
+def generate_html(inventory: dict, checks: dict | None) -> str:
+    servers = inventory.get("servers", [])
+    checked_at = (checks or {}).get("checked_at") or inventory.get("meta", {}).get("checked_at", "—")
+    summary = (checks or {}).get("summary", {})
+
+    all_domains: list[tuple[str, str]] = []
+    domain_checks = (checks or {}).get("domains", {})
     for server in servers:
-        s = server_summary(server)
-        totals["total"] += s["total"]
-        totals["ok"] += s["ok"]
-        totals["down"] += s["down"]
-        totals["inventory"] += s["inventory"]
-    return totals
+        sid = server.get("id", "")
+        for domain in server.get("domains", []):
+            all_domains.append((domain, sid))
+    all_domains.sort(key=lambda x: x[0].lower())
 
+    overview_rows = "".join(
+        domain_row(d, sid, domain_checks.get(d)) for d, sid in all_domains
+    )
+    server_sections = "".join(server_block(s, checks) for s in servers)
 
-def generate_html(data: dict) -> str:
-    data = normalize_data(data)
-    meta = data.get("meta", {})
-    servers: list[dict] = data.get("servers", [])
-    generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    checked = html.escape(str(meta.get("checked_at", "")))
-    agg = aggregate_summary(servers)
-
-    server_sections = "".join(render_server_section(s) for s in servers)
     server_options = "".join(
-        f'<option value="{html.escape(s.get("id", ""))}">{html.escape(s.get("hostname", s.get("id", "")))}</option>'
+        f'<option value="{html.escape(s.get("id", ""))}">{html.escape(s.get("hostname", ""))}</option>'
         for s in servers
     )
 
-    verdict = "All probed sites healthy" if agg["down"] == 0 else f"{agg['down']} site(s) need attention"
-    if agg["inventory"]:
-        verdict += f" · {agg['inventory']} inventory-only (not probed)"
+    total = summary.get("total", len(all_domains))
+    ok = summary.get("ok", "—")
+    down = summary.get("down", "—")
+    ssl_warn = summary.get("ssl_warn", "—")
+    dns_fail = summary.get("dns_fail", "—")
+
+    unchecked_note = ""
+    if not checks:
+        unchecked_note = '<div class="verdict warn">No check_results.json — run <code>python3 scripts/check_domains.py</code> first.</div>'
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -297,302 +190,189 @@ def generate_html(data: dict) -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>Hosted Services — {checked}</title>
+  <title>Domain Health — {html.escape(str(checked_at))}</title>
   <style>
     :root {{
-      --bg: #f4f6f9;
-      --surface: #ffffff;
-      --text: #1a1d26;
-      --muted: #5c6578;
-      --border: #e2e8f0;
-      --accent: #2563eb;
-      --ok: #059669;
-      --ok-bg: #ecfdf5;
-      --down: #dc2626;
-      --down-bg: #fef2f2;
-      --warn: #d97706;
-      --warn-bg: #fffbeb;
-      --inv: #6366f1;
-      --inv-bg: #eef2ff;
-      --shadow: 0 1px 3px rgba(0,0,0,.08);
-      --radius: 12px;
+      --bg: #f4f6f9; --surface: #fff; --text: #1a1d26; --muted: #5c6578;
+      --border: #e2e8f0; --accent: #2563eb; --ok: #059669; --ok-bg: #ecfdf5;
+      --down: #dc2626; --down-bg: #fef2f2; --warn: #d97706; --warn-bg: #fffbeb;
+      --inv: #6366f1; --inv-bg: #eef2ff; --radius: 10px;
     }}
     @media (prefers-color-scheme: dark) {{
       :root {{
-        --bg: #0f1419;
-        --surface: #1a2332;
-        --text: #e8edf5;
-        --muted: #94a3b8;
-        --border: #2d3a4f;
-        --accent: #60a5fa;
-        --ok-bg: #064e3b33;
-        --down-bg: #7f1d1d33;
-        --warn-bg: #78350f33;
-        --inv-bg: #312e8133;
-        --shadow: 0 1px 3px rgba(0,0,0,.3);
+        --bg: #0f1419; --surface: #1a2332; --text: #e8edf5; --muted: #94a3b8;
+        --border: #2d3a4f; --accent: #60a5fa; --ok-bg: #064e3b33; --down-bg: #7f1d1d33;
+        --warn-bg: #78350f33; --inv-bg: #312e8133;
       }}
     }}
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 1rem;
-      max-width: 960px;
-      margin: 0 auto;
-    }}
-    header.page-header {{ margin-bottom: 1.5rem; }}
-    header.page-header h1 {{ font-size: 1.5rem; font-weight: 700; margin-bottom: .25rem; }}
-    .subtitle {{ color: var(--muted); font-size: .9rem; }}
-    .summary-grid {{
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: .75rem;
-      margin-bottom: 1rem;
-    }}
-    @media (min-width: 480px) {{ .summary-grid {{ grid-template-columns: repeat(5, 1fr); }} }}
-    .server-stats {{ margin-top: .75rem; }}
-    .stat-card {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: .75rem;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }}
-    .stat-card .value {{ font-size: 1.5rem; font-weight: 700; line-height: 1.2; }}
-    .stat-card .label {{ font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }}
+    body {{ font-family: system-ui, sans-serif; background: var(--bg); color: var(--text);
+      line-height: 1.45; padding: 1rem; max-width: 1100px; margin: 0 auto; }}
+    h1 {{ font-size: 1.4rem; margin-bottom: .25rem; }}
+    .subtitle {{ color: var(--muted); font-size: .9rem; margin-bottom: 1rem; }}
+    .summary-grid {{ display: grid; grid-template-columns: repeat(2,1fr); gap: .6rem; margin-bottom: 1rem; }}
+    @media (min-width: 600px) {{ .summary-grid {{ grid-template-columns: repeat(5,1fr); }} }}
+    .stat-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: .7rem; text-align: center; }}
+    .stat-card .value {{ font-size: 1.4rem; font-weight: 700; }}
+    .stat-card .label {{ font-size: .68rem; color: var(--muted); text-transform: uppercase; }}
     .stat-card.ok .value {{ color: var(--ok); }}
     .stat-card.down .value {{ color: var(--down); }}
-    .verdict {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: .75rem 1rem;
-      margin-bottom: 1.5rem;
-      font-size: .95rem;
-    }}
-    .verdict.warn {{ border-color: var(--down); background: var(--down-bg); }}
-    .controls {{
-      display: flex;
-      flex-direction: column;
-      gap: .5rem;
-      margin-bottom: 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: var(--bg);
-      padding: .5rem 0;
-    }}
-    @media (min-width: 480px) {{ .controls {{ flex-direction: row; flex-wrap: wrap; }} }}
-    .controls input, .controls select {{
-      flex: 1;
-      min-width: 8rem;
-      padding: .6rem .75rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--surface);
-      color: var(--text);
-      font-size: 1rem;
-    }}
-    .server-section {{
-      margin-bottom: 2.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 2px solid var(--border);
-    }}
-    .server-section:last-of-type {{ border-bottom: none; }}
-    .server-header h2 {{ font-size: 1.2rem; margin-bottom: .2rem; }}
-    .server-meta {{ color: var(--muted); font-size: .85rem; margin-bottom: .5rem; }}
-    .server-subsection {{ margin-top: 1.25rem; }}
-    .server-subsection h3 {{
-      font-size: 1rem;
-      margin-bottom: .6rem;
-      color: var(--muted);
-    }}
-    .site-list {{ display: flex; flex-direction: column; gap: .6rem; }}
-    .site-card {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: .85rem 1rem;
-      box-shadow: var(--shadow);
-    }}
-    .site-card.down {{ border-left: 4px solid var(--down); background: var(--down-bg); }}
-    .site-card.warn {{ border-left: 4px solid var(--warn); background: var(--warn-bg); }}
-    .site-card.inventory {{ border-left: 4px solid var(--inv); }}
-    .site-header {{
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
-      margin-bottom: .35rem;
-    }}
-    .domain {{ font-weight: 600; color: var(--accent); text-decoration: none; word-break: break-all; }}
-    a.domain:hover {{ text-decoration: underline; }}
-    .status-pill {{
-      font-size: .7rem;
-      font-weight: 700;
-      padding: .2rem .5rem;
-      border-radius: 999px;
-      white-space: nowrap;
-    }}
+    .verdict {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: .7rem 1rem; margin-bottom: 1rem; font-size: .9rem; }}
+    .verdict.warn {{ border-color: var(--warn); background: var(--warn-bg); }}
+    .tabs {{ display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }}
+    .tab {{ border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      padding: .45rem .8rem; border-radius: 999px; cursor: pointer; font-size: .85rem; }}
+    .tab.active {{ background: var(--accent); color: #fff; border-color: var(--accent); }}
+    .controls {{ display: flex; flex-direction: column; gap: .45rem; margin-bottom: 1rem; }}
+    @media (min-width: 600px) {{ .controls {{ flex-direction: row; flex-wrap: wrap; }} }}
+    .controls input, .controls select {{ flex: 1; min-width: 9rem; padding: .55rem .7rem;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }}
+    .view {{ display: none; }}
+    .view.active {{ display: block; }}
+    section {{ margin-bottom: 2rem; }}
+    h2 {{ font-size: 1.1rem; margin-bottom: .3rem; }}
+    .server-meta {{ color: var(--muted); font-size: .82rem; margin-bottom: .6rem; }}
+    .table-wrap {{ overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }}
+    table {{ width: 100%; border-collapse: collapse; font-size: .82rem; }}
+    th, td {{ padding: .55rem .65rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }}
+    th {{ background: var(--bg); font-size: .72rem; text-transform: uppercase; color: var(--muted); }}
+    tr:last-child td {{ border-bottom: none; }}
+    tr.hidden {{ display: none; }}
+    td.mono {{ font-family: ui-monospace, monospace; font-size: .78rem; }}
+    a {{ color: var(--accent); text-decoration: none; word-break: break-all; }}
+    a:hover {{ text-decoration: underline; }}
+    .status-pill {{ font-size: .68rem; font-weight: 700; padding: .15rem .45rem; border-radius: 999px; white-space: nowrap; }}
     .status-pill.ok {{ background: var(--ok-bg); color: var(--ok); }}
     .status-pill.down {{ background: var(--down-bg); color: var(--down); }}
     .status-pill.warn {{ background: var(--warn-bg); color: var(--warn); }}
     .status-pill.inventory {{ background: var(--inv-bg); color: var(--inv); }}
-    .site-meta {{ font-size: .8rem; color: var(--muted); }}
-    .badge {{
-      display: inline-block;
-      font-size: .65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: .1rem .4rem;
-      border-radius: 4px;
-      margin-right: .25rem;
-    }}
-    .badge-docker {{ background: #dbeafe; color: #1e40af; }}
-    .badge-static {{ background: #fef3c7; color: #92400e; }}
-    .badge-redirect {{ background: #ede9fe; color: #5b21b6; }}
-    .badge-proxy {{ background: #fce7f3; color: #9d174d; }}
-    .badge-mail {{ background: #d1fae5; color: #065f46; }}
-    .badge-app {{ background: #e0e7ff; color: #3730a3; }}
-    .badge-api {{ background: #f3e8ff; color: #6b21a8; }}
-    @media (prefers-color-scheme: dark) {{
-      .badge-docker {{ background: #1e3a5f; color: #93c5fd; }}
-      .badge-static {{ background: #78350f; color: #fde68a; }}
-      .badge-redirect {{ background: #4c1d95; color: #c4b5fd; }}
-      .badge-proxy {{ background: #831843; color: #f9a8d4; }}
-      .badge-mail {{ background: #064e3b; color: #6ee7b7; }}
-      .badge-app {{ background: #312e81; color: #a5b4fc; }}
-      .badge-api {{ background: #581c87; color: #d8b4fe; }}
-    }}
-    .aliases {{ margin-top: .4rem; padding-left: 1.2rem; font-size: .75rem; color: var(--muted); }}
-    .fix-block {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: .75rem 1rem;
-      margin-bottom: .75rem;
-    }}
-    .fix-block h3 {{ font-size: .9rem; margin-bottom: .5rem; }}
-    pre {{ overflow-x: auto; font-size: .75rem; background: var(--bg); padding: .5rem; border-radius: 6px; }}
-    footer {{
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: .75rem;
-      color: var(--muted);
-      text-align: center;
-    }}
-    .hidden {{ display: none !important; }}
+    .tag {{ font-size: .65rem; padding: .05rem .3rem; border-radius: 4px; }}
+    .tag.warn {{ background: var(--warn-bg); color: var(--warn); }}
+    footer {{ margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);
+      font-size: .75rem; color: var(--muted); text-align: center; }}
   </style>
 </head>
 <body>
-  <header class="page-header">
-    <h1>Hosted Services Report</h1>
-    <p class="subtitle">Checked <strong>{checked}</strong> · {agg['servers']} servers · {agg['total']} sites</p>
+  <header>
+    <h1>Domain Health Report</h1>
+    <p class="subtitle">Checked <strong>{html.escape(str(checked_at))}</strong> · {len(all_domains)} domains · {len(servers)} servers</p>
   </header>
 
   <div class="summary-grid">
-    <div class="stat-card"><div class="value">{agg['total']}</div><div class="label">Total</div></div>
-    <div class="stat-card ok"><div class="value">{agg['ok']}</div><div class="label">OK</div></div>
-    <div class="stat-card down"><div class="value">{agg['down']}</div><div class="label">Down</div></div>
-    <div class="stat-card"><div class="value">{agg['inventory']}</div><div class="label">Inventory</div></div>
-    <div class="stat-card"><div class="value">{agg['servers']}</div><div class="label">Servers</div></div>
+    <div class="stat-card"><div class="value">{total}</div><div class="label">Total</div></div>
+    <div class="stat-card ok"><div class="value">{ok}</div><div class="label">OK</div></div>
+    <div class="stat-card down"><div class="value">{down}</div><div class="label">Down</div></div>
+    <div class="stat-card"><div class="value">{dns_fail}</div><div class="label">DNS fail</div></div>
+    <div class="stat-card"><div class="value">{ssl_warn}</div><div class="label">SSL warn</div></div>
   </div>
 
-  <div class="verdict{" warn" if agg['down'] else ""}">
-    {html.escape(verdict)}
+  {unchecked_note}
+
+  <div class="tabs">
+    <button class="tab active" data-view="overview">All domains</button>
+    <button class="tab" data-view="servers">By server</button>
   </div>
 
   <div class="controls">
-    <input type="search" id="search" placeholder="Search domain…" autocomplete="off">
+    <input type="search" id="search" placeholder="Filter domain…" autocomplete="off">
     <select id="filter-server">
       <option value="all">All servers</option>
       {server_options}
     </select>
     <select id="filter-status">
       <option value="all">All statuses</option>
-      <option value="ok">OK / probed</option>
-      <option value="down">Down</option>
-      <option value="inventory">Inventory only</option>
-      <option value="warn">HTTP-only / warnings</option>
-    </select>
-    <select id="filter-type">
-      <option value="all">All types</option>
-      <option value="docker">Docker</option>
-      <option value="static">Static</option>
-      <option value="redirect">Redirect</option>
-      <option value="proxy">Proxy</option>
-      <option value="mail">Mail webmail</option>
-      <option value="app">App / admin</option>
+      <option value="ok">OK</option>
+      <option value="warn">Warnings</option>
+      <option value="down">Issues</option>
+      <option value="inventory">Not checked</option>
     </select>
   </div>
 
-  {server_sections}
+  <div id="view-overview" class="view active">
+    <section>
+      <h2>All domains</h2>
+      <div class="table-wrap">
+        <table class="domain-table" id="table-overview">
+          <thead>
+            <tr><th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Status</th></tr>
+          </thead>
+          <tbody>{overview_rows}</tbody>
+        </table>
+      </div>
+    </section>
+  </div>
 
-  <footer>Generated {generated} from <code>websites.yaml</code></footer>
+  <div id="view-servers" class="view">
+    {server_sections}
+  </div>
+
+  <footer>Generated from <code>websites.yaml</code> + <code>check_results.json</code></footer>
 
   <script>
+    const tabs = document.querySelectorAll('.tab');
+    const views = document.querySelectorAll('.view');
     const search = document.getElementById('search');
     const filterServer = document.getElementById('filter-server');
     const filterStatus = document.getElementById('filter-status');
-    const filterType = document.getElementById('filter-type');
-    const cards = document.querySelectorAll('.site-card[data-domain]');
-    const sections = document.querySelectorAll('.server-section');
+
+    tabs.forEach(tab => tab.addEventListener('click', () => {{
+      tabs.forEach(t => t.classList.remove('active'));
+      views.forEach(v => v.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('view-' + tab.dataset.view).classList.add('active');
+      applyFilters();
+    }}));
 
     function applyFilters() {{
       const q = search.value.toLowerCase().trim();
       const srv = filterServer.value;
       const st = filterStatus.value;
-      const ty = filterType.value;
+      const activeView = document.querySelector('.view.active');
+      const rows = activeView.querySelectorAll('.domain-row');
 
-      cards.forEach(card => {{
-        const domain = card.dataset.domain || '';
+      rows.forEach(row => {{
+        const domain = row.dataset.domain || '';
         const matchQ = !q || domain.includes(q);
-        const matchSrv = srv === 'all' || card.dataset.server === srv;
-        const matchSt = st === 'all' || card.dataset.status === st;
-        const matchTy = ty === 'all' || card.dataset.type === ty;
-        card.classList.toggle('hidden', !(matchQ && matchSrv && matchSt && matchTy));
+        const matchSrv = srv === 'all' || row.dataset.server === srv;
+        let matchSt = st === 'all';
+        if (!matchSt) {{
+          const rs = row.dataset.status;
+          if (st === 'warn') matchSt = rs === 'warn';
+          else if (st === 'down') matchSt = rs === 'down';
+          else matchSt = rs === st;
+        }}
+        row.classList.toggle('hidden', !(matchQ && matchSrv && matchSt));
       }});
 
-      sections.forEach(section => {{
-        if (srv !== 'all' && section.dataset.server !== srv) {{
-          section.classList.add('hidden');
-          return;
-        }}
-        section.classList.remove('hidden');
-        const visible = section.querySelectorAll('.site-card[data-domain]:not(.hidden)');
-        const subs = section.querySelectorAll('.server-subsection');
-        subs.forEach(sub => {{
-          const subCards = sub.querySelectorAll('.site-card[data-domain]');
-          if (!subCards.length) return;
-          const anyVisible = [...subCards].some(c => !c.classList.contains('hidden'));
-          sub.classList.toggle('hidden', !anyVisible);
+      if (activeView.id === 'view-servers') {{
+        activeView.querySelectorAll('.server-section').forEach(section => {{
+          if (srv !== 'all' && section.dataset.server !== srv) {{
+            section.style.display = 'none';
+            return;
+          }}
+          section.style.display = '';
+          const visible = section.querySelectorAll('.domain-row:not(.hidden)').length;
+          section.style.display = visible ? '' : 'none';
         }});
-      }});
+      }}
     }}
 
-    [search, filterServer, filterStatus, filterType].forEach(el =>
-      el.addEventListener('input', applyFilters));
-    [filterServer, filterStatus, filterType].forEach(el =>
-      el.addEventListener('change', applyFilters));
+    [search, filterServer, filterStatus].forEach(el => {{
+      el.addEventListener('input', applyFilters);
+      el.addEventListener('change', applyFilters);
+    }});
   </script>
 </body>
 </html>
 """
 
 
-def count_sites(data: dict) -> int:
-    data = normalize_data(data)
-    return sum(len(s.get("websites", [])) for s in data.get("servers", []))
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-i", "--input", type=Path, default=DEFAULT_INPUT)
+    parser.add_argument("-c", "--checks", type=Path, default=DEFAULT_CHECKS)
     parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -600,12 +380,14 @@ def main() -> int:
         print(f"Input not found: {args.input}", file=sys.stderr)
         return 1
 
-    data = load_data(args.input)
-    html_out = generate_html(data)
+    inventory = load_yaml(args.input)
+    checks = load_checks(args.checks)
+    out = generate_html(inventory, checks)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(html_out, encoding="utf-8")
-    print(f"Wrote {args.output} ({count_sites(data)} sites across {len(normalize_data(data).get('servers', []))} servers)")
+    args.output.write_text(out, encoding="utf-8")
+    n = sum(len(s.get("domains", [])) for s in inventory.get("servers", []))
+    print(f"Wrote {args.output} ({n} domains)")
     return 0
 
 
