@@ -1,39 +1,39 @@
-# Hosted websites inventory — edit this file and re-run generate_report.py
-# Last checked from web.chilicode.com (37.16.72.137)
+# Hosted services inventory — edit and re-run: python3 scripts/generate_report.py
+# Servers: web.chilicode.com (web) · mail.chilicode.com (mail/apps)
 
 meta:
-  checked_at: "2026-08-15"
-  server_hostname: web.chilicode.com
-  server_ip: 37.16.72.137
+  checked_at: '2026-08-15'
+servers:
+- id: web
+  hostname: web.chilicode.com
+  ip: 37.16.72.137
+  role: Web hosting
   apache_status: active
   running_containers: 36
   sources:
-    - Apache sites-enabled (apachectl -S)
-    - /var/www/pages/sites.txt
-    - Running Docker containers
-    - HTTPS probes
-
-summary:
-  total: 55
-  ok: 51
-  down: 4
-
-websites:
+  - Apache sites-enabled (apachectl -S)
+  - /var/www/pages/sites.txt
+  - Running Docker containers
+  - HTTPS probes
+  summary:
+    total: 55
+    ok: 51
+    down: 4
+  websites:
   - domain: 360demo.chilicode.com
     type: static
     path: /var/www/vhosts/360demochilicodecom/htdocs
     status: ok
     http_status: 200
     aliases: []
-
   - domain: andibruckner.com
     type: docker
     port: 4023
     folder: andibruckner
     status: ok
     http_status: 200
-    aliases: [www.andibruckner.com]
-
+    aliases:
+    - www.andibruckner.com
   - domain: astro-lernstern.at
     type: docker
     port: 4033
@@ -41,28 +41,27 @@ websites:
     status: ok
     http_status: 200
     aliases:
-      - www.astro-lernstern.at
-      - astro-lernstern.de
-      - www.astro-lernstern.de
-      - astro-lernstern.com
-      - www.astro-lernstern.com
-
+    - www.astro-lernstern.at
+    - astro-lernstern.de
+    - www.astro-lernstern.de
+    - astro-lernstern.com
+    - www.astro-lernstern.com
   - domain: bayer.cc
     type: docker
     port: 4030
     folder: bayer
     status: ok
     http_status: 200
-    aliases: [www.bayer.cc]
-
+    aliases:
+    - www.bayer.cc
   - domain: capro.cc
     type: docker
     port: 4020
     folder: capro
     status: ok
     http_status: 200
-    aliases: [www.capro.cc]
-
+    aliases:
+    - www.capro.cc
   - domain: chilicode.com
     type: docker
     port: 4040
@@ -70,20 +69,19 @@ websites:
     status: ok
     http_status: 200
     aliases:
-      - www.chilicode.com
-      - chilicode.at
-      - www.chilicode.at
-      - itsnotrocketscience.at
-      - www.itsnotrocketscience.at
-
+    - www.chilicode.com
+    - chilicode.at
+    - www.chilicode.at
+    - itsnotrocketscience.at
+    - www.itsnotrocketscience.at
   - domain: der-bioimker.at
     type: docker
     port: 4003
     folder: bioimker
     status: ok
     http_status: 200
-    aliases: [www.der-bioimker.at]
-
+    aliases:
+    - www.der-bioimker.at
   - domain: derschimmelimhaus.at
     type: redirect
     redirect_to: timschoeberl.at
@@ -91,10 +89,9 @@ websites:
     status: ok
     http_status: 301
     aliases:
-      - www.derschimmelimhaus.at
-      - derschimmelimhaus.com
-      - www.derschimmelimhaus.com
-
+    - www.derschimmelimhaus.at
+    - derschimmelimhaus.com
+    - www.derschimmelimhaus.com
   - domain: diefugenlosedusche.at
     type: redirect
     redirect_to: timschoeberl.at
@@ -102,38 +99,36 @@ websites:
     status: ok
     http_status: 301
     aliases:
-      - www.diefugenlosedusche.at
-      - diefugenlosedusche.com
-      - www.diefugenlosedusche.com
-
+    - www.diefugenlosedusche.at
+    - diefugenlosedusche.com
+    - www.diefugenlosedusche.com
   - domain: drobits.chilicode.at
     type: docker
     port: 4045
     folder: drobits
     status: ok
     http_status: 200
-    aliases: [www.drobits.chilicode.at]
-
+    aliases:
+    - www.drobits.chilicode.at
   - domain: eisenbergklassik.at
     type: redirect
     redirect_to: weinbau-schiefer.at
     status: ok
     http_status: 301
     aliases:
-      - www.eisenbergklassik.at
-      - eisenbergklassik.eu
-      - www.eisenbergklassik.eu
-      - xn--blaufrnkisch-lcb.eu
-      - www.xn--blaufrnkisch-lcb.eu
-
+    - www.eisenbergklassik.at
+    - eisenbergklassik.eu
+    - www.eisenbergklassik.eu
+    - xn--blaufrnkisch-lcb.eu
+    - www.xn--blaufrnkisch-lcb.eu
   - domain: fairkleiden.at
     type: docker
     port: 4042
     folder: fairkleiden
     status: ok
     http_status: 200
-    aliases: [www.fairkleiden.at]
-
+    aliases:
+    - www.fairkleiden.at
   - domain: fairspeisen.com
     type: docker
     port: 4026
@@ -142,32 +137,32 @@ websites:
     status: down
     http_status: 503
     issue: docker-compose.yml.off — container not running
-    aliases: [www.fairspeisen.com]
-
+    aliases:
+    - www.fairspeisen.com
   - domain: fenzpr.com
     type: docker
     port: 4021
     folder: fenzpr
     status: ok
     http_status: 200
-    aliases: [www.fenzpr.com]
-
+    aliases:
+    - www.fenzpr.com
   - domain: feuerwehr-oberwart.at
     type: docker
     port: 4015
     folder: ffoberwart
     status: ok
     http_status: 200
-    aliases: [www.feuerwehr-oberwart.at]
-
+    aliases:
+    - www.feuerwehr-oberwart.at
   - domain: ff-burgau-burgauberg.at
     type: docker
     port: 4014
     folder: ffburgau
     status: ok
     http_status: 200
-    aliases: [www.ff-burgau-burgauberg.at]
-
+    aliases:
+    - www.ff-burgau-burgauberg.at
   - domain: ff-burgau-burgauberg.chilicode.at
     type: docker
     port: 4016
@@ -177,8 +172,8 @@ websites:
     status: down
     http_status: 503
     issue: ffburgau-historisch-joomla-1 + DB exited (~2 months)
-    aliases: [www.ff-burgau-burgauberg.chilicode.at]
-
+    aliases:
+    - www.ff-burgau-burgauberg.chilicode.at
   - domain: ffoberwart.chilicode.at
     type: redirect
     redirect_to: feuerwehr-oberwart.at
@@ -186,31 +181,30 @@ websites:
     notes: redirect/proxy
     status: ok
     http_status: 301
-    aliases: [www.ffoberwart.chilicode.at]
-
+    aliases:
+    - www.ffoberwart.chilicode.at
   - domain: foto.fotobruckner.com
     type: redirect
     redirect_to: fotobruckner.com
     status: ok
     http_status: 301
     aliases: []
-
   - domain: fotobruckner.com
     type: docker
     port: 4024
     folder: fotobruckner
     status: ok
     http_status: 200
-    aliases: [www.fotobruckner.com]
-
+    aliases:
+    - www.fotobruckner.com
   - domain: getsgo.at
     type: docker
     port: 4009
     folder: getsgo
     status: ok
     http_status: 200
-    aliases: [www.getsgo.at]
-
+    aliases:
+    - www.getsgo.at
   - domain: historisch.ff-burgau-burgauberg.at
     type: docker
     port: 4016
@@ -221,29 +215,26 @@ websites:
     http_status: 503
     issue: ffburgau-historisch-joomla-1 + DB exited (~2 months)
     aliases: []
-
   - domain: historisch.umiz.at
     type: static
     path: /var/www/vhosts/historischumizat/htdocs
     status: ok
     http_status: 200
     aliases: []
-
   - domain: hochzeit.fotobruckner.com
     type: docker
     port: 4019
     folder: hochzeitandi
     status: ok
     http_status: 200
-    aliases: [www.hochzeit.fotobruckner.com]
-
+    aliases:
+    - www.hochzeit.fotobruckner.com
   - domain: hochzeitandi.chilicode.at
     type: redirect
     redirect_to: hochzeit.fotobruckner.com
     status: ok
     http_status: 301
     aliases: []
-
   - domain: hoerist-kollmann.at
     type: docker
     port: 4001
@@ -251,16 +242,16 @@ websites:
     status: ok
     http_status: 301
     notes: redirects to IDN variant
-    aliases: [www.hoerist-kollmann.at]
-
+    aliases:
+    - www.hoerist-kollmann.at
   - domain: im-hundegluecksraum.at
     type: docker
     port: 4031
     folder: hunderaum
     status: ok
     http_status: 200
-    aliases: [www.im-hundegluecksraum.at]
-
+    aliases:
+    - www.im-hundegluecksraum.at
   - domain: kopfensteiner.at
     type: docker
     port: 4006
@@ -268,16 +259,16 @@ websites:
     status: ok
     http_status: 200
     notes: Public DNS (8.8.8.8) points here; local resolver was flaky during check
-    aliases: [www.kopfensteiner.at]
-
+    aliases:
+    - www.kopfensteiner.at
   - domain: kunstraum-rotenturm.at
     type: docker
     port: 4038
     folder: kunstraum
     status: ok
     http_status: 200
-    aliases: [www.kunstraum-rotenturm.at]
-
+    aliases:
+    - www.kunstraum-rotenturm.at
   - domain: loranth.at
     type: docker
     port: 4022
@@ -285,32 +276,31 @@ websites:
     status: ok
     http_status: 200
     aliases:
-      - www.loranth.at
-      - loranth.digital
-      - www.loranth.digital
-
+    - www.loranth.at
+    - loranth.digital
+    - www.loranth.digital
   - domain: proksch-maler.at
     type: static
     notes: shared with pinkafeld vhost dir
     status: ok
     http_status: 200
-    aliases: [www.proksch-maler.at]
-
+    aliases:
+    - www.proksch-maler.at
   - domain: proksch-pinkafeld.at
     type: static
     path: /var/www/vhosts/proksch-pinkafeldat/htdocs
     status: ok
     http_status: 200
-    aliases: [www.proksch-pinkafeld.at]
-
+    aliases:
+    - www.proksch-pinkafeld.at
   - domain: raumplanungzt.at
     type: docker
     port: 4028
     folder: raumplanungzt
     status: ok
     http_status: 200
-    aliases: [www.raumplanungzt.at]
-
+    aliases:
+    - www.raumplanungzt.at
   - domain: riser-riser.at
     type: docker
     port: 4025
@@ -318,20 +308,19 @@ websites:
     status: ok
     http_status: 200
     aliases:
-      - www.riser-riser.at
-      - im-gluecksraum.at
-      - www.im-gluecksraum.at
-      - yope-trainer.at
-      - www.yope-trainer.at
-
+    - www.riser-riser.at
+    - im-gluecksraum.at
+    - www.im-gluecksraum.at
+    - yope-trainer.at
+    - www.yope-trainer.at
   - domain: schneckenchecker.at
     type: docker
     port: 4034
     folder: schneckenchecker
     status: ok
     http_status: 200
-    aliases: [www.schneckenchecker.at]
-
+    aliases:
+    - www.schneckenchecker.at
   - domain: schwartz-arch.at
     type: static
     path: /var/www/vhosts/schwartz-archat/htdocs
@@ -339,24 +328,24 @@ websites:
     notes: compose off, served static
     status: ok
     http_status: 200
-    aliases: [www.schwartz-arch.at]
-
+    aliases:
+    - www.schwartz-arch.at
   - domain: shop-de.sonnenmulde.at
     type: docker
     port: 4013
     folder: sonnenmulde
     status: ok
     http_status: 200
-    aliases: [www.shop-de.sonnenmulde.at]
-
+    aliases:
+    - www.shop-de.sonnenmulde.at
   - domain: shop-en.sonnenmulde.at
     type: docker
     port: 4017
     folder: sonnenmulde_en
     status: ok
     http_status: 200
-    aliases: [www.shop-en.sonnenmulde.at]
-
+    aliases:
+    - www.shop-en.sonnenmulde.at
   - domain: shophelfer.at
     type: docker
     port: 4039
@@ -365,80 +354,80 @@ websites:
     status: down
     http_status: 503
     issue: docker-compose.yml.off — container not running
-    aliases: [www.shophelfer.at]
-
+    aliases:
+    - www.shophelfer.at
   - domain: stadtkapelle.chilicode.at
     type: docker
     port: 4046
     folder: stadtkapelle_oberwart
     status: ok
     http_status: 200
-    aliases: [www.stadtkapelle.chilicode.at]
-
+    aliases:
+    - www.stadtkapelle.chilicode.at
   - domain: strametz-juranek.at
     type: docker
     port: 4002
     folder: jsj
     status: ok
     http_status: 200
-    aliases: [www.strametz-juranek.at]
-
+    aliases:
+    - www.strametz-juranek.at
   - domain: suesseshandwerk.at
     type: docker
     port: 4037
     folder: suesses
     status: ok
     http_status: 200
-    aliases: [www.suesseshandwerk.at]
-
+    aliases:
+    - www.suesseshandwerk.at
   - domain: tader.co.at
     type: docker
     port: 4005
     folder: tader
     status: ok
     http_status: 200
-    aliases: [www.tader.co.at]
-
+    aliases:
+    - www.tader.co.at
   - domain: timschoeberl.at
     type: docker
     port: 4027
     folder: timschoeberl
     status: ok
     http_status: 200
-    aliases: [www.timschoeberl.at]
-
+    aliases:
+    - www.timschoeberl.at
   - domain: umiz.at
     type: docker
     port: 4004
     folder: umiz
     status: ok
     http_status: 200
-    aliases: [www.umiz.at]
-
+    aliases:
+    - www.umiz.at
   - domain: vermessungehrlich.at
     type: docker
     port: 4029
     folder: pongo
     status: ok
     http_status: 200
-    aliases: [www.vermessungehrlich.at]
-
+    aliases:
+    - www.vermessungehrlich.at
   - domain: viaquintaas.com
     type: docker
     port: 4018
     folder: viaquintaas
     status: ok
     http_status: 200
-    aliases: [www.viaquintaas.com]
-
+    aliases:
+    - www.viaquintaas.com
   - domain: vs-unterwart.at
     type: docker
     port: 4007
     folder: vsunterwart
     status: ok
     http_status: 200
-    aliases: [www.vs-unterwart.at]
-
+    aliases:
+    - www.vs-unterwart.at
   - domain: web.chilicode.com
     type: proxy
     port: 4042
@@ -446,15 +435,14 @@ websites:
     status: ok
     http_status: 301
     aliases: []
-
   - domain: weinbau-schiefer.at
     type: docker
     port: 4011
     folder: schiefer
     status: ok
     http_status: 200
-    aliases: [www.weinbau-schiefer.at]
-
+    aliases:
+    - www.weinbau-schiefer.at
   - domain: weltreise.chilicode.at
     type: static
     path: /var/www/vhosts/weltreisechilicodeat/htdocs
@@ -463,31 +451,30 @@ websites:
     status: ok
     http_status: 200
     aliases: []
-
   - domain: wiegeilistdasdenn.at
     type: redirect
     redirect_to: chilicode.com
     port: 4044
     status: ok
     http_status: 301
-    aliases: [www.wiegeilistdasdenn.at]
-
+    aliases:
+    - www.wiegeilistdasdenn.at
   - domain: wvb-thermenland.at
     type: docker
     port: 4035
     folder: thermenland
     status: ok
     http_status: 200
-    aliases: [www.wvb-thermenland.at]
-
+    aliases:
+    - www.wvb-thermenland.at
   - domain: wvsb.at
     type: docker
     port: 4032
     folder: wvsb
     status: ok
     http_status: 200
-    aliases: [www.wvsb.at]
-
+    aliases:
+    - www.wvsb.at
   - domain: xn--hrist-kollmann-vpb.at
     type: docker
     port: 4001
@@ -495,18 +482,230 @@ websites:
     notes: IDN for hörist-kollmann
     status: ok
     http_status: 200
-    aliases: [www.xn--hrist-kollmann-vpb.at]
-
-fixes:
+    aliases:
+    - www.xn--hrist-kollmann-vpb.at
+  fixes:
   - domain: fairspeisen.com
     commands:
-      - cd /var/www/pages/fairspeisen && mv docker-compose.yml.off docker-compose.yml && docker compose up -d
+    - cd /var/www/pages/fairspeisen && mv docker-compose.yml.off docker-compose.yml
+      && docker compose up -d
   - domain: shophelfer.at
     commands:
-      - cd /var/www/pages/shophelfer && mv docker-compose.yml.off docker-compose.yml && docker compose up -d
+    - cd /var/www/pages/shophelfer && mv docker-compose.yml.off docker-compose.yml
+      && docker compose up -d
   - domain: historisch.ff-burgau-burgauberg.at
     commands:
-      - cd /var/www/pages/ffburgau-historisch && docker compose up -d
+    - cd /var/www/pages/ffburgau-historisch && docker compose up -d
   - domain: ff-burgau-burgauberg.chilicode.at
     commands:
-      - cd /var/www/pages/ffburgau-historisch && docker compose up -d
+    - cd /var/www/pages/ffburgau-historisch && docker compose up -d
+- id: mail
+  hostname: mail.chilicode.com
+  role: Mail, webmail & apps
+  apache_vhosts: 37
+  docker_containers: 0
+  notes: 34 mail webmail hosts + 3 apps/admin · most vhosts on 80 and 443
+  sources:
+  - Apache sites-enabled
+  - Server inventory (2026-08-15)
+  summary:
+    total: 37
+    ok: 37
+    down: 0
+  websites:
+  - domain: app.trustlens.tech
+    type: app
+    category: admin
+    probed: false
+    notes: Default vhost
+    aliases:
+    - trustlens.tech (HTTPS alias)
+  - domain: trustlens.tech
+    type: app
+    category: admin
+    probed: false
+    http_only: true
+    notes: HTTP only (separate vhost)
+  - domain: postfixadmin.chilicode.com
+    type: app
+    category: admin
+    probed: false
+    notes: PostfixAdmin
+  - domain: mail.albertwieder.com
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.andibruckner.com
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.archneubauer.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.astro-lernstern.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.bayer.cc
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.capro.cc
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.chilicode.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.chilicode.com
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.fairkleiden.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.fenzpr.com
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.ff-burgau-burgauberg.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.fotobruckner.com
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.getsgo.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.hoerist-kollmann.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.hubertbaumgartner.com
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.im-gluecksraum.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.im-hundegluecksraum.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.kunstraum-rotenturm.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.mobilboxmanager.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.proksch-maler.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.proksch-pinkafeld.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.raumplanungzt.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.riser-riser.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.schneckenchecker.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.schwartz-arch.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.shophelfer.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.strametz-juranek.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.suesseshandwerk.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.tader.co.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.timschoeberl.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.top-learning.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.vermessungehrlich.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: HTTP only — no SSL vhost
+    http_only: true
+  - domain: mail.weinbau-schiefer.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  - domain: mail.weingut-schuetzenhof.at
+    type: mail
+    category: webmail
+    probed: false
+    notes: Roundcube-style webmail · Apache vhost (80 + 443)
+  services:
+  - name: TrustLens API
+    type: node
+    path: ~/trustlens-app
+    port: 3001
+    bind: 0.0.0.0:3001
+    notes: Not served by Apache

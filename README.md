@@ -1,6 +1,6 @@
 # Website Health Report
 
-Mobile-friendly status dashboard for hosted websites. Data lives in `websites.yaml`; a Python script builds static HTML for GitHub Pages.
+Mobile-friendly status dashboard for hosted services across multiple servers. Data lives in `websites.yaml`; a Python script builds static HTML for GitHub Pages.
 
 ## Architecture
 
@@ -14,8 +14,8 @@ flowchart LR
 
 | Component | Purpose |
 |-----------|---------|
-| `websites.yaml` | Single source of truth: domains, types, ports, status, aliases, fixes |
-| `scripts/generate_report.py` | Reads YAML, emits self-contained HTML with search/filter |
+| `websites.yaml` | Multi-server inventory (`servers[]` with sites, services, fixes) |
+| `scripts/generate_report.py` | Reads YAML, emits self-contained HTML with search/filter per server |
 | `.github/workflows/pages.yml` | Regenerates and deploys on push to `main` |
 | `docs/index.html` | Generated report (committed so it works before first CI run) |
 
@@ -33,23 +33,45 @@ python scripts/generate_report.py
 2. Regenerate: `python scripts/generate_report.py`
 3. Commit `websites.yaml` and `docs/index.html`, push to `main`.
 
+### YAML structure
+
+```yaml
+meta:
+  checked_at: "2026-08-15"
+
+servers:
+  - id: web
+    hostname: web.chilicode.com
+    ip: 37.16.72.137
+    role: Web hosting
+    summary: { total: 55, ok: 51, down: 4 }
+    websites: [...]
+    fixes: [...]
+
+  - id: mail
+    hostname: mail.chilicode.com
+    role: Mail, webmail & apps
+    websites: [...]
+    services: [...]   # non-Apache backends
+```
+
 ### Site entry fields
 
 ```yaml
 - domain: example.com          # required — canonical hostname
-  type: docker                 # docker | static | redirect | proxy
+  type: docker                 # docker | static | redirect | proxy | mail | app
   port: 4020                   # backend port (docker/proxy)
   folder: example              # /var/www/pages/<folder>
   path: /var/www/vhosts/...    # static document root
   redirect_to: other.com       # for redirects
   status: ok                   # ok | down
   http_status: 200             # last HTTPS probe result
+  probed: false                # inventory-only (no health check yet)
+  http_only: true              # no SSL vhost
   issue: "container not running"  # shown when down
   notes: "optional context"
   aliases: [www.example.com]
 ```
-
-Top-level `meta`, `summary`, and `fixes` sections drive the dashboard header and suggested repair commands.
 
 ## GitHub Pages setup
 
@@ -59,15 +81,22 @@ Top-level `meta`, `summary`, and `fixes` sections drive the dashboard header and
 
 ## Current inventory (2026-08-15)
 
-| Status | Count |
-|--------|------:|
-| OK | 51 |
-| Down (503) | 4 |
-| **Total** | **55** |
+| Server | Sites | OK | Down | Notes |
+|--------|------:|---:|-----:|-------|
+| `web.chilicode.com` | 55 | 51 | 4 | HTTPS probed · 36 Docker containers |
+| `mail.chilicode.com` | 37 | — | — | Inventory only (not probed) |
+| **Total** | **92** | | | |
 
-**Down sites:** `fairspeisen.com`, `shophelfer.at`, `historisch.ff-burgau-burgauberg.at`, `ff-burgau-burgauberg.chilicode.at`
+### web.chilicode.com — down sites
 
-Server: `web.chilicode.com` (`37.16.72.137`) · 36 Docker containers running
+`fairspeisen.com`, `shophelfer.at`, `historisch.ff-burgau-burgauberg.at`, `ff-burgau-burgauberg.chilicode.at`
+
+### mail.chilicode.com
+
+- **Apps / admin:** `app.trustlens.tech`, `trustlens.tech` (HTTP only), `postfixadmin.chilicode.com`
+- **Backend:** TrustLens API on `0.0.0.0:3001` (Node, `~/trustlens-app`)
+- **Webmail:** 34 `mail.*` Apache vhosts (Roundcube-style); `mail.vermessungehrlich.at` is HTTP-only (no SSL vhost)
+- No Docker web containers running
 
 ## Future enhancements
 
