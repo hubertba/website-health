@@ -66,9 +66,31 @@
     .tag.warn { background: var(--warn-bg); color: var(--warn); }
     .alerts-panel { background: var(--down-bg); border: 1px solid var(--down); border-radius: var(--radius);
       padding: .85rem 1rem; margin-bottom: 1rem; }
-    .alerts-panel h2 { font-size: 1rem; margin-bottom: .5rem; color: var(--down); }
+    .alerts-panel h2 { font-size: 1rem; margin-bottom: .35rem; color: var(--down); }
+    .alert-hint { margin-bottom: .5rem; font-size: .78rem; }
     .alert-list { list-style: none; font-size: .85rem; }
-    .alert-item { padding: .25rem 0; }
+    .alert-item { padding: .35rem 0; border-bottom: 1px solid var(--border); }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-link {
+      display: block; width: 100%; text-align: left; background: none; border: none;
+      padding: .35rem 0; font: inherit; color: inherit; cursor: pointer;
+    }
+    .alert-link:hover { text-decoration: underline; }
+    .alert-link[aria-expanded="true"] { font-weight: 600; }
+    .alert-details {
+      margin: .35rem 0 .5rem .75rem; padding: .55rem .65rem; font-size: .78rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    }
+    .alert-details div { margin-bottom: .25rem; }
+    .jump-to-domain {
+      margin-top: .45rem; padding: .35rem .6rem; font-size: .75rem; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--accent); cursor: pointer;
+    }
+    .domain-row.highlight td { animation: highlight-row 2s ease; }
+    @keyframes highlight-row {
+      0%, 100% { background: transparent; }
+      30% { background: var(--warn-bg); }
+    }
     .alert-item.critical { color: var(--down); }
     .alert-item.warning { color: var(--warn); }
     .alert-item.info { color: var(--muted); }
@@ -96,7 +118,8 @@
   
     <section class="alerts-panel">
       <h2>Alerts (3)</h2>
-      <ul class="alert-list"><li class="alert-item critical"><strong>fairspeisen.com</strong> (web) — Still down</li><li class="alert-item critical"><strong>shophelfer.at</strong> (web) — Still down</li><li class="alert-item warning"><strong>postfixadmin.chilicode.com</strong> (mail) — Still ssl_warn</li></ul>
+      <p class="muted alert-hint">Tap an alert for details or to jump to the domain in the table.</p>
+      <ul class="alert-list"><li class="alert-item critical"><button type="button" class="alert-link" data-domain="fairspeisen.com" aria-expanded="false" aria-controls="alert-detail-domain-fairspeisen-com"><strong>fairspeisen.com</strong> (web) — Still down</button><div class="alert-details" id="alert-detail-domain-fairspeisen-com" hidden><div><strong>Kind:</strong> ongoing</div><div><strong>Severity:</strong> critical</div><div><strong>Previous:</strong> <code>down</code></div><div><strong>DNS:</strong> 37.16.72.137</div><div><strong>HTTP:</strong> HTTPS 503</div><div><strong>SSL:</strong> valid · 2026-10-31</div><div><strong>Trend:</strong> 0.0% uptime · since 2026-08-16 19:59 UTC</div><button type="button" class="jump-to-domain" data-domain="fairspeisen.com">Scroll to table row</button></div></li><li class="alert-item critical"><button type="button" class="alert-link" data-domain="shophelfer.at" aria-expanded="false" aria-controls="alert-detail-domain-shophelfer-at"><strong>shophelfer.at</strong> (web) — Still down</button><div class="alert-details" id="alert-detail-domain-shophelfer-at" hidden><div><strong>Kind:</strong> ongoing</div><div><strong>Severity:</strong> critical</div><div><strong>Previous:</strong> <code>down</code></div><div><strong>DNS:</strong> 37.16.72.137</div><div><strong>HTTP:</strong> HTTPS 503</div><div><strong>SSL:</strong> valid · 2026-11-07</div><div><strong>Trend:</strong> 0.0% uptime · since 2026-08-16 19:59 UTC</div><button type="button" class="jump-to-domain" data-domain="shophelfer.at">Scroll to table row</button></div></li><li class="alert-item warning"><button type="button" class="alert-link" data-domain="postfixadmin.chilicode.com" aria-expanded="false" aria-controls="alert-detail-domain-postfixadmin-chilicode-com"><strong>postfixadmin.chilicode.com</strong> (mail) — Still ssl_warn</button><div class="alert-details" id="alert-detail-domain-postfixadmin-chilicode-com" hidden><div><strong>Kind:</strong> ongoing</div><div><strong>Severity:</strong> warning</div><div><strong>Previous:</strong> <code>ssl_warn</code></div><div><strong>DNS:</strong> 37.16.72.84</div><div><strong>HTTP:</strong> HTTPS 200</div><div><strong>SSL:</strong> valid · 2026-09-15 <span class="tag warn">29d left</span></div><div><strong>Trend:</strong> 0.0% uptime · since 2026-08-16 19:59 UTC</div><button type="button" class="jump-to-domain" data-domain="postfixadmin.chilicode.com">Scroll to table row</button></div></li></ul>
       
     </section>
     
@@ -131,7 +154,8 @@
             <tr><th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Trend</th><th>Status</th></tr>
           </thead>
           <tbody>
-    <tr class="domain-row ok" data-domain="360demo.chilicode.com"
+    <tr class="domain-row ok" id="domain-360demo-chilicode-com"
+        data-domain="360demo.chilicode.com"
         data-server="web" data-status="ok">
       <td><a href="https://360demo.chilicode.com" target="_blank" rel="noopener">360demo.chilicode.com</a></td>
       <td><code>web</code></td>
@@ -142,7 +166,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="andibruckner.com"
+    <tr class="domain-row ok" id="domain-andibruckner-com"
+        data-domain="andibruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://andibruckner.com" target="_blank" rel="noopener">andibruckner.com</a></td>
       <td><code>web</code></td>
@@ -153,7 +178,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="app.trustlens.tech"
+    <tr class="domain-row ok" id="domain-app-trustlens-tech"
+        data-domain="app.trustlens.tech"
         data-server="mail" data-status="ok">
       <td><a href="https://app.trustlens.tech" target="_blank" rel="noopener">app.trustlens.tech</a></td>
       <td><code>mail</code></td>
@@ -164,7 +190,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="astro-lernstern.at"
+    <tr class="domain-row ok" id="domain-astro-lernstern-at"
+        data-domain="astro-lernstern.at"
         data-server="web" data-status="ok">
       <td><a href="https://astro-lernstern.at" target="_blank" rel="noopener">astro-lernstern.at</a></td>
       <td><code>web</code></td>
@@ -175,7 +202,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="bayer.cc"
+    <tr class="domain-row ok" id="domain-bayer-cc"
+        data-domain="bayer.cc"
         data-server="web" data-status="ok">
       <td><a href="https://bayer.cc" target="_blank" rel="noopener">bayer.cc</a></td>
       <td><code>web</code></td>
@@ -186,7 +214,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="capro.cc"
+    <tr class="domain-row ok" id="domain-capro-cc"
+        data-domain="capro.cc"
         data-server="web" data-status="ok">
       <td><a href="https://capro.cc" target="_blank" rel="noopener">capro.cc</a></td>
       <td><code>web</code></td>
@@ -197,7 +226,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="chilicode.com"
+    <tr class="domain-row ok" id="domain-chilicode-com"
+        data-domain="chilicode.com"
         data-server="web" data-status="ok">
       <td><a href="https://chilicode.com" target="_blank" rel="noopener">chilicode.com</a></td>
       <td><code>web</code></td>
@@ -208,7 +238,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="der-bioimker.at"
+    <tr class="domain-row ok" id="domain-der-bioimker-at"
+        data-domain="der-bioimker.at"
         data-server="web" data-status="ok">
       <td><a href="https://der-bioimker.at" target="_blank" rel="noopener">der-bioimker.at</a></td>
       <td><code>web</code></td>
@@ -219,7 +250,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="derschimmelimhaus.at"
+    <tr class="domain-row ok" id="domain-derschimmelimhaus-at"
+        data-domain="derschimmelimhaus.at"
         data-server="web" data-status="ok">
       <td><a href="https://derschimmelimhaus.at" target="_blank" rel="noopener">derschimmelimhaus.at</a></td>
       <td><code>web</code></td>
@@ -230,7 +262,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="diefugenlosedusche.at"
+    <tr class="domain-row ok" id="domain-diefugenlosedusche-at"
+        data-domain="diefugenlosedusche.at"
         data-server="web" data-status="ok">
       <td><a href="https://diefugenlosedusche.at" target="_blank" rel="noopener">diefugenlosedusche.at</a></td>
       <td><code>web</code></td>
@@ -241,7 +274,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="drobits.chilicode.at"
+    <tr class="domain-row ok" id="domain-drobits-chilicode-at"
+        data-domain="drobits.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://drobits.chilicode.at" target="_blank" rel="noopener">drobits.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -252,7 +286,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="eisenbergklassik.at"
+    <tr class="domain-row ok" id="domain-eisenbergklassik-at"
+        data-domain="eisenbergklassik.at"
         data-server="web" data-status="ok">
       <td><a href="https://eisenbergklassik.at" target="_blank" rel="noopener">eisenbergklassik.at</a></td>
       <td><code>web</code></td>
@@ -263,7 +298,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="fairkleiden.at"
+    <tr class="domain-row ok" id="domain-fairkleiden-at"
+        data-domain="fairkleiden.at"
         data-server="web" data-status="ok">
       <td><a href="https://fairkleiden.at" target="_blank" rel="noopener">fairkleiden.at</a></td>
       <td><code>web</code></td>
@@ -274,7 +310,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row down" data-domain="fairspeisen.com"
+    <tr class="domain-row down" id="domain-fairspeisen-com"
+        data-domain="fairspeisen.com"
         data-server="web" data-status="down">
       <td><a href="https://fairspeisen.com" target="_blank" rel="noopener">fairspeisen.com</a></td>
       <td><code>web</code></td>
@@ -285,7 +322,8 @@
       <td><span class="status-pill down">Down</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="fenzpr.com"
+    <tr class="domain-row ok" id="domain-fenzpr-com"
+        data-domain="fenzpr.com"
         data-server="web" data-status="ok">
       <td><a href="https://fenzpr.com" target="_blank" rel="noopener">fenzpr.com</a></td>
       <td><code>web</code></td>
@@ -296,7 +334,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="feuerwehr-oberwart.at"
+    <tr class="domain-row ok" id="domain-feuerwehr-oberwart-at"
+        data-domain="feuerwehr-oberwart.at"
         data-server="web" data-status="ok">
       <td><a href="https://feuerwehr-oberwart.at" target="_blank" rel="noopener">feuerwehr-oberwart.at</a></td>
       <td><code>web</code></td>
@@ -307,7 +346,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="ff-burgau-burgauberg.at"
+    <tr class="domain-row ok" id="domain-ff-burgau-burgauberg-at"
+        data-domain="ff-burgau-burgauberg.at"
         data-server="web" data-status="ok">
       <td><a href="https://ff-burgau-burgauberg.at" target="_blank" rel="noopener">ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
@@ -318,7 +358,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="ff-burgau-burgauberg.chilicode.at"
+    <tr class="domain-row ok" id="domain-ff-burgau-burgauberg-chilicode-at"
+        data-domain="ff-burgau-burgauberg.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://ff-burgau-burgauberg.chilicode.at" target="_blank" rel="noopener">ff-burgau-burgauberg.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -329,7 +370,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="ffoberwart.chilicode.at"
+    <tr class="domain-row ok" id="domain-ffoberwart-chilicode-at"
+        data-domain="ffoberwart.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://ffoberwart.chilicode.at" target="_blank" rel="noopener">ffoberwart.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -340,7 +382,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="foto.fotobruckner.com"
+    <tr class="domain-row ok" id="domain-foto-fotobruckner-com"
+        data-domain="foto.fotobruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://foto.fotobruckner.com" target="_blank" rel="noopener">foto.fotobruckner.com</a></td>
       <td><code>web</code></td>
@@ -351,7 +394,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="fotobruckner.com"
+    <tr class="domain-row ok" id="domain-fotobruckner-com"
+        data-domain="fotobruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://fotobruckner.com" target="_blank" rel="noopener">fotobruckner.com</a></td>
       <td><code>web</code></td>
@@ -362,7 +406,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="getsgo.at"
+    <tr class="domain-row ok" id="domain-getsgo-at"
+        data-domain="getsgo.at"
         data-server="web" data-status="ok">
       <td><a href="https://getsgo.at" target="_blank" rel="noopener">getsgo.at</a></td>
       <td><code>web</code></td>
@@ -373,7 +418,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="historisch.ff-burgau-burgauberg.at"
+    <tr class="domain-row ok" id="domain-historisch-ff-burgau-burgauberg-at"
+        data-domain="historisch.ff-burgau-burgauberg.at"
         data-server="web" data-status="ok">
       <td><a href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
@@ -384,7 +430,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="historisch.umiz.at"
+    <tr class="domain-row ok" id="domain-historisch-umiz-at"
+        data-domain="historisch.umiz.at"
         data-server="web" data-status="ok">
       <td><a href="https://historisch.umiz.at" target="_blank" rel="noopener">historisch.umiz.at</a></td>
       <td><code>web</code></td>
@@ -395,7 +442,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="hochzeit.fotobruckner.com"
+    <tr class="domain-row ok" id="domain-hochzeit-fotobruckner-com"
+        data-domain="hochzeit.fotobruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://hochzeit.fotobruckner.com" target="_blank" rel="noopener">hochzeit.fotobruckner.com</a></td>
       <td><code>web</code></td>
@@ -406,7 +454,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="hochzeitandi.chilicode.at"
+    <tr class="domain-row ok" id="domain-hochzeitandi-chilicode-at"
+        data-domain="hochzeitandi.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://hochzeitandi.chilicode.at" target="_blank" rel="noopener">hochzeitandi.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -417,7 +466,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="hoerist-kollmann.at"
+    <tr class="domain-row ok" id="domain-hoerist-kollmann-at"
+        data-domain="hoerist-kollmann.at"
         data-server="web" data-status="ok">
       <td><a href="https://hoerist-kollmann.at" target="_blank" rel="noopener">hoerist-kollmann.at</a></td>
       <td><code>web</code></td>
@@ -428,7 +478,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="im-hundegluecksraum.at"
+    <tr class="domain-row ok" id="domain-im-hundegluecksraum-at"
+        data-domain="im-hundegluecksraum.at"
         data-server="web" data-status="ok">
       <td><a href="https://im-hundegluecksraum.at" target="_blank" rel="noopener">im-hundegluecksraum.at</a></td>
       <td><code>web</code></td>
@@ -439,7 +490,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="kopfensteiner.at"
+    <tr class="domain-row ok" id="domain-kopfensteiner-at"
+        data-domain="kopfensteiner.at"
         data-server="web" data-status="ok">
       <td><a href="https://kopfensteiner.at" target="_blank" rel="noopener">kopfensteiner.at</a></td>
       <td><code>web</code></td>
@@ -450,7 +502,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="kunstraum-rotenturm.at"
+    <tr class="domain-row ok" id="domain-kunstraum-rotenturm-at"
+        data-domain="kunstraum-rotenturm.at"
         data-server="web" data-status="ok">
       <td><a href="https://kunstraum-rotenturm.at" target="_blank" rel="noopener">kunstraum-rotenturm.at</a></td>
       <td><code>web</code></td>
@@ -461,7 +514,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="loranth.at"
+    <tr class="domain-row ok" id="domain-loranth-at"
+        data-domain="loranth.at"
         data-server="web" data-status="ok">
       <td><a href="https://loranth.at" target="_blank" rel="noopener">loranth.at</a></td>
       <td><code>web</code></td>
@@ -472,7 +526,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.albertwieder.com"
+    <tr class="domain-row ok" id="domain-mail-albertwieder-com"
+        data-domain="mail.albertwieder.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.albertwieder.com" target="_blank" rel="noopener">mail.albertwieder.com</a></td>
       <td><code>mail</code></td>
@@ -483,7 +538,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.andibruckner.com"
+    <tr class="domain-row ok" id="domain-mail-andibruckner-com"
+        data-domain="mail.andibruckner.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.andibruckner.com" target="_blank" rel="noopener">mail.andibruckner.com</a></td>
       <td><code>mail</code></td>
@@ -494,7 +550,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.archneubauer.at"
+    <tr class="domain-row ok" id="domain-mail-archneubauer-at"
+        data-domain="mail.archneubauer.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.archneubauer.at" target="_blank" rel="noopener">mail.archneubauer.at</a></td>
       <td><code>mail</code></td>
@@ -505,7 +562,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.astro-lernstern.at"
+    <tr class="domain-row ok" id="domain-mail-astro-lernstern-at"
+        data-domain="mail.astro-lernstern.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.astro-lernstern.at" target="_blank" rel="noopener">mail.astro-lernstern.at</a></td>
       <td><code>mail</code></td>
@@ -516,7 +574,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.bayer.cc"
+    <tr class="domain-row ok" id="domain-mail-bayer-cc"
+        data-domain="mail.bayer.cc"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.bayer.cc" target="_blank" rel="noopener">mail.bayer.cc</a></td>
       <td><code>mail</code></td>
@@ -527,7 +586,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.capro.cc"
+    <tr class="domain-row ok" id="domain-mail-capro-cc"
+        data-domain="mail.capro.cc"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.capro.cc" target="_blank" rel="noopener">mail.capro.cc</a></td>
       <td><code>mail</code></td>
@@ -538,7 +598,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.chilicode.at"
+    <tr class="domain-row ok" id="domain-mail-chilicode-at"
+        data-domain="mail.chilicode.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.chilicode.at" target="_blank" rel="noopener">mail.chilicode.at</a></td>
       <td><code>mail</code></td>
@@ -549,7 +610,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.chilicode.com"
+    <tr class="domain-row ok" id="domain-mail-chilicode-com"
+        data-domain="mail.chilicode.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.chilicode.com" target="_blank" rel="noopener">mail.chilicode.com</a></td>
       <td><code>mail</code></td>
@@ -560,7 +622,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.fairkleiden.at"
+    <tr class="domain-row ok" id="domain-mail-fairkleiden-at"
+        data-domain="mail.fairkleiden.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.fairkleiden.at" target="_blank" rel="noopener">mail.fairkleiden.at</a></td>
       <td><code>mail</code></td>
@@ -571,7 +634,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.fenzpr.com"
+    <tr class="domain-row ok" id="domain-mail-fenzpr-com"
+        data-domain="mail.fenzpr.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.fenzpr.com" target="_blank" rel="noopener">mail.fenzpr.com</a></td>
       <td><code>mail</code></td>
@@ -582,7 +646,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.ff-burgau-burgauberg.at"
+    <tr class="domain-row ok" id="domain-mail-ff-burgau-burgauberg-at"
+        data-domain="mail.ff-burgau-burgauberg.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.ff-burgau-burgauberg.at" target="_blank" rel="noopener">mail.ff-burgau-burgauberg.at</a></td>
       <td><code>mail</code></td>
@@ -593,7 +658,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.fotobruckner.com"
+    <tr class="domain-row ok" id="domain-mail-fotobruckner-com"
+        data-domain="mail.fotobruckner.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.fotobruckner.com" target="_blank" rel="noopener">mail.fotobruckner.com</a></td>
       <td><code>mail</code></td>
@@ -604,7 +670,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.getsgo.at"
+    <tr class="domain-row ok" id="domain-mail-getsgo-at"
+        data-domain="mail.getsgo.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.getsgo.at" target="_blank" rel="noopener">mail.getsgo.at</a></td>
       <td><code>mail</code></td>
@@ -615,7 +682,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.hoerist-kollmann.at"
+    <tr class="domain-row ok" id="domain-mail-hoerist-kollmann-at"
+        data-domain="mail.hoerist-kollmann.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.hoerist-kollmann.at" target="_blank" rel="noopener">mail.hoerist-kollmann.at</a></td>
       <td><code>mail</code></td>
@@ -626,7 +694,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.hubertbaumgartner.com"
+    <tr class="domain-row ok" id="domain-mail-hubertbaumgartner-com"
+        data-domain="mail.hubertbaumgartner.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.hubertbaumgartner.com" target="_blank" rel="noopener">mail.hubertbaumgartner.com</a></td>
       <td><code>mail</code></td>
@@ -637,7 +706,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.im-gluecksraum.at"
+    <tr class="domain-row ok" id="domain-mail-im-gluecksraum-at"
+        data-domain="mail.im-gluecksraum.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.im-gluecksraum.at" target="_blank" rel="noopener">mail.im-gluecksraum.at</a></td>
       <td><code>mail</code></td>
@@ -648,7 +718,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.im-hundegluecksraum.at"
+    <tr class="domain-row ok" id="domain-mail-im-hundegluecksraum-at"
+        data-domain="mail.im-hundegluecksraum.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.im-hundegluecksraum.at" target="_blank" rel="noopener">mail.im-hundegluecksraum.at</a></td>
       <td><code>mail</code></td>
@@ -659,7 +730,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.kunstraum-rotenturm.at"
+    <tr class="domain-row ok" id="domain-mail-kunstraum-rotenturm-at"
+        data-domain="mail.kunstraum-rotenturm.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.kunstraum-rotenturm.at" target="_blank" rel="noopener">mail.kunstraum-rotenturm.at</a></td>
       <td><code>mail</code></td>
@@ -670,7 +742,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.mobilboxmanager.at"
+    <tr class="domain-row ok" id="domain-mail-mobilboxmanager-at"
+        data-domain="mail.mobilboxmanager.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.mobilboxmanager.at" target="_blank" rel="noopener">mail.mobilboxmanager.at</a></td>
       <td><code>mail</code></td>
@@ -681,7 +754,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.proksch-maler.at"
+    <tr class="domain-row ok" id="domain-mail-proksch-maler-at"
+        data-domain="mail.proksch-maler.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.proksch-maler.at" target="_blank" rel="noopener">mail.proksch-maler.at</a></td>
       <td><code>mail</code></td>
@@ -692,7 +766,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.proksch-pinkafeld.at"
+    <tr class="domain-row ok" id="domain-mail-proksch-pinkafeld-at"
+        data-domain="mail.proksch-pinkafeld.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.proksch-pinkafeld.at" target="_blank" rel="noopener">mail.proksch-pinkafeld.at</a></td>
       <td><code>mail</code></td>
@@ -703,7 +778,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.raumplanungzt.at"
+    <tr class="domain-row ok" id="domain-mail-raumplanungzt-at"
+        data-domain="mail.raumplanungzt.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.raumplanungzt.at" target="_blank" rel="noopener">mail.raumplanungzt.at</a></td>
       <td><code>mail</code></td>
@@ -714,7 +790,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.riser-riser.at"
+    <tr class="domain-row ok" id="domain-mail-riser-riser-at"
+        data-domain="mail.riser-riser.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.riser-riser.at" target="_blank" rel="noopener">mail.riser-riser.at</a></td>
       <td><code>mail</code></td>
@@ -725,7 +802,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.schneckenchecker.at"
+    <tr class="domain-row ok" id="domain-mail-schneckenchecker-at"
+        data-domain="mail.schneckenchecker.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.schneckenchecker.at" target="_blank" rel="noopener">mail.schneckenchecker.at</a></td>
       <td><code>mail</code></td>
@@ -736,7 +814,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.schwartz-arch.at"
+    <tr class="domain-row ok" id="domain-mail-schwartz-arch-at"
+        data-domain="mail.schwartz-arch.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.schwartz-arch.at" target="_blank" rel="noopener">mail.schwartz-arch.at</a></td>
       <td><code>mail</code></td>
@@ -747,7 +826,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.shophelfer.at"
+    <tr class="domain-row ok" id="domain-mail-shophelfer-at"
+        data-domain="mail.shophelfer.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.shophelfer.at" target="_blank" rel="noopener">mail.shophelfer.at</a></td>
       <td><code>mail</code></td>
@@ -758,7 +838,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.strametz-juranek.at"
+    <tr class="domain-row ok" id="domain-mail-strametz-juranek-at"
+        data-domain="mail.strametz-juranek.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.strametz-juranek.at" target="_blank" rel="noopener">mail.strametz-juranek.at</a></td>
       <td><code>mail</code></td>
@@ -769,7 +850,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.suesseshandwerk.at"
+    <tr class="domain-row ok" id="domain-mail-suesseshandwerk-at"
+        data-domain="mail.suesseshandwerk.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.suesseshandwerk.at" target="_blank" rel="noopener">mail.suesseshandwerk.at</a></td>
       <td><code>mail</code></td>
@@ -780,7 +862,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.tader.co.at"
+    <tr class="domain-row ok" id="domain-mail-tader-co-at"
+        data-domain="mail.tader.co.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.tader.co.at" target="_blank" rel="noopener">mail.tader.co.at</a></td>
       <td><code>mail</code></td>
@@ -791,7 +874,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.timschoeberl.at"
+    <tr class="domain-row ok" id="domain-mail-timschoeberl-at"
+        data-domain="mail.timschoeberl.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.timschoeberl.at" target="_blank" rel="noopener">mail.timschoeberl.at</a></td>
       <td><code>mail</code></td>
@@ -802,7 +886,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.top-learning.at"
+    <tr class="domain-row ok" id="domain-mail-top-learning-at"
+        data-domain="mail.top-learning.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.top-learning.at" target="_blank" rel="noopener">mail.top-learning.at</a></td>
       <td><code>mail</code></td>
@@ -813,7 +898,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.vermessungehrlich.at"
+    <tr class="domain-row ok" id="domain-mail-vermessungehrlich-at"
+        data-domain="mail.vermessungehrlich.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.vermessungehrlich.at" target="_blank" rel="noopener">mail.vermessungehrlich.at</a></td>
       <td><code>mail</code></td>
@@ -824,7 +910,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.weinbau-schiefer.at"
+    <tr class="domain-row ok" id="domain-mail-weinbau-schiefer-at"
+        data-domain="mail.weinbau-schiefer.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.weinbau-schiefer.at" target="_blank" rel="noopener">mail.weinbau-schiefer.at</a></td>
       <td><code>mail</code></td>
@@ -835,7 +922,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.weingut-schuetzenhof.at"
+    <tr class="domain-row ok" id="domain-mail-weingut-schuetzenhof-at"
+        data-domain="mail.weingut-schuetzenhof.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.weingut-schuetzenhof.at" target="_blank" rel="noopener">mail.weingut-schuetzenhof.at</a></td>
       <td><code>mail</code></td>
@@ -846,7 +934,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row warn" data-domain="postfixadmin.chilicode.com"
+    <tr class="domain-row warn" id="domain-postfixadmin-chilicode-com"
+        data-domain="postfixadmin.chilicode.com"
         data-server="mail" data-status="warn">
       <td><a href="https://postfixadmin.chilicode.com" target="_blank" rel="noopener">postfixadmin.chilicode.com</a></td>
       <td><code>mail</code></td>
@@ -857,7 +946,8 @@
       <td><span class="status-pill warn">SSL expiring</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="proksch-maler.at"
+    <tr class="domain-row ok" id="domain-proksch-maler-at"
+        data-domain="proksch-maler.at"
         data-server="web" data-status="ok">
       <td><a href="https://proksch-maler.at" target="_blank" rel="noopener">proksch-maler.at</a></td>
       <td><code>web</code></td>
@@ -868,7 +958,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="proksch-pinkafeld.at"
+    <tr class="domain-row ok" id="domain-proksch-pinkafeld-at"
+        data-domain="proksch-pinkafeld.at"
         data-server="web" data-status="ok">
       <td><a href="https://proksch-pinkafeld.at" target="_blank" rel="noopener">proksch-pinkafeld.at</a></td>
       <td><code>web</code></td>
@@ -879,7 +970,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="raumplanungzt.at"
+    <tr class="domain-row ok" id="domain-raumplanungzt-at"
+        data-domain="raumplanungzt.at"
         data-server="web" data-status="ok">
       <td><a href="https://raumplanungzt.at" target="_blank" rel="noopener">raumplanungzt.at</a></td>
       <td><code>web</code></td>
@@ -890,7 +982,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="riser-riser.at"
+    <tr class="domain-row ok" id="domain-riser-riser-at"
+        data-domain="riser-riser.at"
         data-server="web" data-status="ok">
       <td><a href="https://riser-riser.at" target="_blank" rel="noopener">riser-riser.at</a></td>
       <td><code>web</code></td>
@@ -901,7 +994,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="schneckenchecker.at"
+    <tr class="domain-row ok" id="domain-schneckenchecker-at"
+        data-domain="schneckenchecker.at"
         data-server="web" data-status="ok">
       <td><a href="https://schneckenchecker.at" target="_blank" rel="noopener">schneckenchecker.at</a></td>
       <td><code>web</code></td>
@@ -912,7 +1006,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="schwartz-arch.at"
+    <tr class="domain-row ok" id="domain-schwartz-arch-at"
+        data-domain="schwartz-arch.at"
         data-server="web" data-status="ok">
       <td><a href="https://schwartz-arch.at" target="_blank" rel="noopener">schwartz-arch.at</a></td>
       <td><code>web</code></td>
@@ -923,7 +1018,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="shop-de.sonnenmulde.at"
+    <tr class="domain-row ok" id="domain-shop-de-sonnenmulde-at"
+        data-domain="shop-de.sonnenmulde.at"
         data-server="web" data-status="ok">
       <td><a href="https://shop-de.sonnenmulde.at" target="_blank" rel="noopener">shop-de.sonnenmulde.at</a></td>
       <td><code>web</code></td>
@@ -934,7 +1030,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="shop-en.sonnenmulde.at"
+    <tr class="domain-row ok" id="domain-shop-en-sonnenmulde-at"
+        data-domain="shop-en.sonnenmulde.at"
         data-server="web" data-status="ok">
       <td><a href="https://shop-en.sonnenmulde.at" target="_blank" rel="noopener">shop-en.sonnenmulde.at</a></td>
       <td><code>web</code></td>
@@ -945,7 +1042,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row down" data-domain="shophelfer.at"
+    <tr class="domain-row down" id="domain-shophelfer-at"
+        data-domain="shophelfer.at"
         data-server="web" data-status="down">
       <td><a href="https://shophelfer.at" target="_blank" rel="noopener">shophelfer.at</a></td>
       <td><code>web</code></td>
@@ -956,7 +1054,8 @@
       <td><span class="status-pill down">Down</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="stadtkapelle.chilicode.at"
+    <tr class="domain-row ok" id="domain-stadtkapelle-chilicode-at"
+        data-domain="stadtkapelle.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://stadtkapelle.chilicode.at" target="_blank" rel="noopener">stadtkapelle.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -967,7 +1066,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="strametz-juranek.at"
+    <tr class="domain-row ok" id="domain-strametz-juranek-at"
+        data-domain="strametz-juranek.at"
         data-server="web" data-status="ok">
       <td><a href="https://strametz-juranek.at" target="_blank" rel="noopener">strametz-juranek.at</a></td>
       <td><code>web</code></td>
@@ -978,7 +1078,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="suesseshandwerk.at"
+    <tr class="domain-row ok" id="domain-suesseshandwerk-at"
+        data-domain="suesseshandwerk.at"
         data-server="web" data-status="ok">
       <td><a href="https://suesseshandwerk.at" target="_blank" rel="noopener">suesseshandwerk.at</a></td>
       <td><code>web</code></td>
@@ -989,7 +1090,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="tader.co.at"
+    <tr class="domain-row ok" id="domain-tader-co-at"
+        data-domain="tader.co.at"
         data-server="web" data-status="ok">
       <td><a href="https://tader.co.at" target="_blank" rel="noopener">tader.co.at</a></td>
       <td><code>web</code></td>
@@ -1000,7 +1102,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="timschoeberl.at"
+    <tr class="domain-row ok" id="domain-timschoeberl-at"
+        data-domain="timschoeberl.at"
         data-server="web" data-status="ok">
       <td><a href="https://timschoeberl.at" target="_blank" rel="noopener">timschoeberl.at</a></td>
       <td><code>web</code></td>
@@ -1011,7 +1114,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="trustlens.tech"
+    <tr class="domain-row ok" id="domain-trustlens-tech"
+        data-domain="trustlens.tech"
         data-server="mail" data-status="ok">
       <td><a href="https://trustlens.tech" target="_blank" rel="noopener">trustlens.tech</a></td>
       <td><code>mail</code></td>
@@ -1022,7 +1126,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="umiz.at"
+    <tr class="domain-row ok" id="domain-umiz-at"
+        data-domain="umiz.at"
         data-server="web" data-status="ok">
       <td><a href="https://umiz.at" target="_blank" rel="noopener">umiz.at</a></td>
       <td><code>web</code></td>
@@ -1033,7 +1138,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="vermessungehrlich.at"
+    <tr class="domain-row ok" id="domain-vermessungehrlich-at"
+        data-domain="vermessungehrlich.at"
         data-server="web" data-status="ok">
       <td><a href="https://vermessungehrlich.at" target="_blank" rel="noopener">vermessungehrlich.at</a></td>
       <td><code>web</code></td>
@@ -1044,7 +1150,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="viaquintaas.com"
+    <tr class="domain-row ok" id="domain-viaquintaas-com"
+        data-domain="viaquintaas.com"
         data-server="web" data-status="ok">
       <td><a href="https://viaquintaas.com" target="_blank" rel="noopener">viaquintaas.com</a></td>
       <td><code>web</code></td>
@@ -1055,7 +1162,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="vs-unterwart.at"
+    <tr class="domain-row ok" id="domain-vs-unterwart-at"
+        data-domain="vs-unterwart.at"
         data-server="web" data-status="ok">
       <td><a href="https://vs-unterwart.at" target="_blank" rel="noopener">vs-unterwart.at</a></td>
       <td><code>web</code></td>
@@ -1066,7 +1174,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="web.chilicode.com"
+    <tr class="domain-row ok" id="domain-web-chilicode-com"
+        data-domain="web.chilicode.com"
         data-server="web" data-status="ok">
       <td><a href="https://web.chilicode.com" target="_blank" rel="noopener">web.chilicode.com</a></td>
       <td><code>web</code></td>
@@ -1077,7 +1186,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="weinbau-schiefer.at"
+    <tr class="domain-row ok" id="domain-weinbau-schiefer-at"
+        data-domain="weinbau-schiefer.at"
         data-server="web" data-status="ok">
       <td><a href="https://weinbau-schiefer.at" target="_blank" rel="noopener">weinbau-schiefer.at</a></td>
       <td><code>web</code></td>
@@ -1088,7 +1198,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="weltreise.chilicode.at"
+    <tr class="domain-row ok" id="domain-weltreise-chilicode-at"
+        data-domain="weltreise.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://weltreise.chilicode.at" target="_blank" rel="noopener">weltreise.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1099,7 +1210,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="wiegeilistdasdenn.at"
+    <tr class="domain-row ok" id="domain-wiegeilistdasdenn-at"
+        data-domain="wiegeilistdasdenn.at"
         data-server="web" data-status="ok">
       <td><a href="https://wiegeilistdasdenn.at" target="_blank" rel="noopener">wiegeilistdasdenn.at</a></td>
       <td><code>web</code></td>
@@ -1110,7 +1222,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="wvb-thermenland.at"
+    <tr class="domain-row ok" id="domain-wvb-thermenland-at"
+        data-domain="wvb-thermenland.at"
         data-server="web" data-status="ok">
       <td><a href="https://wvb-thermenland.at" target="_blank" rel="noopener">wvb-thermenland.at</a></td>
       <td><code>web</code></td>
@@ -1121,7 +1234,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="wvsb.at"
+    <tr class="domain-row ok" id="domain-wvsb-at"
+        data-domain="wvsb.at"
         data-server="web" data-status="ok">
       <td><a href="https://wvsb.at" target="_blank" rel="noopener">wvsb.at</a></td>
       <td><code>web</code></td>
@@ -1132,7 +1246,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="xn--hrist-kollmann-vpb.at"
+    <tr class="domain-row ok" id="domain-xn--hrist-kollmann-vpb-at"
+        data-domain="xn--hrist-kollmann-vpb.at"
         data-server="web" data-status="ok">
       <td><a href="https://xn--hrist-kollmann-vpb.at" target="_blank" rel="noopener">xn--hrist-kollmann-vpb.at</a></td>
       <td><code>web</code></td>
@@ -1163,7 +1278,8 @@
             </tr>
           </thead>
           <tbody>
-    <tr class="domain-row ok" data-domain="360demo.chilicode.com"
+    <tr class="domain-row ok" id="domain-360demo-chilicode-com"
+        data-domain="360demo.chilicode.com"
         data-server="web" data-status="ok">
       <td><a href="https://360demo.chilicode.com" target="_blank" rel="noopener">360demo.chilicode.com</a></td>
       <td><code>web</code></td>
@@ -1174,7 +1290,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="andibruckner.com"
+    <tr class="domain-row ok" id="domain-andibruckner-com"
+        data-domain="andibruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://andibruckner.com" target="_blank" rel="noopener">andibruckner.com</a></td>
       <td><code>web</code></td>
@@ -1185,7 +1302,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="astro-lernstern.at"
+    <tr class="domain-row ok" id="domain-astro-lernstern-at"
+        data-domain="astro-lernstern.at"
         data-server="web" data-status="ok">
       <td><a href="https://astro-lernstern.at" target="_blank" rel="noopener">astro-lernstern.at</a></td>
       <td><code>web</code></td>
@@ -1196,7 +1314,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="bayer.cc"
+    <tr class="domain-row ok" id="domain-bayer-cc"
+        data-domain="bayer.cc"
         data-server="web" data-status="ok">
       <td><a href="https://bayer.cc" target="_blank" rel="noopener">bayer.cc</a></td>
       <td><code>web</code></td>
@@ -1207,7 +1326,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="capro.cc"
+    <tr class="domain-row ok" id="domain-capro-cc"
+        data-domain="capro.cc"
         data-server="web" data-status="ok">
       <td><a href="https://capro.cc" target="_blank" rel="noopener">capro.cc</a></td>
       <td><code>web</code></td>
@@ -1218,7 +1338,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="chilicode.com"
+    <tr class="domain-row ok" id="domain-chilicode-com"
+        data-domain="chilicode.com"
         data-server="web" data-status="ok">
       <td><a href="https://chilicode.com" target="_blank" rel="noopener">chilicode.com</a></td>
       <td><code>web</code></td>
@@ -1229,7 +1350,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="der-bioimker.at"
+    <tr class="domain-row ok" id="domain-der-bioimker-at"
+        data-domain="der-bioimker.at"
         data-server="web" data-status="ok">
       <td><a href="https://der-bioimker.at" target="_blank" rel="noopener">der-bioimker.at</a></td>
       <td><code>web</code></td>
@@ -1240,7 +1362,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="derschimmelimhaus.at"
+    <tr class="domain-row ok" id="domain-derschimmelimhaus-at"
+        data-domain="derschimmelimhaus.at"
         data-server="web" data-status="ok">
       <td><a href="https://derschimmelimhaus.at" target="_blank" rel="noopener">derschimmelimhaus.at</a></td>
       <td><code>web</code></td>
@@ -1251,7 +1374,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="diefugenlosedusche.at"
+    <tr class="domain-row ok" id="domain-diefugenlosedusche-at"
+        data-domain="diefugenlosedusche.at"
         data-server="web" data-status="ok">
       <td><a href="https://diefugenlosedusche.at" target="_blank" rel="noopener">diefugenlosedusche.at</a></td>
       <td><code>web</code></td>
@@ -1262,7 +1386,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="drobits.chilicode.at"
+    <tr class="domain-row ok" id="domain-drobits-chilicode-at"
+        data-domain="drobits.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://drobits.chilicode.at" target="_blank" rel="noopener">drobits.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1273,7 +1398,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="eisenbergklassik.at"
+    <tr class="domain-row ok" id="domain-eisenbergklassik-at"
+        data-domain="eisenbergklassik.at"
         data-server="web" data-status="ok">
       <td><a href="https://eisenbergklassik.at" target="_blank" rel="noopener">eisenbergklassik.at</a></td>
       <td><code>web</code></td>
@@ -1284,7 +1410,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="fairkleiden.at"
+    <tr class="domain-row ok" id="domain-fairkleiden-at"
+        data-domain="fairkleiden.at"
         data-server="web" data-status="ok">
       <td><a href="https://fairkleiden.at" target="_blank" rel="noopener">fairkleiden.at</a></td>
       <td><code>web</code></td>
@@ -1295,7 +1422,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row down" data-domain="fairspeisen.com"
+    <tr class="domain-row down" id="domain-fairspeisen-com"
+        data-domain="fairspeisen.com"
         data-server="web" data-status="down">
       <td><a href="https://fairspeisen.com" target="_blank" rel="noopener">fairspeisen.com</a></td>
       <td><code>web</code></td>
@@ -1306,7 +1434,8 @@
       <td><span class="status-pill down">Down</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="fenzpr.com"
+    <tr class="domain-row ok" id="domain-fenzpr-com"
+        data-domain="fenzpr.com"
         data-server="web" data-status="ok">
       <td><a href="https://fenzpr.com" target="_blank" rel="noopener">fenzpr.com</a></td>
       <td><code>web</code></td>
@@ -1317,7 +1446,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="feuerwehr-oberwart.at"
+    <tr class="domain-row ok" id="domain-feuerwehr-oberwart-at"
+        data-domain="feuerwehr-oberwart.at"
         data-server="web" data-status="ok">
       <td><a href="https://feuerwehr-oberwart.at" target="_blank" rel="noopener">feuerwehr-oberwart.at</a></td>
       <td><code>web</code></td>
@@ -1328,7 +1458,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="ff-burgau-burgauberg.at"
+    <tr class="domain-row ok" id="domain-ff-burgau-burgauberg-at"
+        data-domain="ff-burgau-burgauberg.at"
         data-server="web" data-status="ok">
       <td><a href="https://ff-burgau-burgauberg.at" target="_blank" rel="noopener">ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
@@ -1339,7 +1470,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="ff-burgau-burgauberg.chilicode.at"
+    <tr class="domain-row ok" id="domain-ff-burgau-burgauberg-chilicode-at"
+        data-domain="ff-burgau-burgauberg.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://ff-burgau-burgauberg.chilicode.at" target="_blank" rel="noopener">ff-burgau-burgauberg.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1350,7 +1482,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="ffoberwart.chilicode.at"
+    <tr class="domain-row ok" id="domain-ffoberwart-chilicode-at"
+        data-domain="ffoberwart.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://ffoberwart.chilicode.at" target="_blank" rel="noopener">ffoberwart.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1361,7 +1494,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="foto.fotobruckner.com"
+    <tr class="domain-row ok" id="domain-foto-fotobruckner-com"
+        data-domain="foto.fotobruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://foto.fotobruckner.com" target="_blank" rel="noopener">foto.fotobruckner.com</a></td>
       <td><code>web</code></td>
@@ -1372,7 +1506,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="fotobruckner.com"
+    <tr class="domain-row ok" id="domain-fotobruckner-com"
+        data-domain="fotobruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://fotobruckner.com" target="_blank" rel="noopener">fotobruckner.com</a></td>
       <td><code>web</code></td>
@@ -1383,7 +1518,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="getsgo.at"
+    <tr class="domain-row ok" id="domain-getsgo-at"
+        data-domain="getsgo.at"
         data-server="web" data-status="ok">
       <td><a href="https://getsgo.at" target="_blank" rel="noopener">getsgo.at</a></td>
       <td><code>web</code></td>
@@ -1394,7 +1530,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="historisch.ff-burgau-burgauberg.at"
+    <tr class="domain-row ok" id="domain-historisch-ff-burgau-burgauberg-at"
+        data-domain="historisch.ff-burgau-burgauberg.at"
         data-server="web" data-status="ok">
       <td><a href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
@@ -1405,7 +1542,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="historisch.umiz.at"
+    <tr class="domain-row ok" id="domain-historisch-umiz-at"
+        data-domain="historisch.umiz.at"
         data-server="web" data-status="ok">
       <td><a href="https://historisch.umiz.at" target="_blank" rel="noopener">historisch.umiz.at</a></td>
       <td><code>web</code></td>
@@ -1416,7 +1554,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="hochzeit.fotobruckner.com"
+    <tr class="domain-row ok" id="domain-hochzeit-fotobruckner-com"
+        data-domain="hochzeit.fotobruckner.com"
         data-server="web" data-status="ok">
       <td><a href="https://hochzeit.fotobruckner.com" target="_blank" rel="noopener">hochzeit.fotobruckner.com</a></td>
       <td><code>web</code></td>
@@ -1427,7 +1566,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="hochzeitandi.chilicode.at"
+    <tr class="domain-row ok" id="domain-hochzeitandi-chilicode-at"
+        data-domain="hochzeitandi.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://hochzeitandi.chilicode.at" target="_blank" rel="noopener">hochzeitandi.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1438,7 +1578,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="hoerist-kollmann.at"
+    <tr class="domain-row ok" id="domain-hoerist-kollmann-at"
+        data-domain="hoerist-kollmann.at"
         data-server="web" data-status="ok">
       <td><a href="https://hoerist-kollmann.at" target="_blank" rel="noopener">hoerist-kollmann.at</a></td>
       <td><code>web</code></td>
@@ -1449,7 +1590,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="im-hundegluecksraum.at"
+    <tr class="domain-row ok" id="domain-im-hundegluecksraum-at"
+        data-domain="im-hundegluecksraum.at"
         data-server="web" data-status="ok">
       <td><a href="https://im-hundegluecksraum.at" target="_blank" rel="noopener">im-hundegluecksraum.at</a></td>
       <td><code>web</code></td>
@@ -1460,7 +1602,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="kopfensteiner.at"
+    <tr class="domain-row ok" id="domain-kopfensteiner-at"
+        data-domain="kopfensteiner.at"
         data-server="web" data-status="ok">
       <td><a href="https://kopfensteiner.at" target="_blank" rel="noopener">kopfensteiner.at</a></td>
       <td><code>web</code></td>
@@ -1471,7 +1614,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="kunstraum-rotenturm.at"
+    <tr class="domain-row ok" id="domain-kunstraum-rotenturm-at"
+        data-domain="kunstraum-rotenturm.at"
         data-server="web" data-status="ok">
       <td><a href="https://kunstraum-rotenturm.at" target="_blank" rel="noopener">kunstraum-rotenturm.at</a></td>
       <td><code>web</code></td>
@@ -1482,7 +1626,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="loranth.at"
+    <tr class="domain-row ok" id="domain-loranth-at"
+        data-domain="loranth.at"
         data-server="web" data-status="ok">
       <td><a href="https://loranth.at" target="_blank" rel="noopener">loranth.at</a></td>
       <td><code>web</code></td>
@@ -1493,7 +1638,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="proksch-maler.at"
+    <tr class="domain-row ok" id="domain-proksch-maler-at"
+        data-domain="proksch-maler.at"
         data-server="web" data-status="ok">
       <td><a href="https://proksch-maler.at" target="_blank" rel="noopener">proksch-maler.at</a></td>
       <td><code>web</code></td>
@@ -1504,7 +1650,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="proksch-pinkafeld.at"
+    <tr class="domain-row ok" id="domain-proksch-pinkafeld-at"
+        data-domain="proksch-pinkafeld.at"
         data-server="web" data-status="ok">
       <td><a href="https://proksch-pinkafeld.at" target="_blank" rel="noopener">proksch-pinkafeld.at</a></td>
       <td><code>web</code></td>
@@ -1515,7 +1662,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="raumplanungzt.at"
+    <tr class="domain-row ok" id="domain-raumplanungzt-at"
+        data-domain="raumplanungzt.at"
         data-server="web" data-status="ok">
       <td><a href="https://raumplanungzt.at" target="_blank" rel="noopener">raumplanungzt.at</a></td>
       <td><code>web</code></td>
@@ -1526,7 +1674,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="riser-riser.at"
+    <tr class="domain-row ok" id="domain-riser-riser-at"
+        data-domain="riser-riser.at"
         data-server="web" data-status="ok">
       <td><a href="https://riser-riser.at" target="_blank" rel="noopener">riser-riser.at</a></td>
       <td><code>web</code></td>
@@ -1537,7 +1686,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="schneckenchecker.at"
+    <tr class="domain-row ok" id="domain-schneckenchecker-at"
+        data-domain="schneckenchecker.at"
         data-server="web" data-status="ok">
       <td><a href="https://schneckenchecker.at" target="_blank" rel="noopener">schneckenchecker.at</a></td>
       <td><code>web</code></td>
@@ -1548,7 +1698,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="schwartz-arch.at"
+    <tr class="domain-row ok" id="domain-schwartz-arch-at"
+        data-domain="schwartz-arch.at"
         data-server="web" data-status="ok">
       <td><a href="https://schwartz-arch.at" target="_blank" rel="noopener">schwartz-arch.at</a></td>
       <td><code>web</code></td>
@@ -1559,7 +1710,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="shop-de.sonnenmulde.at"
+    <tr class="domain-row ok" id="domain-shop-de-sonnenmulde-at"
+        data-domain="shop-de.sonnenmulde.at"
         data-server="web" data-status="ok">
       <td><a href="https://shop-de.sonnenmulde.at" target="_blank" rel="noopener">shop-de.sonnenmulde.at</a></td>
       <td><code>web</code></td>
@@ -1570,7 +1722,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="shop-en.sonnenmulde.at"
+    <tr class="domain-row ok" id="domain-shop-en-sonnenmulde-at"
+        data-domain="shop-en.sonnenmulde.at"
         data-server="web" data-status="ok">
       <td><a href="https://shop-en.sonnenmulde.at" target="_blank" rel="noopener">shop-en.sonnenmulde.at</a></td>
       <td><code>web</code></td>
@@ -1581,7 +1734,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row down" data-domain="shophelfer.at"
+    <tr class="domain-row down" id="domain-shophelfer-at"
+        data-domain="shophelfer.at"
         data-server="web" data-status="down">
       <td><a href="https://shophelfer.at" target="_blank" rel="noopener">shophelfer.at</a></td>
       <td><code>web</code></td>
@@ -1592,7 +1746,8 @@
       <td><span class="status-pill down">Down</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="stadtkapelle.chilicode.at"
+    <tr class="domain-row ok" id="domain-stadtkapelle-chilicode-at"
+        data-domain="stadtkapelle.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://stadtkapelle.chilicode.at" target="_blank" rel="noopener">stadtkapelle.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1603,7 +1758,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="strametz-juranek.at"
+    <tr class="domain-row ok" id="domain-strametz-juranek-at"
+        data-domain="strametz-juranek.at"
         data-server="web" data-status="ok">
       <td><a href="https://strametz-juranek.at" target="_blank" rel="noopener">strametz-juranek.at</a></td>
       <td><code>web</code></td>
@@ -1614,7 +1770,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="suesseshandwerk.at"
+    <tr class="domain-row ok" id="domain-suesseshandwerk-at"
+        data-domain="suesseshandwerk.at"
         data-server="web" data-status="ok">
       <td><a href="https://suesseshandwerk.at" target="_blank" rel="noopener">suesseshandwerk.at</a></td>
       <td><code>web</code></td>
@@ -1625,7 +1782,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="tader.co.at"
+    <tr class="domain-row ok" id="domain-tader-co-at"
+        data-domain="tader.co.at"
         data-server="web" data-status="ok">
       <td><a href="https://tader.co.at" target="_blank" rel="noopener">tader.co.at</a></td>
       <td><code>web</code></td>
@@ -1636,7 +1794,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="timschoeberl.at"
+    <tr class="domain-row ok" id="domain-timschoeberl-at"
+        data-domain="timschoeberl.at"
         data-server="web" data-status="ok">
       <td><a href="https://timschoeberl.at" target="_blank" rel="noopener">timschoeberl.at</a></td>
       <td><code>web</code></td>
@@ -1647,7 +1806,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="umiz.at"
+    <tr class="domain-row ok" id="domain-umiz-at"
+        data-domain="umiz.at"
         data-server="web" data-status="ok">
       <td><a href="https://umiz.at" target="_blank" rel="noopener">umiz.at</a></td>
       <td><code>web</code></td>
@@ -1658,7 +1818,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="vermessungehrlich.at"
+    <tr class="domain-row ok" id="domain-vermessungehrlich-at"
+        data-domain="vermessungehrlich.at"
         data-server="web" data-status="ok">
       <td><a href="https://vermessungehrlich.at" target="_blank" rel="noopener">vermessungehrlich.at</a></td>
       <td><code>web</code></td>
@@ -1669,7 +1830,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="viaquintaas.com"
+    <tr class="domain-row ok" id="domain-viaquintaas-com"
+        data-domain="viaquintaas.com"
         data-server="web" data-status="ok">
       <td><a href="https://viaquintaas.com" target="_blank" rel="noopener">viaquintaas.com</a></td>
       <td><code>web</code></td>
@@ -1680,7 +1842,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="vs-unterwart.at"
+    <tr class="domain-row ok" id="domain-vs-unterwart-at"
+        data-domain="vs-unterwart.at"
         data-server="web" data-status="ok">
       <td><a href="https://vs-unterwart.at" target="_blank" rel="noopener">vs-unterwart.at</a></td>
       <td><code>web</code></td>
@@ -1691,7 +1854,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="web.chilicode.com"
+    <tr class="domain-row ok" id="domain-web-chilicode-com"
+        data-domain="web.chilicode.com"
         data-server="web" data-status="ok">
       <td><a href="https://web.chilicode.com" target="_blank" rel="noopener">web.chilicode.com</a></td>
       <td><code>web</code></td>
@@ -1702,7 +1866,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="weinbau-schiefer.at"
+    <tr class="domain-row ok" id="domain-weinbau-schiefer-at"
+        data-domain="weinbau-schiefer.at"
         data-server="web" data-status="ok">
       <td><a href="https://weinbau-schiefer.at" target="_blank" rel="noopener">weinbau-schiefer.at</a></td>
       <td><code>web</code></td>
@@ -1713,7 +1878,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="weltreise.chilicode.at"
+    <tr class="domain-row ok" id="domain-weltreise-chilicode-at"
+        data-domain="weltreise.chilicode.at"
         data-server="web" data-status="ok">
       <td><a href="https://weltreise.chilicode.at" target="_blank" rel="noopener">weltreise.chilicode.at</a></td>
       <td><code>web</code></td>
@@ -1724,7 +1890,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="wiegeilistdasdenn.at"
+    <tr class="domain-row ok" id="domain-wiegeilistdasdenn-at"
+        data-domain="wiegeilistdasdenn.at"
         data-server="web" data-status="ok">
       <td><a href="https://wiegeilistdasdenn.at" target="_blank" rel="noopener">wiegeilistdasdenn.at</a></td>
       <td><code>web</code></td>
@@ -1735,7 +1902,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="wvb-thermenland.at"
+    <tr class="domain-row ok" id="domain-wvb-thermenland-at"
+        data-domain="wvb-thermenland.at"
         data-server="web" data-status="ok">
       <td><a href="https://wvb-thermenland.at" target="_blank" rel="noopener">wvb-thermenland.at</a></td>
       <td><code>web</code></td>
@@ -1746,7 +1914,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="wvsb.at"
+    <tr class="domain-row ok" id="domain-wvsb-at"
+        data-domain="wvsb.at"
         data-server="web" data-status="ok">
       <td><a href="https://wvsb.at" target="_blank" rel="noopener">wvsb.at</a></td>
       <td><code>web</code></td>
@@ -1757,7 +1926,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="xn--hrist-kollmann-vpb.at"
+    <tr class="domain-row ok" id="domain-xn--hrist-kollmann-vpb-at"
+        data-domain="xn--hrist-kollmann-vpb.at"
         data-server="web" data-status="ok">
       <td><a href="https://xn--hrist-kollmann-vpb.at" target="_blank" rel="noopener">xn--hrist-kollmann-vpb.at</a></td>
       <td><code>web</code></td>
@@ -1785,7 +1955,8 @@
             </tr>
           </thead>
           <tbody>
-    <tr class="domain-row ok" data-domain="app.trustlens.tech"
+    <tr class="domain-row ok" id="domain-app-trustlens-tech"
+        data-domain="app.trustlens.tech"
         data-server="mail" data-status="ok">
       <td><a href="https://app.trustlens.tech" target="_blank" rel="noopener">app.trustlens.tech</a></td>
       <td><code>mail</code></td>
@@ -1796,7 +1967,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.albertwieder.com"
+    <tr class="domain-row ok" id="domain-mail-albertwieder-com"
+        data-domain="mail.albertwieder.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.albertwieder.com" target="_blank" rel="noopener">mail.albertwieder.com</a></td>
       <td><code>mail</code></td>
@@ -1807,7 +1979,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.andibruckner.com"
+    <tr class="domain-row ok" id="domain-mail-andibruckner-com"
+        data-domain="mail.andibruckner.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.andibruckner.com" target="_blank" rel="noopener">mail.andibruckner.com</a></td>
       <td><code>mail</code></td>
@@ -1818,7 +1991,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.archneubauer.at"
+    <tr class="domain-row ok" id="domain-mail-archneubauer-at"
+        data-domain="mail.archneubauer.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.archneubauer.at" target="_blank" rel="noopener">mail.archneubauer.at</a></td>
       <td><code>mail</code></td>
@@ -1829,7 +2003,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.astro-lernstern.at"
+    <tr class="domain-row ok" id="domain-mail-astro-lernstern-at"
+        data-domain="mail.astro-lernstern.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.astro-lernstern.at" target="_blank" rel="noopener">mail.astro-lernstern.at</a></td>
       <td><code>mail</code></td>
@@ -1840,7 +2015,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.bayer.cc"
+    <tr class="domain-row ok" id="domain-mail-bayer-cc"
+        data-domain="mail.bayer.cc"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.bayer.cc" target="_blank" rel="noopener">mail.bayer.cc</a></td>
       <td><code>mail</code></td>
@@ -1851,7 +2027,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.capro.cc"
+    <tr class="domain-row ok" id="domain-mail-capro-cc"
+        data-domain="mail.capro.cc"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.capro.cc" target="_blank" rel="noopener">mail.capro.cc</a></td>
       <td><code>mail</code></td>
@@ -1862,7 +2039,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.chilicode.at"
+    <tr class="domain-row ok" id="domain-mail-chilicode-at"
+        data-domain="mail.chilicode.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.chilicode.at" target="_blank" rel="noopener">mail.chilicode.at</a></td>
       <td><code>mail</code></td>
@@ -1873,7 +2051,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.chilicode.com"
+    <tr class="domain-row ok" id="domain-mail-chilicode-com"
+        data-domain="mail.chilicode.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.chilicode.com" target="_blank" rel="noopener">mail.chilicode.com</a></td>
       <td><code>mail</code></td>
@@ -1884,7 +2063,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.fairkleiden.at"
+    <tr class="domain-row ok" id="domain-mail-fairkleiden-at"
+        data-domain="mail.fairkleiden.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.fairkleiden.at" target="_blank" rel="noopener">mail.fairkleiden.at</a></td>
       <td><code>mail</code></td>
@@ -1895,7 +2075,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.fenzpr.com"
+    <tr class="domain-row ok" id="domain-mail-fenzpr-com"
+        data-domain="mail.fenzpr.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.fenzpr.com" target="_blank" rel="noopener">mail.fenzpr.com</a></td>
       <td><code>mail</code></td>
@@ -1906,7 +2087,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.ff-burgau-burgauberg.at"
+    <tr class="domain-row ok" id="domain-mail-ff-burgau-burgauberg-at"
+        data-domain="mail.ff-burgau-burgauberg.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.ff-burgau-burgauberg.at" target="_blank" rel="noopener">mail.ff-burgau-burgauberg.at</a></td>
       <td><code>mail</code></td>
@@ -1917,7 +2099,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.fotobruckner.com"
+    <tr class="domain-row ok" id="domain-mail-fotobruckner-com"
+        data-domain="mail.fotobruckner.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.fotobruckner.com" target="_blank" rel="noopener">mail.fotobruckner.com</a></td>
       <td><code>mail</code></td>
@@ -1928,7 +2111,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.getsgo.at"
+    <tr class="domain-row ok" id="domain-mail-getsgo-at"
+        data-domain="mail.getsgo.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.getsgo.at" target="_blank" rel="noopener">mail.getsgo.at</a></td>
       <td><code>mail</code></td>
@@ -1939,7 +2123,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.hoerist-kollmann.at"
+    <tr class="domain-row ok" id="domain-mail-hoerist-kollmann-at"
+        data-domain="mail.hoerist-kollmann.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.hoerist-kollmann.at" target="_blank" rel="noopener">mail.hoerist-kollmann.at</a></td>
       <td><code>mail</code></td>
@@ -1950,7 +2135,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.hubertbaumgartner.com"
+    <tr class="domain-row ok" id="domain-mail-hubertbaumgartner-com"
+        data-domain="mail.hubertbaumgartner.com"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.hubertbaumgartner.com" target="_blank" rel="noopener">mail.hubertbaumgartner.com</a></td>
       <td><code>mail</code></td>
@@ -1961,7 +2147,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.im-gluecksraum.at"
+    <tr class="domain-row ok" id="domain-mail-im-gluecksraum-at"
+        data-domain="mail.im-gluecksraum.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.im-gluecksraum.at" target="_blank" rel="noopener">mail.im-gluecksraum.at</a></td>
       <td><code>mail</code></td>
@@ -1972,7 +2159,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.im-hundegluecksraum.at"
+    <tr class="domain-row ok" id="domain-mail-im-hundegluecksraum-at"
+        data-domain="mail.im-hundegluecksraum.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.im-hundegluecksraum.at" target="_blank" rel="noopener">mail.im-hundegluecksraum.at</a></td>
       <td><code>mail</code></td>
@@ -1983,7 +2171,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.kunstraum-rotenturm.at"
+    <tr class="domain-row ok" id="domain-mail-kunstraum-rotenturm-at"
+        data-domain="mail.kunstraum-rotenturm.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.kunstraum-rotenturm.at" target="_blank" rel="noopener">mail.kunstraum-rotenturm.at</a></td>
       <td><code>mail</code></td>
@@ -1994,7 +2183,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.mobilboxmanager.at"
+    <tr class="domain-row ok" id="domain-mail-mobilboxmanager-at"
+        data-domain="mail.mobilboxmanager.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.mobilboxmanager.at" target="_blank" rel="noopener">mail.mobilboxmanager.at</a></td>
       <td><code>mail</code></td>
@@ -2005,7 +2195,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.proksch-maler.at"
+    <tr class="domain-row ok" id="domain-mail-proksch-maler-at"
+        data-domain="mail.proksch-maler.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.proksch-maler.at" target="_blank" rel="noopener">mail.proksch-maler.at</a></td>
       <td><code>mail</code></td>
@@ -2016,7 +2207,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.proksch-pinkafeld.at"
+    <tr class="domain-row ok" id="domain-mail-proksch-pinkafeld-at"
+        data-domain="mail.proksch-pinkafeld.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.proksch-pinkafeld.at" target="_blank" rel="noopener">mail.proksch-pinkafeld.at</a></td>
       <td><code>mail</code></td>
@@ -2027,7 +2219,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.raumplanungzt.at"
+    <tr class="domain-row ok" id="domain-mail-raumplanungzt-at"
+        data-domain="mail.raumplanungzt.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.raumplanungzt.at" target="_blank" rel="noopener">mail.raumplanungzt.at</a></td>
       <td><code>mail</code></td>
@@ -2038,7 +2231,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.riser-riser.at"
+    <tr class="domain-row ok" id="domain-mail-riser-riser-at"
+        data-domain="mail.riser-riser.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.riser-riser.at" target="_blank" rel="noopener">mail.riser-riser.at</a></td>
       <td><code>mail</code></td>
@@ -2049,7 +2243,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.schneckenchecker.at"
+    <tr class="domain-row ok" id="domain-mail-schneckenchecker-at"
+        data-domain="mail.schneckenchecker.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.schneckenchecker.at" target="_blank" rel="noopener">mail.schneckenchecker.at</a></td>
       <td><code>mail</code></td>
@@ -2060,7 +2255,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.schwartz-arch.at"
+    <tr class="domain-row ok" id="domain-mail-schwartz-arch-at"
+        data-domain="mail.schwartz-arch.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.schwartz-arch.at" target="_blank" rel="noopener">mail.schwartz-arch.at</a></td>
       <td><code>mail</code></td>
@@ -2071,7 +2267,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.shophelfer.at"
+    <tr class="domain-row ok" id="domain-mail-shophelfer-at"
+        data-domain="mail.shophelfer.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.shophelfer.at" target="_blank" rel="noopener">mail.shophelfer.at</a></td>
       <td><code>mail</code></td>
@@ -2082,7 +2279,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.strametz-juranek.at"
+    <tr class="domain-row ok" id="domain-mail-strametz-juranek-at"
+        data-domain="mail.strametz-juranek.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.strametz-juranek.at" target="_blank" rel="noopener">mail.strametz-juranek.at</a></td>
       <td><code>mail</code></td>
@@ -2093,7 +2291,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.suesseshandwerk.at"
+    <tr class="domain-row ok" id="domain-mail-suesseshandwerk-at"
+        data-domain="mail.suesseshandwerk.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.suesseshandwerk.at" target="_blank" rel="noopener">mail.suesseshandwerk.at</a></td>
       <td><code>mail</code></td>
@@ -2104,7 +2303,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.tader.co.at"
+    <tr class="domain-row ok" id="domain-mail-tader-co-at"
+        data-domain="mail.tader.co.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.tader.co.at" target="_blank" rel="noopener">mail.tader.co.at</a></td>
       <td><code>mail</code></td>
@@ -2115,7 +2315,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.timschoeberl.at"
+    <tr class="domain-row ok" id="domain-mail-timschoeberl-at"
+        data-domain="mail.timschoeberl.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.timschoeberl.at" target="_blank" rel="noopener">mail.timschoeberl.at</a></td>
       <td><code>mail</code></td>
@@ -2126,7 +2327,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.top-learning.at"
+    <tr class="domain-row ok" id="domain-mail-top-learning-at"
+        data-domain="mail.top-learning.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.top-learning.at" target="_blank" rel="noopener">mail.top-learning.at</a></td>
       <td><code>mail</code></td>
@@ -2137,7 +2339,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.vermessungehrlich.at"
+    <tr class="domain-row ok" id="domain-mail-vermessungehrlich-at"
+        data-domain="mail.vermessungehrlich.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.vermessungehrlich.at" target="_blank" rel="noopener">mail.vermessungehrlich.at</a></td>
       <td><code>mail</code></td>
@@ -2148,7 +2351,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.weinbau-schiefer.at"
+    <tr class="domain-row ok" id="domain-mail-weinbau-schiefer-at"
+        data-domain="mail.weinbau-schiefer.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.weinbau-schiefer.at" target="_blank" rel="noopener">mail.weinbau-schiefer.at</a></td>
       <td><code>mail</code></td>
@@ -2159,7 +2363,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="mail.weingut-schuetzenhof.at"
+    <tr class="domain-row ok" id="domain-mail-weingut-schuetzenhof-at"
+        data-domain="mail.weingut-schuetzenhof.at"
         data-server="mail" data-status="ok">
       <td><a href="https://mail.weingut-schuetzenhof.at" target="_blank" rel="noopener">mail.weingut-schuetzenhof.at</a></td>
       <td><code>mail</code></td>
@@ -2170,7 +2375,8 @@
       <td><span class="status-pill ok">OK</span></td>
     </tr>
     
-    <tr class="domain-row warn" data-domain="postfixadmin.chilicode.com"
+    <tr class="domain-row warn" id="domain-postfixadmin-chilicode-com"
+        data-domain="postfixadmin.chilicode.com"
         data-server="mail" data-status="warn">
       <td><a href="https://postfixadmin.chilicode.com" target="_blank" rel="noopener">postfixadmin.chilicode.com</a></td>
       <td><code>mail</code></td>
@@ -2181,7 +2387,8 @@
       <td><span class="status-pill warn">SSL expiring</span></td>
     </tr>
     
-    <tr class="domain-row ok" data-domain="trustlens.tech"
+    <tr class="domain-row ok" id="domain-trustlens-tech"
+        data-domain="trustlens.tech"
         data-server="mail" data-status="ok">
       <td><a href="https://trustlens.tech" target="_blank" rel="noopener">trustlens.tech</a></td>
       <td><code>mail</code></td>
@@ -2269,6 +2476,65 @@
       el.addEventListener('input', applyFilters);
       el.addEventListener('change', applyFilters);
     });
+
+    function showOverview() {
+      tabs.forEach(t => t.classList.remove('active'));
+      views.forEach(v => v.classList.remove('active'));
+      document.querySelector('.tab[data-view="overview"]').classList.add('active');
+      document.getElementById('view-overview').classList.add('active');
+    }
+
+    function scrollToDomain(domain) {
+      showOverview();
+      search.value = domain;
+      filterServer.value = 'all';
+      filterStatus.value = 'all';
+      applyFilters();
+
+      const row = document.getElementById('domain-' + domain.replace(/\./g, '-'));
+      if (!row) return;
+
+      row.classList.remove('hidden');
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      row.classList.remove('highlight');
+      void row.offsetWidth;
+      row.classList.add('highlight');
+      setTimeout(() => row.classList.remove('highlight'), 2200);
+    }
+
+    document.querySelectorAll('.alert-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const domain = btn.dataset.domain;
+        const details = document.getElementById('alert-detail-domain-' + domain.replace(/\./g, '-'));
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+        document.querySelectorAll('.alert-link[aria-expanded="true"]').forEach(other => {
+          if (other !== btn) {
+            other.setAttribute('aria-expanded', 'false');
+            const otherDetails = document.getElementById(other.getAttribute('aria-controls'));
+            if (otherDetails) otherDetails.hidden = true;
+          }
+        });
+
+        if (details) {
+          details.hidden = expanded;
+          btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        }
+        scrollToDomain(domain);
+      });
+    });
+
+    document.querySelectorAll('.jump-to-domain').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        scrollToDomain(btn.dataset.domain);
+      });
+    });
+
+    if (location.hash.startsWith('#domain-')) {
+      const domain = location.hash.slice(8).replace(/-/g, '.');
+      setTimeout(() => scrollToDomain(domain), 100);
+    }
   </script>
 </body>
 </html>

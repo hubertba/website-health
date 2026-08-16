@@ -93,17 +93,30 @@ def fmt_trend(domain: str, trends: dict | None) -> str:
     return " · ".join(parts)
 
 
-def render_alerts(alerts: dict | None) -> str:
+def domain_id(domain: str) -> str:
+    return "domain-" + domain.lower().replace(".", "-")
+
+
+def render_alerts(alerts: dict | None, domain_checks: dict | None, trends: dict | None) -> str:
     if not alerts or not alerts.get("alerts"):
         return ""
     items = []
     for alert in alerts["alerts"][:15]:
         sev = alert.get("severity", "info")
+        domain = alert["domain"]
+        did = domain_id(domain)
+        check = (domain_checks or {}).get(domain)
+        details = _alert_details(alert, check, trends, domain)
         items.append(
             f'<li class="alert-item {html.escape(sev)}">'
-            f'<strong>{html.escape(alert["domain"])}</strong> '
+            f'<button type="button" class="alert-link" data-domain="{html.escape(domain.lower())}" '
+            f'aria-expanded="false" aria-controls="alert-detail-{html.escape(did)}">'
+            f'<strong>{html.escape(domain)}</strong> '
             f'({html.escape(alert.get("server_id", ""))}) — '
-            f'{html.escape(alert.get("message", ""))}</li>'
+            f'{html.escape(alert.get("message", ""))}'
+            f'</button>'
+            f'<div class="alert-details" id="alert-detail-{html.escape(did)}" hidden>{details}</div>'
+            f'</li>'
         )
     more = ""
     if alerts["alert_count"] > 15:
@@ -111,10 +124,31 @@ def render_alerts(alerts: dict | None) -> str:
     return f"""
     <section class="alerts-panel">
       <h2>Alerts ({alerts['alert_count']})</h2>
+      <p class="muted alert-hint">Tap an alert for details or to jump to the domain in the table.</p>
       <ul class="alert-list">{"".join(items)}</ul>
       {more}
     </section>
     """
+
+
+def _alert_details(alert: dict, check: dict | None, trends: dict | None, domain: str) -> str:
+    lines = [
+        f'<div><strong>Kind:</strong> {html.escape(alert.get("kind", ""))}</div>',
+        f'<div><strong>Severity:</strong> {html.escape(alert.get("severity", ""))}</div>',
+    ]
+    if prev := alert.get("previous_status"):
+        lines.append(f'<div><strong>Previous:</strong> <code>{html.escape(prev)}</code></div>')
+    if check:
+        lines.append(f'<div><strong>DNS:</strong> {fmt_dns(check)}</div>')
+        lines.append(f'<div><strong>HTTP:</strong> {fmt_http(check)}</div>')
+        lines.append(f'<div><strong>SSL:</strong> {fmt_ssl(check)}</div>')
+    if trends and (info := trends.get("domains", {}).get(domain)):
+        lines.append(f'<div><strong>Trend:</strong> {fmt_trend(domain, trends)}</div>')
+    lines.append(
+        f'<button type="button" class="jump-to-domain" data-domain="{html.escape(domain.lower())}">'
+        f'Scroll to table row</button>'
+    )
+    return "".join(lines)
 
 
 def render_history_summary(trends: dict | None) -> str:
@@ -175,7 +209,8 @@ def domain_row(domain: str, server_id: str, check: dict | None, trends: dict | N
         scheme = "http"
 
     return f"""
-    <tr class="domain-row {st_cls}" data-domain="{html.escape(domain.lower())}"
+    <tr class="domain-row {st_cls}" id="{domain_id(domain)}"
+        data-domain="{html.escape(domain.lower())}"
         data-server="{html.escape(server_id)}" data-status="{st_cls}">
       <td><a href="{scheme}://{html.escape(domain)}" target="_blank" rel="noopener">{html.escape(domain)}</a></td>
       <td><code>{html.escape(server_id)}</code></td>
@@ -248,7 +283,7 @@ def generate_html(inventory: dict, checks: dict | None, trends: dict | None, ale
         domain_row(d, sid, domain_checks.get(d), trends) for d, sid in all_domains
     )
     server_sections = "".join(server_block(s, checks, trends) for s in servers)
-    alerts_html = render_alerts(alerts)
+    alerts_html = render_alerts(alerts, domain_checks, trends)
     history_html = render_history_summary(trends)
 
     server_options = "".join(
@@ -334,9 +369,31 @@ def generate_html(inventory: dict, checks: dict | None, trends: dict | None, ale
     .tag.warn {{ background: var(--warn-bg); color: var(--warn); }}
     .alerts-panel {{ background: var(--down-bg); border: 1px solid var(--down); border-radius: var(--radius);
       padding: .85rem 1rem; margin-bottom: 1rem; }}
-    .alerts-panel h2 {{ font-size: 1rem; margin-bottom: .5rem; color: var(--down); }}
+    .alerts-panel h2 {{ font-size: 1rem; margin-bottom: .35rem; color: var(--down); }}
+    .alert-hint {{ margin-bottom: .5rem; font-size: .78rem; }}
     .alert-list {{ list-style: none; font-size: .85rem; }}
-    .alert-item {{ padding: .25rem 0; }}
+    .alert-item {{ padding: .35rem 0; border-bottom: 1px solid var(--border); }}
+    .alert-item:last-child {{ border-bottom: none; }}
+    .alert-link {{
+      display: block; width: 100%; text-align: left; background: none; border: none;
+      padding: .35rem 0; font: inherit; color: inherit; cursor: pointer;
+    }}
+    .alert-link:hover {{ text-decoration: underline; }}
+    .alert-link[aria-expanded="true"] {{ font-weight: 600; }}
+    .alert-details {{
+      margin: .35rem 0 .5rem .75rem; padding: .55rem .65rem; font-size: .78rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    }}
+    .alert-details div {{ margin-bottom: .25rem; }}
+    .jump-to-domain {{
+      margin-top: .45rem; padding: .35rem .6rem; font-size: .75rem; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--accent); cursor: pointer;
+    }}
+    .domain-row.highlight td {{ animation: highlight-row 2s ease; }}
+    @keyframes highlight-row {{
+      0%, 100% {{ background: transparent; }}
+      30% {{ background: var(--warn-bg); }}
+    }}
     .alert-item.critical {{ color: var(--down); }}
     .alert-item.warning {{ color: var(--warn); }}
     .alert-item.info {{ color: var(--muted); }}
@@ -465,6 +522,74 @@ def generate_html(inventory: dict, checks: dict | None, trends: dict | None, ale
       el.addEventListener('input', applyFilters);
       el.addEventListener('change', applyFilters);
     }});
+
+    function showOverview() {{
+      tabs.forEach(t => t.classList.remove('active'));
+      views.forEach(v => v.classList.remove('active'));
+      document.querySelector('.tab[data-view="overview"]').classList.add('active');
+      document.getElementById('view-overview').classList.add('active');
+    }}
+
+    function scrollToDomain(domain) {{
+      showOverview();
+      search.value = domain;
+      filterServer.value = 'all';
+      filterStatus.value = 'all';
+      applyFilters();
+
+      const row = document.getElementById('domain-' + domain.replace(/\\./g, '-'));
+      if (!row) return;
+
+      row.classList.remove('hidden');
+      row.scrollIntoView({{ behavior: 'smooth', block: 'center' }});
+      row.classList.remove('highlight');
+      void row.offsetWidth;
+      row.classList.add('highlight');
+      setTimeout(() => row.classList.remove('highlight'), 2200);
+    }}
+
+    document.querySelectorAll('.alert-link').forEach(btn => {{
+      btn.addEventListener('click', () => {{
+        const domain = btn.dataset.domain;
+        const details = document.getElementById('alert-detail-domain-' + domain.replace(/\\./g, '-'));
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+        document.querySelectorAll('.alert-link[aria-expanded="true"]').forEach(other => {{
+          if (other !== btn) {{
+            other.setAttribute('aria-expanded', 'false');
+            const otherDetails = document.getElementById(other.getAttribute('aria-controls'));
+            if (otherDetails) otherDetails.hidden = true;
+          }}
+        }});
+
+        if (details) {{
+          details.hidden = expanded;
+          btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        }}
+        scrollToDomain(domain);
+      }});
+    }});
+
+    document.querySelectorAll('.jump-to-domain').forEach(btn => {{
+      btn.addEventListener('click', (e) => {{
+        e.stopPropagation();
+        scrollToDomain(btn.dataset.domain);
+      }});
+    }});
+
+    if (location.hash.startsWith('#domain-')) {{
+      const row = document.querySelector(location.hash);
+      if (row) {{
+        setTimeout(() => {{
+          showOverview();
+          search.value = row.dataset.domain || '';
+          applyFilters();
+          row.scrollIntoView({{ behavior: 'smooth', block: 'center' }});
+          row.classList.add('highlight');
+          setTimeout(() => row.classList.remove('highlight'), 2200);
+        }}, 100);
+      }}
+    }}
   </script>
 </body>
 </html>
