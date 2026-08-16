@@ -7,6 +7,8 @@ on:
       - websites.yaml
       - scripts/**
       - history/**
+      - requirements-docs/**
+      - requirements-docs.txt
       - .github/workflows/pages.yml
   workflow_dispatch:
   schedule:
@@ -35,7 +37,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt -r requirements-docs.txt
 
       - name: Check domains (DNS, HTTP, SSL)
         run: python3 scripts/check_domains.py
@@ -46,8 +48,11 @@ jobs:
       - name: Append history snapshot and compute trends
         run: python3 scripts/history.py --append
 
-      - name: Generate report
+      - name: Generate health report
         run: python3 scripts/generate_report.py
+
+      - name: Build requirements docs (Sphinx + Mermaid)
+        run: python3 -m sphinx -b html requirements-docs docs/docs
 
       - name: Commit history updates
         run: |

@@ -5,13 +5,22 @@ Requirements for the domain health monitoring tool, documented with `sphinx-need
 
 .. toctree::
    :maxdepth: 2
-   :caption: Requirements
+   :caption: Documentation
 
+   diagrams
    needs/core
    needs/history
    needs/alerts
 
+Live reports
+------------
+
+* `Domain health report <../>`_
+* `Requirements documentation <./>`_ (this site)
+
 Build locally::
 
    pip install -r requirements-docs.txt
-   python3 -m sphinx -b html requirements-docs requirements-docs/_build
+   python3 -m sphinx -b html requirements-docs docs/docs
+
+The HTML output is written to ``docs/docs/`` so GitHub Pages serves it at ``/docs/``.

@@ -3,3 +3,4 @@ alerts.json
 __pycache__/
 *.pyc
 requirements-docs/_build/
+docs/docs/

@@ -16,9 +16,11 @@ python3 scripts/generate_report.py  # → docs/index.html
 
 ```bash
 pip install -r requirements-docs.txt
-python3 -m sphinx -b html requirements-docs requirements-docs/_build
-open requirements-docs/_build/index.html
+python3 -m sphinx -b html requirements-docs docs/docs
+open docs/docs/index.html
 ```
+
+Published at **https://hubertba.github.io/website-health/docs/** (Mermaid diagrams in `diagrams.rst`).
 
 See `requirements-docs/needs/` for **REQ_***, **SPEC_***, **IMPL_***, and **TEST_*** items covering core checks, history/trends, and alerts.
 

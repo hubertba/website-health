@@ -409,7 +409,8 @@ def generate_html(inventory: dict, checks: dict | None, trends: dict | None, ale
     </section>
   </div>
 
-  <footer>Generated from <code>websites.yaml</code> + <code>check_results.json</code> + <code>history/trends.json</code></footer>
+  <footer>Generated from <code>websites.yaml</code> + <code>check_results.json</code> + <code>history/trends.json</code>
+    · <a href="docs/">Requirements docs</a></footer>
 
   <script>
     const tabs = document.querySelectorAll('.tab');

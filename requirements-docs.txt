@@ -1,3 +1,4 @@
 # Sphinx requirements for building needs documentation
 sphinx>=7.0
 sphinx-needs>=4.0
+sphinxcontrib-mermaid>=0.9
