@@ -9,8 +9,14 @@ on:
       - history/**
       - requirements-docs/**
       - requirements-docs.txt
+      - requirements.txt
       - .github/workflows/pages.yml
   workflow_dispatch:
+    inputs:
+      domain_filter:
+        description: "Comma-separated domains to check (empty = all)"
+        required: false
+        default: ""
   schedule:
     - cron: "0 6 * * *"
 
@@ -39,11 +45,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt -r requirements-docs.txt
 
-      - name: Check domains (DNS, HTTP, SSL)
-        run: python3 scripts/check_domains.py
+      - name: Check domains (DNS, HTTP, SSL, mail DNS)
+        run: |
+          FILTER="${{ github.event.inputs.domain_filter }}"
+          if [ -n "$FILTER" ]; then
+            python3 scripts/check_domains.py --filter "$FILTER"
+          else
+            python3 scripts/check_domains.py
+          fi
 
       - name: Process alerts (compare with previous snapshot)
-        run: python3 scripts/alerts.py --summary
+        run: python3 scripts/alerts.py --summary --create-issues
 
       - name: Append history snapshot and compute trends
         run: python3 scripts/history.py --append

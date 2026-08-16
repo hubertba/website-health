@@ -14,8 +14,10 @@ System overview
      subgraph checks["Health checks"]
        CHECK["check_domains.py"]
        DNS["DNS resolve"]
-       HTTP["HTTP status"]
+       HTTP["HTTP status + latency"]
        SSL["SSL certificate"]
+       SEC["Security headers"]
+       MAIL["Mail DNS (MX/SPF/DMARC)"]
      end
 
      subgraph pipeline["CI pipeline"]
@@ -31,6 +33,7 @@ System overview
        TRENDS["history/trends.json"]
        ALERTJSON["alerts.json"]
        HTML["docs/index.html"]
+       DATA["docs/data/export.*"]
        DOCS["docs/docs/"]
      end
 
@@ -40,7 +43,7 @@ System overview
      end
 
      YAML --> CHECK
-     CHECK --> DNS & HTTP & SSL
+     CHECK --> DNS & HTTP & SSL & SEC & MAIL
      CHECK --> JSON
      JSON --> ALERTS
      SNAP --> ALERTS
@@ -51,6 +54,7 @@ System overview
      TRENDS --> REPORT
      ALERTJSON --> REPORT
      REPORT --> HTML
+     REPORT --> DATA
      YAML --> SPHINX
      SPHINX --> DOCS
      HTML --> ROOT
@@ -71,7 +75,7 @@ CI/CD pipeline
      participant Git as main branch
      participant Pages as GitHub Pages
 
-     GHA->>Check: Run DNS / HTTP / SSL checks
+     GHA->>Check: Run DNS / HTTP / SSL / mail checks
      Check-->>GHA: check_results.json
      GHA->>Alert: Compare vs last snapshot
      Alert-->>GHA: alerts.json + step summary
@@ -143,11 +147,12 @@ Used by alerts to detect regressions and recoveries.
 
    flowchart LR
      ok["ok (0)"] --> http_only["http_only (1)"]
-     http_only --> warn["warn (2)"]
+     http_only --> warn["warn / slow (2)"]
      warn --> ssl_warn["ssl_warn (3)"]
-     ssl_warn --> dns_fail["dns_fail (4)"]
-     dns_fail --> ssl_fail["ssl_fail (5)"]
-     ssl_fail --> down["down (6)"]
+     ssl_warn --> ssl_crit["ssl_crit (4)"]
+     ssl_crit --> dns_fail["dns_fail (5)"]
+     dns_fail --> ssl_fail["ssl_fail (6)"]
+     ssl_fail --> down["down (7)"]
 
      style ok fill:#d1fae5
      style down fill:#fecaca
@@ -164,7 +169,7 @@ Server layout
        W2["Docker / static / redirect"]
      end
 
-     subgraph mail["mail.chilicode.com"]
+     subgraph mail["mail.chilicode.com · 37.16.72.84"]
        M1["37 domains"]
        M2["Webmail mail.*"]
        M3["Apps: trustlens, postfixadmin"]

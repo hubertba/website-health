@@ -73,8 +73,8 @@ Alerts
    :status: implemented
    :tags: alerts
 
-   ``down``, ``dns_fail``, ``ssl_fail`` → critical; ``ssl_warn``, ``warn`` →
-   warning; ``recovered`` → info.
+   ``down``, ``dns_fail``, ``ssl_fail``, ``ssl_crit`` → critical; ``ssl_warn``,
+   ``warn``, ``slow`` → warning; ``recovered`` → info.
 
 .. spec:: Status severity ordering
    :id: SPEC_ALERT_002
@@ -82,8 +82,8 @@ Alerts
    :status: implemented
    :tags: alerts
 
-   Statuses are ordered: ``ok`` < ``http_only`` < ``warn`` < ``ssl_warn`` <
-   ``dns_fail`` < ``ssl_fail`` < ``down``.
+   Statuses are ordered: ``ok`` < ``http_only`` < ``warn`` / ``slow`` <
+   ``ssl_warn`` < ``ssl_crit`` < ``dns_fail`` < ``ssl_fail`` < ``down``.
 
 .. impl:: alerts.py
    :id: IMPL_ALERT_001

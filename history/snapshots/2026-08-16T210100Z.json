@@ -1,0 +1,753 @@
+{
+  "checked_at": "2026-08-16 21:01 UTC",
+  "summary": {
+    "total": 92,
+    "ok": 0,
+    "down": 2,
+    "dns_fail": 0,
+    "ssl_fail": 0,
+    "ssl_warn": 1,
+    "ssl_crit": 0,
+    "slow": 0,
+    "http_only": 0,
+    "warn": 89
+  },
+  "domains": {
+    "360demo.chilicode.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 519,
+      "ssl_days_left": 82
+    },
+    "andibruckner.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 756,
+      "ssl_days_left": 75
+    },
+    "der-bioimker.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 714,
+      "ssl_days_left": 69
+    },
+    "bayer.cc": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 806,
+      "ssl_days_left": 75
+    },
+    "chilicode.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 884,
+      "ssl_days_left": 82
+    },
+    "capro.cc": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 832,
+      "ssl_days_left": 72
+    },
+    "derschimmelimhaus.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1094,
+      "ssl_days_left": 82
+    },
+    "astro-lernstern.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1509,
+      "ssl_days_left": 31
+    },
+    "fenzpr.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 761,
+      "ssl_days_left": 31
+    },
+    "drobits.chilicode.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 789,
+      "ssl_days_left": 32
+    },
+    "diefugenlosedusche.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 977,
+      "ssl_days_left": 82
+    },
+    "ff-burgau-burgauberg.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 827,
+      "ssl_days_left": 31
+    },
+    "fairkleiden.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 793,
+      "ssl_days_left": 82
+    },
+    "eisenbergklassik.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1105,
+      "ssl_days_left": 82
+    },
+    "ff-burgau-burgauberg.chilicode.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 557,
+      "ssl_days_left": 80
+    },
+    "fairspeisen.com": {
+      "status": "down",
+      "server_id": "web",
+      "http_status": 503,
+      "http_scheme": "https",
+      "response_ms": 520,
+      "ssl_days_left": 75
+    },
+    "historisch.ff-burgau-burgauberg.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 607,
+      "ssl_days_left": 31
+    },
+    "feuerwehr-oberwart.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1636,
+      "ssl_days_left": 82
+    },
+    "getsgo.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 748,
+      "ssl_days_left": 33
+    },
+    "foto.fotobruckner.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1316,
+      "ssl_days_left": 41
+    },
+    "historisch.umiz.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 505,
+      "ssl_days_left": 79
+    },
+    "fotobruckner.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1461,
+      "ssl_days_left": 75
+    },
+    "hochzeit.fotobruckner.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 849,
+      "ssl_days_left": 88
+    },
+    "ffoberwart.chilicode.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1893,
+      "ssl_days_left": 86
+    },
+    "hochzeitandi.chilicode.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1010,
+      "ssl_days_left": 67
+    },
+    "im-hundegluecksraum.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 860,
+      "ssl_days_left": 77
+    },
+    "proksch-maler.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 505,
+      "ssl_days_left": 54
+    },
+    "kunstraum-rotenturm.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 869,
+      "ssl_days_left": 82
+    },
+    "kopfensteiner.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 826,
+      "ssl_days_left": 31
+    },
+    "hoerist-kollmann.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1518,
+      "ssl_days_left": 52
+    },
+    "proksch-pinkafeld.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 492,
+      "ssl_days_left": 54
+    },
+    "loranth.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 861,
+      "ssl_days_left": 82
+    },
+    "raumplanungzt.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 596,
+      "ssl_days_left": 75
+    },
+    "riser-riser.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 858,
+      "ssl_days_left": 82
+    },
+    "schwartz-arch.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 506,
+      "ssl_days_left": 82
+    },
+    "schneckenchecker.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 648,
+      "ssl_days_left": 82
+    },
+    "shop-en.sonnenmulde.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 915,
+      "ssl_days_left": 35
+    },
+    "shop-de.sonnenmulde.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1063,
+      "ssl_days_left": 78
+    },
+    "stadtkapelle.chilicode.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 815,
+      "ssl_days_left": 48
+    },
+    "strametz-juranek.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 769,
+      "ssl_days_left": 68
+    },
+    "shophelfer.at": {
+      "status": "down",
+      "server_id": "web",
+      "http_status": 503,
+      "http_scheme": "https",
+      "response_ms": 486,
+      "ssl_days_left": 82
+    },
+    "suesseshandwerk.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 801,
+      "ssl_days_left": 82
+    },
+    "tader.co.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 667,
+      "ssl_days_left": 31
+    },
+    "timschoeberl.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 731,
+      "ssl_days_left": 77
+    },
+    "vermessungehrlich.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 559,
+      "ssl_days_left": 75
+    },
+    "umiz.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 669,
+      "ssl_days_left": 31
+    },
+    "viaquintaas.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 604,
+      "ssl_days_left": 68
+    },
+    "vs-unterwart.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 686,
+      "ssl_days_left": 63
+    },
+    "weltreise.chilicode.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 515,
+      "ssl_days_left": 88
+    },
+    "weinbau-schiefer.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1042,
+      "ssl_days_left": 82
+    },
+    "xn--hrist-kollmann-vpb.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 616,
+      "ssl_days_left": 52
+    },
+    "wvb-thermenland.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 790,
+      "ssl_days_left": 82
+    },
+    "web.chilicode.com": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1374,
+      "ssl_days_left": 63
+    },
+    "wiegeilistdasdenn.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1273,
+      "ssl_days_left": 82
+    },
+    "app.trustlens.tech": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 508,
+      "ssl_days_left": 41
+    },
+    "wvsb.at": {
+      "status": "warn",
+      "server_id": "web",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 853,
+      "ssl_days_left": 80
+    },
+    "trustlens.tech": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 489,
+      "ssl_days_left": 41
+    },
+    "mail.andibruckner.com": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 497,
+      "ssl_days_left": 38
+    },
+    "mail.astro-lernstern.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 512,
+      "ssl_days_left": 38
+    },
+    "mail.albertwieder.com": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 523,
+      "ssl_days_left": 38
+    },
+    "mail.archneubauer.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 525,
+      "ssl_days_left": 38
+    },
+    "postfixadmin.chilicode.com": {
+      "status": "ssl_warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 1020,
+      "ssl_days_left": 29
+    },
+    "mail.bayer.cc": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 503,
+      "ssl_days_left": 38
+    },
+    "mail.capro.cc": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 519,
+      "ssl_days_left": 38
+    },
+    "mail.chilicode.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 523,
+      "ssl_days_left": 38
+    },
+    "mail.chilicode.com": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 513,
+      "ssl_days_left": 38
+    },
+    "mail.fenzpr.com": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 500,
+      "ssl_days_left": 38
+    },
+    "mail.ff-burgau-burgauberg.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 501,
+      "ssl_days_left": 38
+    },
+    "mail.fairkleiden.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 495,
+      "ssl_days_left": 38
+    },
+    "mail.fotobruckner.com": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 519,
+      "ssl_days_left": 38
+    },
+    "mail.getsgo.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 513,
+      "ssl_days_left": 38
+    },
+    "mail.hoerist-kollmann.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 488,
+      "ssl_days_left": 38
+    },
+    "mail.hubertbaumgartner.com": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 499,
+      "ssl_days_left": 38
+    },
+    "mail.im-gluecksraum.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 510,
+      "ssl_days_left": 38
+    },
+    "mail.im-hundegluecksraum.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 496,
+      "ssl_days_left": 38
+    },
+    "mail.kunstraum-rotenturm.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 511,
+      "ssl_days_left": 38
+    },
+    "mail.proksch-maler.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 499,
+      "ssl_days_left": 38
+    },
+    "mail.proksch-pinkafeld.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 496,
+      "ssl_days_left": 38
+    },
+    "mail.raumplanungzt.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 521,
+      "ssl_days_left": 38
+    },
+    "mail.mobilboxmanager.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 501,
+      "ssl_days_left": 38
+    },
+    "mail.riser-riser.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 516,
+      "ssl_days_left": 38
+    },
+    "mail.schneckenchecker.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 497,
+      "ssl_days_left": 38
+    },
+    "mail.schwartz-arch.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 510,
+      "ssl_days_left": 38
+    },
+    "mail.shophelfer.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 510,
+      "ssl_days_left": 38
+    },
+    "mail.strametz-juranek.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 497,
+      "ssl_days_left": 38
+    },
+    "mail.suesseshandwerk.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 523,
+      "ssl_days_left": 38
+    },
+    "mail.tader.co.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 499,
+      "ssl_days_left": 38
+    },
+    "mail.timschoeberl.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 508,
+      "ssl_days_left": 38
+    },
+    "mail.vermessungehrlich.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 597,
+      "ssl_days_left": 61
+    },
+    "mail.weinbau-schiefer.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 517,
+      "ssl_days_left": 38
+    },
+    "mail.top-learning.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 516,
+      "ssl_days_left": 38
+    },
+    "mail.weingut-schuetzenhof.at": {
+      "status": "warn",
+      "server_id": "mail",
+      "http_status": 200,
+      "http_scheme": "https",
+      "response_ms": 2323,
+      "ssl_days_left": 37
+    }
+  }
+}

@@ -9,8 +9,11 @@ Requirements for the domain health monitoring tool, documented with `sphinx-need
 
    diagrams
    needs/core
+   needs/security
+   needs/mail
    needs/history
    needs/alerts
+   needs/export
 
 Live reports
 ------------

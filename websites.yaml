@@ -3,6 +3,14 @@
 
 meta:
   checked_at: '2026-08-15'
+  maintenance:
+    - fairspeisen.com
+    - shophelfer.at
+  runbooks:
+    fairspeisen.com:
+      - cd /var/www/pages/fairspeisen && docker compose up -d
+    shophelfer.at:
+      - cd /var/www/pages/shophelfer && docker compose up -d
   proxied:
     cloudflare:
       - astro-lernstern.at
@@ -72,6 +80,7 @@ servers:
   - xn--hrist-kollmann-vpb.at
 - id: mail
   hostname: mail.chilicode.com
+  ip: 37.16.72.84
   domains:
   - app.trustlens.tech
   - trustlens.tech

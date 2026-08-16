@@ -10,13 +10,21 @@ STATUS_SEVERITY: dict[str, int] = {
     OK_STATUS: 0,
     HTTP_ONLY_STATUS: 1,
     "warn": 2,
+    "slow": 2,
     "ssl_warn": 3,
-    "dns_fail": 4,
-    "ssl_fail": 5,
-    "down": 6,
+    "ssl_crit": 4,
+    "dns_fail": 5,
+    "ssl_fail": 6,
+    "down": 7,
 }
 
-ALERT_STATUSES = frozenset({"down", "dns_fail", "ssl_fail", "ssl_warn", "warn"})
+ALERT_STATUSES = frozenset(
+    {"down", "dns_fail", "ssl_fail", "ssl_warn", "ssl_crit", "warn", "slow"}
+)
+
+SLOW_RESPONSE_MS = 3000
+SSL_WARN_DAYS = 30
+SSL_CRIT_DAYS = 7
 
 
 def is_healthy(status: str) -> bool:
@@ -65,6 +73,22 @@ def build_proxy_map(data: dict) -> dict[str, str]:
     return proxied
 
 
+def build_maintenance_set(data: dict) -> set[str]:
+    """Domains in maintenance mode — alerts suppressed, shown with badge."""
+    return set(data.get("meta", {}).get("maintenance") or [])
+
+
+def build_runbook_map(data: dict) -> dict[str, list[str]]:
+    """Domain -> list of remediation commands from meta.runbooks."""
+    runbooks: dict[str, list[str]] = {}
+    for domain, steps in (data.get("meta", {}).get("runbooks") or {}).items():
+        if isinstance(steps, str):
+            runbooks[domain] = [steps]
+        elif steps:
+            runbooks[domain] = list(steps)
+    return runbooks
+
+
 def slim_snapshot(results: dict) -> dict:
     """Compact snapshot for history storage."""
     domains = {}
@@ -75,6 +99,7 @@ def slim_snapshot(results: dict) -> dict:
             "server_id": entry.get("server_id"),
             "http_status": http.get("status"),
             "http_scheme": http.get("scheme"),
+            "response_ms": http.get("response_ms"),
             "ssl_days_left": entry.get("ssl", {}).get("days_left"),
         }
     return {

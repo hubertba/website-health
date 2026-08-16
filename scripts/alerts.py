@@ -10,12 +10,15 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import yaml
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from health_common import ALERT_STATUSES, is_recovery, is_regression
+from health_common import ALERT_STATUSES, build_maintenance_set, build_runbook_map, is_recovery, is_regression
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CHECKS = ROOT / "check_results.json"
 DEFAULT_OUTPUT = ROOT / "alerts.json"
+DEFAULT_INVENTORY = ROOT / "websites.yaml"
 HISTORY_DIR = ROOT / "history"
 SNAPSHOTS_DIR = HISTORY_DIR / "snapshots"
 
@@ -34,8 +37,9 @@ def latest_snapshot_before_current() -> dict | None:
     return load_json(snapshots[-1])
 
 
-def build_alerts(current: dict, previous: dict | None) -> dict:
+def build_alerts(current: dict, previous: dict | None, maintenance: set[str], runbooks: dict) -> dict:
     alerts: list[dict] = []
+    suppressed = 0
     curr_domains = current.get("domains", {})
     prev_domains = (previous or {}).get("domains", {})
 
@@ -44,9 +48,13 @@ def build_alerts(current: dict, previous: dict | None) -> dict:
         prev_entry = prev_domains.get(domain, {})
         prev_status = prev_entry.get("status")
 
+        if domain in maintenance:
+            suppressed += 1
+            continue
+
         if prev_status is None:
             if status in ALERT_STATUSES:
-                alerts.append(_alert("new_issue", domain, entry, status, "First check — already in bad state"))
+                alerts.append(_alert("new_issue", domain, entry, status, "First check — already in bad state", runbooks))
             continue
 
         if is_regression(prev_status, status):
@@ -58,6 +66,7 @@ def build_alerts(current: dict, previous: dict | None) -> dict:
                     status,
                     f"Status worsened: {prev_status} → {status}",
                     previous=prev_status,
+                    runbooks=runbooks,
                 )
             )
         elif is_recovery(prev_status, status):
@@ -70,6 +79,7 @@ def build_alerts(current: dict, previous: dict | None) -> dict:
                     f"Recovered: {prev_status} → {status}",
                     previous=prev_status,
                     severity="info",
+                    runbooks=runbooks,
                 )
             )
         elif status in ALERT_STATUSES and status == prev_status:
@@ -82,6 +92,7 @@ def build_alerts(current: dict, previous: dict | None) -> dict:
                     f"Still {status}",
                     previous=prev_status,
                     severity=_severity(status),
+                    runbooks=runbooks,
                 )
             )
 
@@ -92,14 +103,15 @@ def build_alerts(current: dict, previous: dict | None) -> dict:
         "has_previous": previous is not None,
         "alert_count": len(alerts),
         "critical_count": sum(1 for a in alerts if a["severity"] == "critical"),
+        "suppressed_count": suppressed,
         "alerts": alerts,
     }
 
 
 def _severity(status: str) -> str:
-    if status in {"down", "dns_fail", "ssl_fail"}:
+    if status in {"down", "dns_fail", "ssl_fail", "ssl_crit"}:
         return "critical"
-    if status in {"ssl_warn", "warn"}:
+    if status in {"ssl_warn", "warn", "slow"}:
         return "warning"
     return "info"
 
@@ -114,9 +126,11 @@ def _alert(
     entry: dict,
     status: str,
     message: str,
+    runbooks: dict,
     previous: str | None = None,
     severity: str | None = None,
 ) -> dict:
+    http = entry.get("http", {})
     return {
         "kind": kind,
         "domain": domain,
@@ -125,8 +139,10 @@ def _alert(
         "previous_status": previous,
         "severity": severity or _severity(status),
         "message": message,
-        "http_status": entry.get("http", {}).get("status"),
+        "http_status": http.get("status"),
+        "response_ms": http.get("response_ms"),
         "ssl_days_left": entry.get("ssl", {}).get("days_left"),
+        "runbook": runbooks.get(domain),
     }
 
 
@@ -142,6 +158,9 @@ def write_github_step_summary(alerts_data: dict) -> None:
         f"({alerts_data['critical_count']} critical) · checked {alerts_data.get('checked_at', '—')}",
         "",
     ]
+    if alerts_data.get("suppressed_count"):
+        lines.append(f"_{alerts_data['suppressed_count']} domain(s) in maintenance — alerts suppressed._")
+        lines.append("")
 
     if not alerts_data["alerts"]:
         lines.append("No alerts — all domains stable or improved.")
@@ -169,14 +188,19 @@ def create_github_issues(alerts_data: dict) -> None:
             continue
 
         title = f"[{alert['status']}] {alert['domain']}"
-        body = (
-            f"**Automated alert** from website-health checker\n\n"
-            f"- Domain: `{alert['domain']}`\n"
-            f"- Server: `{alert['server_id']}`\n"
-            f"- Message: {alert['message']}\n"
-            f"- HTTP status: {alert.get('http_status')}\n"
-            f"- Checked at: {alerts_data.get('checked_at')}\n"
-        )
+        body_parts = [
+            "**Automated alert** from website-health checker\n",
+            f"- Domain: `{alert['domain']}`",
+            f"- Server: `{alert['server_id']}`",
+            f"- Message: {alert['message']}",
+            f"- HTTP status: {alert.get('http_status')}",
+            f"- Response time: {alert.get('response_ms')} ms",
+            f"- Checked at: {alerts_data.get('checked_at')}",
+        ]
+        if runbook := alert.get("runbook"):
+            body_parts.append("\n**Runbook:**")
+            body_parts.extend(f"```\n{step}\n```" for step in runbook)
+        body = "\n".join(body_parts) + "\n"
         label = "website-health"
 
         existing = subprocess.run(
@@ -203,6 +227,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-c", "--checks", type=Path, default=DEFAULT_CHECKS)
     parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("-i", "--inventory", type=Path, default=DEFAULT_INVENTORY)
     parser.add_argument("--create-issues", action="store_true", help="Open GitHub issues for new critical alerts")
     parser.add_argument("--summary", action="store_true", help="Write GitHub Actions step summary")
     args = parser.parse_args()
@@ -211,14 +236,21 @@ def main() -> int:
         print(f"Checks not found: {args.checks}", file=sys.stderr)
         return 1
 
+    maintenance: set[str] = set()
+    runbooks: dict = {}
+    if args.inventory.is_file():
+        inventory = yaml.safe_load(args.inventory.read_text(encoding="utf-8"))
+        maintenance = build_maintenance_set(inventory)
+        runbooks = build_runbook_map(inventory)
+
     current = load_json(args.checks)
     previous = latest_snapshot_before_current()
-    alerts_data = build_alerts(current, previous)
+    alerts_data = build_alerts(current, previous, maintenance, runbooks)
 
     args.output.write_text(json.dumps(alerts_data, indent=2), encoding="utf-8")
     print(
         f"Wrote {args.output} — {alerts_data['alert_count']} alerts "
-        f"({alerts_data['critical_count']} critical)"
+        f"({alerts_data['critical_count']} critical, {alerts_data['suppressed_count']} suppressed)"
     )
 
     if args.summary:

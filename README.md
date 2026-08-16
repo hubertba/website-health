@@ -1,15 +1,21 @@
 # Website Health Report
 
-Domain overview with DNS, HTTP, and SSL checks. Inventory is a minimal YAML; checks run at build time.
+Domain overview with DNS, HTTP, SSL, security headers, mail DNS, latency, and redirect checks. Inventory is a minimal YAML; checks run at build time.
 
 ## Quick start
 
 ```bash
 pip install -r requirements.txt
-python3 scripts/check_domains.py      # DNS + HTTP + SSL → check_results.json
+python3 scripts/check_domains.py      # DNS + HTTP + SSL + mail DNS → check_results.json
 python3 scripts/alerts.py --summary # Compare with previous snapshot → alerts.json
 python3 scripts/history.py --append   # Save snapshot + trends
-python3 scripts/generate_report.py  # → docs/index.html
+python3 scripts/generate_report.py  # → docs/index.html + docs/data/export.{json,csv}
+```
+
+Check a single domain:
+
+```bash
+python3 scripts/check_domains.py --filter example.com
 ```
 
 ## Requirements documentation (sphinx-needs)
@@ -22,17 +28,21 @@ open docs/docs/index.html
 
 Published at **https://hubertba.github.io/website-health/docs/** (Mermaid diagrams in `diagrams.rst`).
 
-See `requirements-docs/needs/` for **REQ_***, **SPEC_***, **IMPL_***, and **TEST_*** items covering core checks, history/trends, and alerts.
+See `requirements-docs/needs/` for requirements covering core checks, security/performance, mail DNS, history/trends, alerts, and exports.
 
-## `websites.yaml` (server + domains only)
+## `websites.yaml` (server + domains + meta)
 
 ```yaml
 meta:
   checked_at: "2026-08-15"
+  maintenance:               # suppress alerts, show maint badge
+    - shophelfer.at
+  runbooks:                  # shown in alerts and GitHub issues
+    shophelfer.at:
+      - cd /var/www/pages/shophelfer && docker compose up -d
   proxied:
-    cloudflare:            # DNS points at CDN, not origin IP — expected
+    cloudflare:              # DNS points at CDN, not origin IP — expected
       - astro-lernstern.at
-      - fenzpr.com
 
 servers:
   - id: web
@@ -40,10 +50,10 @@ servers:
     ip: 37.16.72.137          # optional — flag DNS mismatches
     domains:
       - example.com
-      - another.example.com
 
   - id: mail
     hostname: mail.chilicode.com
+    ip: 37.16.72.84
     domains:
       - mail.example.com
 ```
@@ -54,18 +64,25 @@ servers:
 |-------|----------------|
 | **DNS** | Resolves A/AAAA records; compares to server `ip` when set |
 | **HTTP** | Tries HTTPS first, falls back to HTTP; reports status code |
-| **SSL** | Certificate expiry, days remaining, issuer; warns &lt; 30 days |
+| **Latency** | Response time in ms; flags &gt; 3000 ms as `slow` |
+| **Redirects** | Follows up to 10 hops; warns if &gt; 5 |
+| **Security** | HSTS, X-Frame-Options, X-Content-Type-Options on HTTPS |
+| **SSL** | Certificate expiry; `ssl_crit` &lt; 7 days, `ssl_warn` &lt; 30 days |
+| **Mail DNS** | MX, SPF, DMARC for domains on the mail server |
 
 ## Report views
 
-1. **All domains** — flat overview across servers (filter by name, server, status)
+1. **All domains** — flat overview (filter by name, server, status)
 2. **By server** — drill into `web.chilicode.com` or `mail.chilicode.com`
+3. **History** — uptime trends from snapshots
+
+Also: **theme toggle**, **JSON/CSV export** links, **clickable alerts** with runbooks.
 
 ## GitHub Pages
 
-Workflow runs checks daily (06:00 UTC) and on push, then deploys `docs/` to `gh-pages`.
+Workflow runs checks daily (06:00 UTC), on push, and via **workflow_dispatch** (optional domain filter). Critical regressions open GitHub issues (`website-health` label).
 
-Enable Pages: **Settings → Pages → branch `gh-pages` / root**.
+Live report: **https://hubertba.github.io/website-health/**
 
 ## Inventory
 

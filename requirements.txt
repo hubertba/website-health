@@ -1,1 +1,2 @@
 PyYAML>=6.0
+dnspython>=2.0

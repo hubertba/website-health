@@ -47,7 +47,7 @@ Core monitoring
    :tags: core, ssl
 
    Certificates expiring in less than 30 days shall be assigned status
-   ``ssl_warn``.
+   ``ssl_warn``. See also :need:`REQ_SEC_004` for the 7-day critical threshold.
 
 .. req:: Mobile-friendly HTML report
    :id: REQ_CORE_007

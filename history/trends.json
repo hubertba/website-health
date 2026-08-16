@@ -1,742 +1,742 @@
 {
-  "computed_at": "2026-08-16 20:52 UTC",
-  "snapshot_count": 5,
+  "computed_at": "2026-08-16 21:01 UTC",
+  "snapshot_count": 6,
   "domains": {
     "360demo.chilicode.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "andibruckner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "app.trustlens.tech": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "astro-lernstern.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "bayer.cc": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "capro.cc": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "chilicode.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "der-bioimker.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "derschimmelimhaus.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "diefugenlosedusche.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "drobits.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "eisenbergklassik.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "fairkleiden.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "fairspeisen.com": {
       "current_status": "down",
       "previous_status": "down",
       "uptime_pct": 0.0,
-      "checks": 5,
+      "checks": 6,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
     "fenzpr.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "feuerwehr-oberwart.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "ff-burgau-burgauberg.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "ff-burgau-burgauberg.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "ffoberwart.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "foto.fotobruckner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "fotobruckner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "getsgo.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "historisch.ff-burgau-burgauberg.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "historisch.umiz.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "hochzeit.fotobruckner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "hochzeitandi.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "hoerist-kollmann.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "im-hundegluecksraum.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "kopfensteiner.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "kunstraum-rotenturm.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "loranth.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.albertwieder.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.andibruckner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.archneubauer.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.astro-lernstern.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.bayer.cc": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.capro.cc": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.chilicode.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.fairkleiden.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.fenzpr.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.ff-burgau-burgauberg.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.fotobruckner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.getsgo.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.hoerist-kollmann.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.hubertbaumgartner.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.im-gluecksraum.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.im-hundegluecksraum.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.kunstraum-rotenturm.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.mobilboxmanager.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.proksch-maler.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.proksch-pinkafeld.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.raumplanungzt.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.riser-riser.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.schneckenchecker.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.schwartz-arch.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.shophelfer.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.strametz-juranek.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.suesseshandwerk.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.tader.co.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.timschoeberl.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.top-learning.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.vermessungehrlich.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.weinbau-schiefer.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "mail.weingut-schuetzenhof.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "postfixadmin.chilicode.com": {
       "current_status": "ssl_warn",
       "previous_status": "ssl_warn",
       "uptime_pct": 0.0,
-      "checks": 5,
+      "checks": 6,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
     "proksch-maler.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "proksch-pinkafeld.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "raumplanungzt.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "riser-riser.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "schneckenchecker.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "schwartz-arch.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "shop-de.sonnenmulde.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "shop-en.sonnenmulde.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "shophelfer.at": {
       "current_status": "down",
       "previous_status": "down",
       "uptime_pct": 0.0,
-      "checks": 5,
+      "checks": 6,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
     "stadtkapelle.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "strametz-juranek.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "suesseshandwerk.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "tader.co.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "timschoeberl.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "trustlens.tech": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "umiz.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "vermessungehrlich.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "viaquintaas.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "vs-unterwart.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "web.chilicode.com": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "weinbau-schiefer.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "weltreise.chilicode.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "wiegeilistdasdenn.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "wvb-thermenland.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "wvsb.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     },
     "xn--hrist-kollmann-vpb.at": {
-      "current_status": "ok",
+      "current_status": "warn",
       "previous_status": "ok",
-      "uptime_pct": 100.0,
-      "checks": 5,
-      "status_since": "2026-08-16 19:59 UTC",
-      "changed": false
+      "uptime_pct": 83.3,
+      "checks": 6,
+      "status_since": "2026-08-16 21:01 UTC",
+      "changed": true
     }
   }
 }
