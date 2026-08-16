@@ -30,7 +30,7 @@ from health_common import (  # noqa: E402
     build_proxy_map,
     detect_proxy_provider,
 )
-from content_baseline import compare_content, fetch_homepage, load_baseline  # noqa: E402
+from content_baseline import compare_content, fetch_homepage, load_baseline, skip_content_check  # noqa: E402
 from http_probe import normalize_probe_paths, probe_domain  # noqa: E402
 
 DEFAULT_INPUT = ROOT / "websites.yaml"
