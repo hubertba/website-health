@@ -7,8 +7,20 @@ Domain overview with DNS, HTTP, and SSL checks. Inventory is a minimal YAML; che
 ```bash
 pip install -r requirements.txt
 python3 scripts/check_domains.py      # DNS + HTTP + SSL → check_results.json
+python3 scripts/alerts.py --summary # Compare with previous snapshot → alerts.json
+python3 scripts/history.py --append   # Save snapshot + trends
 python3 scripts/generate_report.py  # → docs/index.html
 ```
+
+## Requirements documentation (sphinx-needs)
+
+```bash
+pip install -r requirements-docs.txt
+python3 -m sphinx -b html requirements-docs requirements-docs/_build
+open requirements-docs/_build/index.html
+```
+
+See `requirements-docs/needs/` for **REQ_***, **SPEC_***, **IMPL_***, and **TEST_*** items covering core checks, history/trends, and alerts.
 
 ## `websites.yaml` (server + domains only)
 

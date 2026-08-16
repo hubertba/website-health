@@ -1,0 +1,3 @@
+# Sphinx requirements for building needs documentation
+sphinx>=7.0
+sphinx-needs>=4.0

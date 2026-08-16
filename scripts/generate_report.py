@@ -14,6 +14,8 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_CHECKS = ROOT / "check_results.json"
+DEFAULT_TRENDS = ROOT / "history" / "trends.json"
+DEFAULT_ALERTS = ROOT / "alerts.json"
 DEFAULT_OUTPUT = ROOT / "docs" / "index.html"
 
 STATUS_LABELS = {
@@ -34,6 +36,12 @@ def load_yaml(path: Path) -> dict:
 
 
 def load_checks(path: Path) -> dict | None:
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_optional_json(path: Path) -> dict | None:
     if not path.is_file():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
@@ -71,6 +79,77 @@ def fmt_http(check: dict | None) -> str:
     return f'{scheme.upper()} {http["status"]}'
 
 
+def fmt_trend(domain: str, trends: dict | None) -> str:
+    if not trends:
+        return "—"
+    info = trends.get("domains", {}).get(domain)
+    if not info:
+        return "—"
+    parts = [f'{info.get("uptime_pct", 0)}% uptime']
+    if info.get("changed") and info.get("previous_status"):
+        parts.append(f'{info["previous_status"]}→{info["current_status"]}')
+    elif info.get("current_status") not in {"ok", "http_only"}:
+        parts.append(f'since {html.escape(str(info.get("status_since", "")))}')
+    return " · ".join(parts)
+
+
+def render_alerts(alerts: dict | None) -> str:
+    if not alerts or not alerts.get("alerts"):
+        return ""
+    items = []
+    for alert in alerts["alerts"][:15]:
+        sev = alert.get("severity", "info")
+        items.append(
+            f'<li class="alert-item {html.escape(sev)}">'
+            f'<strong>{html.escape(alert["domain"])}</strong> '
+            f'({html.escape(alert.get("server_id", ""))}) — '
+            f'{html.escape(alert.get("message", ""))}</li>'
+        )
+    more = ""
+    if alerts["alert_count"] > 15:
+        more = f'<p class="muted">…and {alerts["alert_count"] - 15} more alerts</p>'
+    return f"""
+    <section class="alerts-panel">
+      <h2>Alerts ({alerts['alert_count']})</h2>
+      <ul class="alert-list">{"".join(items)}</ul>
+      {more}
+    </section>
+    """
+
+
+def render_history_summary(trends: dict | None) -> str:
+    if not trends or not trends.get("domains"):
+        return '<p class="muted">No history yet — trends appear after multiple scheduled checks.</p>'
+
+    rows = []
+    for domain, info in sorted(trends["domains"].items(), key=lambda x: x[1].get("uptime_pct", 0)):
+        if info.get("uptime_pct", 100) >= 100 and not info.get("changed"):
+            continue
+        st = info.get("current_status", "unknown")
+        rows.append(
+            f"<tr><td>{html.escape(domain)}</td>"
+            f'<td>{info.get("uptime_pct")}%</td>'
+            f"<td>{info.get('checks')}</td>"
+            f'<td><code>{html.escape(st)}</code></td>'
+            f'<td>{html.escape(str(info.get("status_since", "")))}</td></tr>'
+        )
+        if len(rows) >= 25:
+            break
+
+    if not rows:
+        return '<p class="muted">All tracked domains at 100% uptime over recent checks.</p>'
+
+    return f"""
+    <p class="muted">Based on {trends.get('snapshot_count', 0)} snapshots · computed {html.escape(str(trends.get('computed_at', '')))}</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Domain</th><th>Uptime</th><th>Checks</th><th>Status</th><th>Since</th></tr></thead>
+        <tbody>{"".join(rows)}</tbody>
+      </table>
+    </div>
+    """
+
+
 def fmt_ssl(check: dict | None) -> str:
     if not check:
         return "—"
@@ -87,7 +166,7 @@ def fmt_ssl(check: dict | None) -> str:
     return html.escape(label)
 
 
-def domain_row(domain: str, server_id: str, check: dict | None) -> str:
+def domain_row(domain: str, server_id: str, check: dict | None, trends: dict | None = None) -> str:
     status = check.get("status", "unchecked") if check else "unchecked"
     st_cls = status_class(status)
     label = STATUS_LABELS.get(status, status)
@@ -103,12 +182,13 @@ def domain_row(domain: str, server_id: str, check: dict | None) -> str:
       <td class="mono">{fmt_dns(check)}</td>
       <td class="mono">{fmt_http(check)}</td>
       <td class="mono">{fmt_ssl(check)}</td>
+      <td class="mono">{fmt_trend(domain, trends)}</td>
       <td><span class="status-pill {st_cls}">{html.escape(label)}</span></td>
     </tr>
     """
 
 
-def server_block(server: dict, checks: dict | None) -> str:
+def server_block(server: dict, checks: dict | None, trends: dict | None) -> str:
     server_id = server.get("id", "")
     hostname = html.escape(server.get("hostname", server_id))
     ip = server.get("ip")
@@ -116,7 +196,7 @@ def server_block(server: dict, checks: dict | None) -> str:
     domain_checks = (checks or {}).get("domains", {})
 
     rows = "".join(
-        domain_row(d, server_id, domain_checks.get(d)) for d in sorted(domains, key=str.lower)
+        domain_row(d, server_id, domain_checks.get(d), trends) for d in sorted(domains, key=str.lower)
     )
 
     stats = {"ok": 0, "issue": 0, "unchecked": 0}
@@ -141,7 +221,7 @@ def server_block(server: dict, checks: dict | None) -> str:
         <table class="domain-table">
           <thead>
             <tr>
-              <th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Status</th>
+              <th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Trend</th><th>Status</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
@@ -151,7 +231,7 @@ def server_block(server: dict, checks: dict | None) -> str:
     """
 
 
-def generate_html(inventory: dict, checks: dict | None) -> str:
+def generate_html(inventory: dict, checks: dict | None, trends: dict | None, alerts: dict | None) -> str:
     servers = inventory.get("servers", [])
     checked_at = (checks or {}).get("checked_at") or inventory.get("meta", {}).get("checked_at", "—")
     summary = (checks or {}).get("summary", {})
@@ -165,9 +245,11 @@ def generate_html(inventory: dict, checks: dict | None) -> str:
     all_domains.sort(key=lambda x: x[0].lower())
 
     overview_rows = "".join(
-        domain_row(d, sid, domain_checks.get(d)) for d, sid in all_domains
+        domain_row(d, sid, domain_checks.get(d), trends) for d, sid in all_domains
     )
-    server_sections = "".join(server_block(s, checks) for s in servers)
+    server_sections = "".join(server_block(s, checks, trends) for s in servers)
+    alerts_html = render_alerts(alerts)
+    history_html = render_history_summary(trends)
 
     server_options = "".join(
         f'<option value="{html.escape(s.get("id", ""))}">{html.escape(s.get("hostname", ""))}</option>'
@@ -250,6 +332,15 @@ def generate_html(inventory: dict, checks: dict | None) -> str:
     .status-pill.inventory {{ background: var(--inv-bg); color: var(--inv); }}
     .tag {{ font-size: .65rem; padding: .05rem .3rem; border-radius: 4px; }}
     .tag.warn {{ background: var(--warn-bg); color: var(--warn); }}
+    .alerts-panel {{ background: var(--down-bg); border: 1px solid var(--down); border-radius: var(--radius);
+      padding: .85rem 1rem; margin-bottom: 1rem; }}
+    .alerts-panel h2 {{ font-size: 1rem; margin-bottom: .5rem; color: var(--down); }}
+    .alert-list {{ list-style: none; font-size: .85rem; }}
+    .alert-item {{ padding: .25rem 0; }}
+    .alert-item.critical {{ color: var(--down); }}
+    .alert-item.warning {{ color: var(--warn); }}
+    .alert-item.info {{ color: var(--muted); }}
+    .muted {{ color: var(--muted); font-size: .85rem; }}
     footer {{ margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);
       font-size: .75rem; color: var(--muted); text-align: center; }}
   </style>
@@ -270,9 +361,12 @@ def generate_html(inventory: dict, checks: dict | None) -> str:
 
   {unchecked_note}
 
+  {alerts_html}
+
   <div class="tabs">
     <button class="tab active" data-view="overview">All domains</button>
     <button class="tab" data-view="servers">By server</button>
+    <button class="tab" data-view="history">History</button>
   </div>
 
   <div class="controls">
@@ -296,7 +390,7 @@ def generate_html(inventory: dict, checks: dict | None) -> str:
       <div class="table-wrap">
         <table class="domain-table" id="table-overview">
           <thead>
-            <tr><th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Status</th></tr>
+            <tr><th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th><th>SSL</th><th>Trend</th><th>Status</th></tr>
           </thead>
           <tbody>{overview_rows}</tbody>
         </table>
@@ -308,7 +402,14 @@ def generate_html(inventory: dict, checks: dict | None) -> str:
     {server_sections}
   </div>
 
-  <footer>Generated from <code>websites.yaml</code> + <code>check_results.json</code></footer>
+  <div id="view-history" class="view">
+    <section>
+      <h2>History &amp; trends</h2>
+      {history_html}
+    </section>
+  </div>
+
+  <footer>Generated from <code>websites.yaml</code> + <code>check_results.json</code> + <code>history/trends.json</code></footer>
 
   <script>
     const tabs = document.querySelectorAll('.tab');
@@ -373,6 +474,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-i", "--input", type=Path, default=DEFAULT_INPUT)
     parser.add_argument("-c", "--checks", type=Path, default=DEFAULT_CHECKS)
+    parser.add_argument("-t", "--trends", type=Path, default=DEFAULT_TRENDS)
+    parser.add_argument("-a", "--alerts", type=Path, default=DEFAULT_ALERTS)
     parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -382,7 +485,9 @@ def main() -> int:
 
     inventory = load_yaml(args.input)
     checks = load_checks(args.checks)
-    out = generate_html(inventory, checks)
+    trends = load_optional_json(args.trends)
+    alerts = load_optional_json(args.alerts)
+    out = generate_html(inventory, checks, trends, alerts)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(out, encoding="utf-8")
