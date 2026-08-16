@@ -31,6 +31,40 @@ def is_recovery(old_status: str, new_status: str) -> bool:
     return not is_healthy(old_status) and is_healthy(new_status)
 
 
+def looks_like_cloudflare(ip: str) -> bool:
+    """Heuristic check for Cloudflare anycast/proxy addresses."""
+    if ":" in ip:
+        lower = ip.lower()
+        return lower.startswith("2606:4700:") or lower.startswith("2a06:98c0:")
+    parts = ip.split(".")
+    if len(parts) != 4:
+        return False
+    try:
+        first, second = int(parts[0]), int(parts[1])
+    except ValueError:
+        return False
+    if first == 104 and 16 <= second <= 31:
+        return True
+    return first == 172 and 64 <= second <= 71
+
+
+def detect_proxy_provider(addresses: list[str]) -> str | None:
+    if not addresses:
+        return None
+    if all(looks_like_cloudflare(addr) for addr in addresses):
+        return "cloudflare"
+    return None
+
+
+def build_proxy_map(data: dict) -> dict[str, str]:
+    """Domain -> proxy provider from meta.proxied in websites.yaml."""
+    proxied: dict[str, str] = {}
+    for provider, domains in (data.get("meta", {}).get("proxied") or {}).items():
+        for domain in domains or []:
+            proxied[domain] = provider
+    return proxied
+
+
 def slim_snapshot(results: dict) -> dict:
     """Compact snapshot for history storage."""
     domains = {}

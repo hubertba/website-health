@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>Domain Health — 2026-08-16 19:59 UTC</title>
+  <title>Domain Health — 2026-08-16 20:52 UTC</title>
   <style>
     :root {
       --bg: #f4f6f9; --surface: #fff; --text: #1a1d26; --muted: #5c6578;
@@ -64,6 +64,10 @@
     .status-pill.inventory { background: var(--inv-bg); color: var(--inv); }
     .tag { font-size: .65rem; padding: .05rem .3rem; border-radius: 4px; }
     .tag.warn { background: var(--warn-bg); color: var(--warn); }
+    .tag.proxy { background: #dbeafe; color: #1d4ed8; }
+    @media (prefers-color-scheme: dark) {
+      .tag.proxy { background: #1e3a5f; color: #93c5fd; }
+    }
     .alerts-panel { background: var(--down-bg); border: 1px solid var(--down); border-radius: var(--radius);
       padding: .85rem 1rem; margin-bottom: 1rem; }
     .alerts-panel h2 { font-size: 1rem; margin-bottom: .35rem; color: var(--down); }
@@ -102,7 +106,7 @@
 <body>
   <header>
     <h1>Domain Health Report</h1>
-    <p class="subtitle">Checked <strong>2026-08-16 19:59 UTC</strong> · 92 domains · 2 servers</p>
+    <p class="subtitle">Checked <strong>2026-08-16 20:52 UTC</strong> · 92 domains · 2 servers</p>
   </header>
 
   <div class="summary-grid">
@@ -195,7 +199,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://astro-lernstern.at" target="_blank" rel="noopener">astro-lernstern.at</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.77.190, 172.67.211.44, 2606:4700:3033::ac43:d32c, 2606:4700:3037::6815:4dbe <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.77.190, 172.67.211.44, 2606:4700:3033::ac43:d32c, 2606:4700:3037::6815:4dbe <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -327,7 +331,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://fenzpr.com" target="_blank" rel="noopener">fenzpr.com</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.68.29, 172.67.185.123, 2606:4700:3031::ac43:b97b, 2606:4700:3032::6815:441d <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.68.29, 172.67.185.123, 2606:4700:3031::ac43:b97b, 2606:4700:3032::6815:441d <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -351,7 +355,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://ff-burgau-burgauberg.at" target="_blank" rel="noopener">ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -423,7 +427,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -927,7 +931,7 @@
         data-server="mail" data-status="ok">
       <td><a href="https://mail.weingut-schuetzenhof.at" target="_blank" rel="noopener">mail.weingut-schuetzenhof.at</a></td>
       <td><code>mail</code></td>
-      <td class="mono">104.21.22.205, 172.67.206.236, 2606:4700:3031::ac43:ceec, 2606:4700:3032::6815:16cd</td>
+      <td class="mono">104.21.22.205, 172.67.206.236, 2606:4700:3031::ac43:ceec, 2606:4700:3032::6815:16cd <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-23</td>
       <td class="mono">100.0% uptime</td>
@@ -1307,7 +1311,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://astro-lernstern.at" target="_blank" rel="noopener">astro-lernstern.at</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.77.190, 172.67.211.44, 2606:4700:3033::ac43:d32c, 2606:4700:3037::6815:4dbe <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.77.190, 172.67.211.44, 2606:4700:3033::ac43:d32c, 2606:4700:3037::6815:4dbe <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -1439,7 +1443,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://fenzpr.com" target="_blank" rel="noopener">fenzpr.com</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.68.29, 172.67.185.123, 2606:4700:3031::ac43:b97b, 2606:4700:3032::6815:441d <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.68.29, 172.67.185.123, 2606:4700:3031::ac43:b97b, 2606:4700:3032::6815:441d <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -1463,7 +1467,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://ff-burgau-burgauberg.at" target="_blank" rel="noopener">ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -1535,7 +1539,7 @@
         data-server="web" data-status="ok">
       <td><a href="https://historisch.ff-burgau-burgauberg.at" target="_blank" rel="noopener">historisch.ff-burgau-burgauberg.at</a></td>
       <td><code>web</code></td>
-      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag warn">≠ server IP</span></td>
+      <td class="mono">104.21.93.144, 172.67.211.26, 2606:4700:3032::ac43:d31a, 2606:4700:3035::6815:5d90 <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-17</td>
       <td class="mono">100.0% uptime</td>
@@ -2368,7 +2372,7 @@
         data-server="mail" data-status="ok">
       <td><a href="https://mail.weingut-schuetzenhof.at" target="_blank" rel="noopener">mail.weingut-schuetzenhof.at</a></td>
       <td><code>mail</code></td>
-      <td class="mono">104.21.22.205, 172.67.206.236, 2606:4700:3031::ac43:ceec, 2606:4700:3032::6815:16cd</td>
+      <td class="mono">104.21.22.205, 172.67.206.236, 2606:4700:3031::ac43:ceec, 2606:4700:3032::6815:16cd <span class="tag proxy">Cloudflare proxy</span></td>
       <td class="mono">HTTPS 200</td>
       <td class="mono">valid · 2026-09-23</td>
       <td class="mono">100.0% uptime</td>
@@ -2409,11 +2413,11 @@
     <section>
       <h2>History &amp; trends</h2>
       
-    <p class="muted">Based on 2 snapshots · computed 2026-08-16 20:00 UTC</p>
+    <p class="muted">Based on 3 snapshots · computed 2026-08-16 20:02 UTC</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Domain</th><th>Uptime</th><th>Checks</th><th>Status</th><th>Since</th></tr></thead>
-        <tbody><tr><td>fairspeisen.com</td><td>0.0%</td><td>2</td><td><code>down</code></td><td>2026-08-16 19:59 UTC</td></tr><tr><td>postfixadmin.chilicode.com</td><td>0.0%</td><td>2</td><td><code>ssl_warn</code></td><td>2026-08-16 19:59 UTC</td></tr><tr><td>shophelfer.at</td><td>0.0%</td><td>2</td><td><code>down</code></td><td>2026-08-16 19:59 UTC</td></tr></tbody>
+        <tbody><tr><td>fairspeisen.com</td><td>0.0%</td><td>3</td><td><code>down</code></td><td>2026-08-16 19:59 UTC</td></tr><tr><td>postfixadmin.chilicode.com</td><td>0.0%</td><td>3</td><td><code>ssl_warn</code></td><td>2026-08-16 19:59 UTC</td></tr><tr><td>shophelfer.at</td><td>0.0%</td><td>3</td><td><code>down</code></td><td>2026-08-16 19:59 UTC</td></tr></tbody>
       </table>
     </div>
     
@@ -2532,8 +2536,17 @@
     });
 
     if (location.hash.startsWith('#domain-')) {
-      const domain = location.hash.slice(8).replace(/-/g, '.');
-      setTimeout(() => scrollToDomain(domain), 100);
+      const row = document.querySelector(location.hash);
+      if (row) {
+        setTimeout(() => {
+          showOverview();
+          search.value = row.dataset.domain || '';
+          applyFilters();
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          row.classList.add('highlight');
+          setTimeout(() => row.classList.remove('highlight'), 2200);
+        }, 100);
+      }
     }
   </script>
 </body>
