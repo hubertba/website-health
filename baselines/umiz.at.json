@@ -1,0 +1,14 @@
+{
+  "domain": "umiz.at",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 65536,
+  "title": "UMIZ",
+  "stylesheet_count": 44,
+  "script_count": 9,
+  "text_snippet": "UMIZ Link zu Facebook Link zu Flickr Link zu Youtube Link zu Soundcloud E-Mail: office@umiz.at ÜBER UNS WERDEGANG AUFGABENGEBIET JAHRESBERICHTE MITGLIEDSCHAFT UNGARN IM BURGENLAND GESCHICHTE DEMOGRAFIE RECHTSLAGE BEREICHE BIBLIOTHEK und ARCHIV Bibliotheksordnung Gebührenordnung ORTS- UND REGIONALKUNDE UMIZ4KIDS LITERATUR KUNST SPRACHWISSENSCHAFT SONSTIGES NACHRICHTEN DATENBANKEN Archivdatenbank Do",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de-AT\" class=\"html_stretched responsive av-preloader-disabled  html_header_top html_logo_center html_bottom_nav_header html_menu_right html_custom html_header_sticky html_header_shrinking html_header_topbar_active html_mobile_menu_phone html_header_searchicon html_content_align_center html_header_unstick_top html_header_stretch_disabled html_elegant-blog html_av-submenu-hidden html_av-submenu-display-hover html_av-overlay-side html_av-overlay-side-minimal html_av-submenu-noclone html_entry_id_206 av-cookies-no-cookie-consent av-no-preview av-default-lightbox html_text_menu_active av-mobile-menu-switch-portrait\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"robots\" content=\"index, follow\" />\n\n\n<!-- mobile setting -->\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n<!-- Scripts/CSS and wp_head hook -->\n<title>UMIZ</title>\n<meta name='robots' content='max-image-preview:large' />\n<link rel=\"alternate\" href=\"https://umiz.at/\" hreflang=\"de\" />\n<link rel=\"alternate\" href=\"https://umiz.at/hu/home-hauptseite-magyar/\" hreflang=\"hu\" />\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"UMIZ &raquo; Feed\" href=\"https://umiz.at/feed/\" />\n<link rel=\"alternate\" title=\"oEmbed (JSON)\" type=\"application/json+oembed\" href=\"https://umiz.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fumiz.at%2F&#038;lang=de\" />\n<link rel=\"alternate\" title=\"oEmbed (XML)\" type=\"text/xml+oembed\" href=\"https://umiz.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fumiz.at%2F&#038;format=xml&#038;lang=de\" />\n\n<!-- google webfont font replacement -->\n\n\t\t\t<script type='text/javascript'>\n\n\t\t\t\t(function() {\n\n\t\t\t\t\t/*\tcheck if webfonts are disabled by user setting via cookie - or user must opt in.\t*/\n\t\t\t\t\tvar html = document.getElementsByTagName('html')[0];\n\t\t\t\t\tvar cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;\n\t\t\t\t\tvar allow_continue = true;\n\t\t\t\t\tvar silent_accept_cookie = html.className.indexOf('av-cookies-user-silent-accept') >= ",
+  "content_hash": "4e4d50b04ff8b28a",
+  "text_length": 930
+}

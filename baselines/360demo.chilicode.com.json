@@ -1,0 +1,14 @@
+{
+  "domain": "360demo.chilicode.com",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 1189,
+  "title": "360 demos",
+  "stylesheet_count": 1,
+  "script_count": 1,
+  "text_snippet": "360 demos 360 Demos Schiefer Loranth GOED Loranth neu uw402 Privlaka Dinhopel Flo GOED Demo 1 GOED Demo 2 GOED Demo 3 GOED Demo 4 UMIZ Unger Steel motion WVSB Kurz WVSB Lang WVSB Roomtour Pinkafeld",
+  "html_snippet": "<!doctype html>\n\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n\n<title>360 demos</title>\n<meta name=\"description\" content=\"The 360 Demos\">\n<meta name=\"author\" content=\"ChiliCode\">\n\n<link rel=\"stylesheet\" href=\"css/styles.css?v=1.0\">\n\n</head>\n\n<body>\n\n<h1>360 Demos</h1>\n\n<ul>\n<li>\n\t<a href=\"schiefer/\" >Schiefer</a>\n</li>\n<li>\n\t<a href=\"loranth/\" >Loranth</a>\n</li>\n<li>\n\t<a href=\"goed/\" >GOED</a>\n</li>\n<li>\n\t<a href=\"Loranth360neu/\" > Loranth neu</a>\n</li>\n<li>\n\t<a href=\"uw402/\" > uw402</a>\n</li>\n<li>\n\t<a href=\"Privlaka/\" > Privlaka</a>\n</li>\n<li>\n\t<a href=\"dinhopel/\" >Dinhopel</a>\n</li>\n<li>\n\t<a href=\"flo/\" >Flo</a>\n</li>\n<li>\n\t<a href=\"goeddemo1/\" >GOED Demo 1</a>\n</li>\n<li>\n\t<a href=\"goeddemo2/\" >GOED Demo 2</a>\n</li>\n<li>\n\t<a href=\"goeddemo3/\" >GOED Demo 3</a>\n</li>\n<li>\n\t<a href=\"goeddemo4/\" >GOED Demo 4</a>\n</li>\n<li>\n\t<a href=\"umiz/\" >UMIZ</a>\n</li>\n<li>\n\t<a href=\"ungersteel/\" >Unger Steel</a>\n</li>\n<li>\n\t<a href=\"motion/\" >motion</a>\n</li>\n<li>\n\t<a href=\"wvsbkurz/\" >WVSB Kurz</a>\n</li>\n<li>\n\t<a href=\"wvsblang/\" >WVSB Lang</a>\n</li>\n<li>\n\t<a href=\"wvsbroomtourpinkafeld/\" >WVSB Roomtour Pinkafeld</a>\n</li>\n</ul>\n<script src=\"js/scripts.js\"></script>\n</body>\n</html>\n",
+  "content_hash": "9d08b1adc919f791",
+  "text_length": 197
+}

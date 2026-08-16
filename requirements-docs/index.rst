@@ -11,6 +11,7 @@ Requirements for the domain health monitoring tool, documented with `sphinx-need
    needs/core
    needs/security
    needs/performance
+   needs/content
    needs/mail
    needs/history
    needs/alerts

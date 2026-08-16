@@ -1,0 +1,14 @@
+{
+  "domain": "postfixadmin.chilicode.com",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 5297,
+  "title": "Postfix Admin - postfixadmin.chilicode.com",
+  "stylesheet_count": 1,
+  "script_count": 5,
+  "text_snippet": "Postfix Admin - postfixadmin.chilicode.com Mail admins login here to administer your domain. Login (email): Password: Language: &#1041;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; - Bulgarian Catal&agrave; - Catalan &#20013;&#25991; - Chinese simplified (gb2312) &#20013;&#25991; - Chinese traditional &#268;esky - Czech Dansk - Danish Deutsch - German English Espa&ntilde;ol - Spanish Ee",
+  "html_snippet": "<!doctype html>\n<html lang=\"\">\n<head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n\n    <title>Postfix Admin - postfixadmin.chilicode.com</title>\n    <link rel=\"shortcut icon\" href=\"images/favicon.ico\"/>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"css/bootstrap.css\"/>\n    \n    <script src=\"jquery-1.12.4.min.js\"></script>\n    <script src=\"css/bootstrap-3.4.1-dist/js/moment-with-locales.min.js\"></script>\n    <script src=\"css/bootstrap-3.4.1-dist/js/bootstrap.min.js\"></script>\n    <script src=\"css/bootstrap-3.4.1-dist/js/bootstrap-datetimepicker.min.js\"></script>\n</head>\n<body class=\"lang- page-login \">\n<div class=\"container\" style=\"min-width: 600px; width: min-content\" role=\"main\"><!-- flash_error.tpl -->\n<br clear=\"all\"/><br/>\n<nav class=\"navbar navbar-default navbar-fixed-top\">\n    <div class=\"container\">\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href='main.php'><img id=\"login_header_logo\" src=\"images/logo-default.png\"\n                                                         alt=\"Logo\"/></a>\n                    </div>\n    </div>\n</nav>\n\n<div id=\"login\" class=\"container\">\n\n    <h2 class=\"h2\">Mail admins login here to administer your domain.</h2>\n\n    <div class=\"well\">\n\n        <form name=\"frmLogin\" method=\"post\" action=\"\" role=\"form\" class=\"form-signin\">\n            <input type=\"hidden\" name=\"token\" value=\"d61cbcd5ba0e5367a0f067c20d2cc73f\"/>\n            <div class=\"form-group\">\n                <label for=\"fUsername\">Login (email):</label>\n                <input class=\"form-control\" type=\"text\" name=\"fUsername\" id=\"fUsername\"/>\n            </div>\n            <div class=\"form-group\">\n                <label for=\"fPassword\">Password:</label>\n                <input class=\"form-control\" type=\"password\" name=\"fPassword\" id=\"fPassword\"/>\n            </div>\n                        <div class=\"form-group\">",
+  "content_hash": "f889dd195442d077",
+  "text_length": 1343
+}

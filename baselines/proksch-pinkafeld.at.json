@@ -1,0 +1,14 @@
+{
+  "domain": "proksch-pinkafeld.at",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 601,
+  "title": "Proksch Gesmbh - Malerbetrieb & Farbenhandel",
+  "stylesheet_count": 1,
+  "script_count": 1,
+  "text_snippet": "Proksch Gesmbh - Malerbetrieb & Farbenhandel",
+  "html_snippet": "<!doctype html>\r\n<html lang=\"de\">\r\n  <head>\r\n    <meta charset=\"UTF-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <meta name=\"description\" content=\"Proksch Gesmbh - Malerbetrieb & Farbenhandel seit 1890\" />\r\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/vite.svg\" />\r\n    <title>Proksch Gesmbh - Malerbetrieb & Farbenhandel</title>\r\n    <script type=\"module\" crossorigin src=\"/assets/index-D1abAtU8.js\"></script>\n    <link rel=\"stylesheet\" crossorigin href=\"/assets/index-7rJ3TFIh.css\">\n  </head>\r\n  <body>\r\n    <div id=\"app\"></div>\r\r\n  </body>\r\n</html>\r\n",
+  "content_hash": "886f19109e020fca",
+  "text_length": 44
+}

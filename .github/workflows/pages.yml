@@ -6,6 +6,7 @@ on:
     paths:
       - websites.yaml
       - scripts/**
+      - baselines/**
       - history/**
       - requirements-docs/**
       - requirements-docs.txt

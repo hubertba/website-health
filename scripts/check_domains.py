@@ -30,10 +30,12 @@ from health_common import (  # noqa: E402
     build_proxy_map,
     detect_proxy_provider,
 )
+from content_baseline import compare_content, fetch_homepage, load_baseline  # noqa: E402
 from http_probe import normalize_probe_paths, probe_domain  # noqa: E402
 
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_OUTPUT = ROOT / "check_results.json"
+BASELINES_DIR = ROOT / "baselines"
 TIMEOUT = 12
 
 
@@ -133,7 +135,7 @@ def check_ssl(domain: str) -> dict:
         }
 
 
-def overall_status(dns: dict, http: dict, ssl_info: dict) -> str:
+def overall_status(dns: dict, http: dict, ssl_info: dict, content: dict | None = None) -> str:
     if not dns.get("ok"):
         return "dns_fail"
     if http.get("status") and http["status"] >= 500:
@@ -157,6 +159,12 @@ def overall_status(dns: dict, http: dict, ssl_info: dict) -> str:
         return "warn"
     if http["status"] >= 400:
         return "warn"
+    if content and content.get("matched_patterns"):
+        return "warn"
+    if content and any(str(i).startswith("size_shrink") for i in content.get("issues", [])):
+        return "warn"
+    if content and any(str(i).startswith("missing_stylesheets") for i in content.get("issues", [])):
+        return "warn"
     return "ok"
 
 
@@ -167,6 +175,8 @@ def check_domain(
     proxy_provider: str | None = None,
     check_mail: bool = False,
     probe_paths: list | None = None,
+    baselines_dir: Path | None = None,
+    content_markers: list[str] | None = None,
 ) -> dict:
     dns = check_dns(domain)
     if expected_ip and dns.get("ok"):
@@ -192,7 +202,23 @@ def check_domain(
 
     mail_dns = check_mail_dns(domain) if check_mail and not domain.startswith("mail.") else None
 
-    status = overall_status(dns, http, ssl_info if ssl_info.get("ok") is not False else ssl_info)
+    content = None
+    if http.get("status") and http["status"] < 500:
+        page = fetch_homepage(domain, http.get("scheme", "https"))
+        baseline = load_baseline(baselines_dir or BASELINES_DIR, domain) if baselines_dir or BASELINES_DIR.is_dir() else None
+        content = compare_content(
+            domain,
+            page,
+            baseline,
+            must_contain=content_markers,
+        )
+
+    status = overall_status(
+        dns,
+        http,
+        ssl_info if ssl_info.get("ok") is not False else ssl_info,
+        content,
+    )
     if http.get("scheme") == "http" and http.get("ok"):
         status = "http_only" if dns.get("ok") else "dns_fail"
 
@@ -203,14 +229,27 @@ def check_domain(
         "http": http,
         "ssl": ssl_info,
         "mail_dns": mail_dns,
+        "content": content,
         "status": status,
     }
+
+
+def build_content_markers_map(data: dict) -> dict[str, list[str]]:
+    markers: dict[str, list[str]] = {}
+    for domain, values in (data.get("meta", {}).get("content_markers") or {}).items():
+        if isinstance(values, str):
+            markers[domain] = [values]
+        elif values:
+            markers[domain] = list(values)
+    return markers
 
 
 def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = None) -> dict:
     proxy_map = build_proxy_map(data)
     probe_map = build_probe_map(data)
-    tasks: list[tuple[str, str, str | None, str | None, bool, list | None]] = []
+    content_markers_map = build_content_markers_map(data)
+    baselines_dir = BASELINES_DIR
+    tasks: list[tuple[str, str, str | None, str | None, bool, list | None, list[str] | None]] = []
     for server in data.get("servers", []):
         server_id = server.get("id", server.get("hostname", "unknown"))
         expected_ip = server.get("ip")
@@ -218,13 +257,25 @@ def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = N
         for domain in server.get("domains", []):
             if domain_filter and domain not in domain_filter:
                 continue
-            tasks.append((domain, server_id, expected_ip, proxy_map.get(domain), check_mail, probe_map.get(domain)))
+            tasks.append(
+                (domain, server_id, expected_ip, proxy_map.get(domain), check_mail, probe_map.get(domain), content_markers_map.get(domain))
+            )
 
     results: dict[str, dict] = {}
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
-            pool.submit(check_domain, domain, server_id, expected_ip, proxy, check_mail, paths): domain
-            for domain, server_id, expected_ip, proxy, check_mail, paths in tasks
+            pool.submit(
+                check_domain,
+                domain,
+                server_id,
+                expected_ip,
+                proxy,
+                check_mail,
+                paths,
+                baselines_dir,
+                markers,
+            ): domain
+            for domain, server_id, expected_ip, proxy, check_mail, paths, markers in tasks
         }
         for future in as_completed(futures):
             domain = futures[future]

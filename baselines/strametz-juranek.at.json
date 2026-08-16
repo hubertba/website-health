@@ -1,0 +1,14 @@
+{
+  "domain": "strametz-juranek.at",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 65536,
+  "title": "Dr.Jeanette Strametz-Juranek",
+  "stylesheet_count": 2,
+  "script_count": 6,
+  "text_snippet": "Dr.Jeanette Strametz-Juranek Menü Menü Startseite Impressum Datenschutzerklärung Menü Menü Folge einem manuell hinzugefügten Link Prim. a Univ.Prof. in Dr. in Jeanette Strametz-Juranek Fachärztin für Innere Medizin und Kardiologie Spezialisierung Gender Medizin Ärztliche Leiterin RZ Bad Tatzmannsdorf &#8211; ENGLISH SPOKEN &#8211; Folge einem manuell hinzugefügten Link Prim. a Univ.Prof. in Dr. in",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de\" class=\"html_stretched responsive av-preloader-active av-preloader-enabled  html_header_top html_logo_left html_bottom_nav_header html_menu_left html_large html_header_sticky_disabled html_header_shrinking_disabled html_header_transparency html_mobile_menu_tablet html_header_searchicon_disabled html_content_align_center html_header_unstick_top_disabled html_header_stretch html_minimal_header html_av-submenu-hidden html_av-submenu-display-click html_av-overlay-side html_av-overlay-side-minimal html_13 html_av-submenu-noclone html_entry_id_806 av-cookies-no-cookie-consent av-no-preview av-default-lightbox html_text_menu_active av-mobile-menu-switch-default\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"robots\" content=\"index, follow\" />\n\n\n<!-- mobile setting -->\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n<!-- Scripts/CSS and wp_head hook -->\n<title>Dr.Jeanette Strametz-Juranek</title>\n<meta name='robots' content='max-image-preview:large' />\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Dr.Jeanette Strametz-Juranek &raquo; Feed\" href=\"https://strametz-juranek.at/feed/\" />\n<link rel=\"alternate\" title=\"oEmbed (JSON)\" type=\"application/json+oembed\" href=\"https://strametz-juranek.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fstrametz-juranek.at%2F\" />\n<link rel=\"alternate\" title=\"oEmbed (XML)\" type=\"text/xml+oembed\" href=\"https://strametz-juranek.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fstrametz-juranek.at%2F&#038;format=xml\" />\n\n<!-- google webfont font replacement -->\n\n\t\t\t<script type='text/javascript'>\n\n\t\t\t\t(function() {\n\n\t\t\t\t\t/*\tcheck if webfonts are disabled by user setting via cookie - or user must opt in.\t*/\n\t\t\t\t\tvar html = document.getElementsByTagName('html')[0];\n\t\t\t\t\tvar cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;\n\t\t\t\t\tvar allow_continue = true;\n\t\t\t\t\tvar silent_accept_cookie = html.className.indexOf('av-cookies-user-silent-accept') >= 0;\n\n\t\t\t\t\tif( cookie_ch",
+  "content_hash": "bc515c33d8b7943a",
+  "text_length": 1441
+}

@@ -40,7 +40,7 @@ STATUS_LABELS = {
 TABLE_HEADERS = (
     "<th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th>"
     "<th>ms</th><th>TTFB</th><th>Size</th><th>Enc</th><th>Proto</th><th>C/W</th>"
-    "<th>Sec</th><th>Mail</th><th>SSL</th><th>Trend</th><th>Status</th>"
+    "<th>Sec</th><th>Mail</th><th>Content</th><th>SSL</th><th>Trend</th><th>Status</th>"
 )
 
 
@@ -186,6 +186,24 @@ def fmt_timing_detail(check: dict | None) -> str:
     keys = ("dns_ms", "connect_ms", "tls_ms", "ttfb_ms", "download_ms", "total_ms")
     parts = [f"{k.replace('_ms', '')}={timing[k]}" for k in keys if timing.get(k) is not None]
     return f'<div><strong>Timing:</strong> {html.escape(", ".join(parts))}</div>' if parts else ""
+
+
+def fmt_content(check: dict | None) -> str:
+    if not check:
+        return "—"
+    content = check.get("content")
+    if not content:
+        return "—"
+    if content.get("ok"):
+        ratio = content.get("size_ratio")
+        if ratio is not None:
+            return f'<span class="tag ok">{int(ratio * 100)}%</span>'
+        return '<span class="tag ok">ok</span>'
+    issues = content.get("issues") or []
+    if not issues:
+        return "—"
+    title = "; ".join(issues[:2])
+    return f'<span class="tag warn" title="{html.escape(title)}">!</span>'
 
 
 def fmt_redirects(check: dict | None) -> str:
@@ -335,9 +353,14 @@ def _alert_details(
         lines.append(f'<div><strong>Cold/Warm:</strong> {fmt_cold_warm(check)} ms</div>')
         lines.append(fmt_probes(check))
         lines.append(f'<div><strong>Security:</strong> {fmt_security(check)}</div>')
-        lines.append(f'<div><strong>SSL:</strong> {fmt_ssl(check)}</div>')
+        lines.append(f'<div><strong>Content:</strong> {fmt_content(check)}</div>')
+        if check.get("content", {}).get("issues"):
+            lines.append(
+                f'<div class="muted">{html.escape("; ".join(check["content"]["issues"]))}</div>'
+            )
         if check.get("mail_dns"):
             lines.append(f'<div><strong>Mail DNS:</strong> {fmt_mail_dns(check)}</div>')
+        lines.append(f'<div><strong>SSL:</strong> {fmt_ssl(check)}</div>')
     if trends and (info := trends.get("domains", {}).get(domain)):
         lines.append(f'<div><strong>Trend:</strong> {fmt_trend(domain, trends)}</div>')
     lines.append(fmt_runbook(runbook))
@@ -433,6 +456,7 @@ def domain_row(
       <td class="mono">{fmt_cold_warm(check)}</td>
       <td class="mono">{fmt_security(check)}</td>
       <td class="mono">{fmt_mail_dns(check)}</td>
+      <td class="mono">{fmt_content(check)}</td>
       <td class="mono">{fmt_ssl(check)}</td>
       <td class="mono">{fmt_trend(domain, trends)}</td>
       <td><span class="status-pill {st_cls}">{html.escape(label)}</span></td>
@@ -517,6 +541,8 @@ def write_exports(checks: dict | None, inventory: dict, export_dir: Path) -> Non
                 "size_bytes": http.get("size_bytes"),
                 "http_version": http.get("http_version"),
                 "compressed": (http.get("compression") or {}).get("compressed"),
+                "content_ok": (entry.get("content") or {}).get("ok"),
+                "content_issues": ";".join((entry.get("content") or {}).get("issues") or []),
                 "redirect_count": http.get("redirect_count"),
                 "ssl_days_left": ssl_info.get("days_left"),
                 "ssl_expires": ssl_info.get("expires"),

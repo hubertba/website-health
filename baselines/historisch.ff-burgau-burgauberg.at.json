@@ -1,0 +1,14 @@
+{
+  "domain": "historisch.ff-burgau-burgauberg.at",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 17593,
+  "title": "FF Burgau Burgauberg",
+  "stylesheet_count": 12,
+  "script_count": 20,
+  "text_snippet": "FF Burgau Burgauberg Zum Inhalt wechseln Direkt zur Hauptnavigation und Anmeldung Direkt zu den zusätzlichen Informationen Nav Ansichtssuche Navigation Suchen Hauptmenü Home Aktivitäten Einsätze Termine Übungen Mannschaft Jugend Fahrzeuge Links Kursbuchung FDISK Newsflash Feuerwehrhaus Eröffungsfeier Unsere Sponsoren Sanierung des Feuerwehrhauses BFV-FF Kalender einbinden 30.11. Kegelturnier der F",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de-de\" dir=\"ltr\">\n\t<head>\n\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes\"/>\n\t\t<meta name=\"HandheldFriendly\" content=\"true\" />\n\t\t<meta name=\"apple-mobile-web-app-capable\" content=\"YES\" />\n\t\t<meta charset=\"utf-8\" />\n\t<base href=\"https://historisch.ff-burgau-burgauberg.at/\" />\n\t<meta name=\"description\" content=\"Aktuelle Aktivitäten, Einsätze, Termine und Übungen der Freiwilligen Feuerwehr Burgau Burgauberg.\" />\n\t<meta name=\"generator\" content=\"Joomla! - Open Source Content Management\" />\n\t<title>FF Burgau Burgauberg</title>\n\t<link href=\"/index.php?format=feed&amp;type=rss\" rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS 2.0\" />\n\t<link href=\"/index.php?format=feed&amp;type=atom\" rel=\"alternate\" type=\"application/atom+xml\" title=\"Atom 1.0\" />\n\t<link href=\"/templates/beez3/favicon.ico\" rel=\"shortcut icon\" type=\"image/vnd.microsoft.icon\" />\n\t<link href=\"/index.php?option=com_ajax&plugin=arktypography&format=json\" rel=\"stylesheet\" />\n\t<link href=\"/templates/system/css/system.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" />\n\t<link href=\"/templates/beez3/css/position.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" />\n\t<link href=\"/templates/beez3/css/layout.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" />\n\t<link href=\"/templates/beez3/css/print.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" media=\"print\" />\n\t<link href=\"/templates/beez3/css/general.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" />\n\t<link href=\"/templates/beez3/css/red.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" />\n\t<!--[if IE 7]><link href=\"/templates/beez3/css/ie7only.css?b01b8a0c6890c32d18dc3ee4d2097495\" rel=\"stylesheet\" /><![endif]-->\n\t<link href=\"https://historisch.ff-burgau-burgauberg.at/media/editors/arkeditor/css/squeezebox.css\" rel=\"stylesheet\" />\n\t<link href=\"/components/com_jevents/views/flat/assets/css/modstyle.css?v=3.6.60\" rel=\"stylesheet\" />\n\t<link href=\"/media/com_jevents/css/bootstrap.css\" rel=\"",
+  "content_hash": "e3abf512b2271b93",
+  "text_length": 1073
+}

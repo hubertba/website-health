@@ -1,0 +1,14 @@
+{
+  "domain": "web.chilicode.com",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 65536,
+  "title": "verkleiden &#8211; Just another unseen Sites site",
+  "stylesheet_count": 2,
+  "script_count": 7,
+  "text_snippet": "verkleiden &#8211; Just another unseen Sites site Home Aktuelle Werke Unsere Stärken Über uns Kontakt Menü Menü Link zu X Link zu Dribbble Link zu Facebook Herzlich Willkommen bei &#8222; fairkleiden &#8220; ! Wir sind Emma und Josefine. Wir und eine ganze Schar im Hintergrund zeigen euch hier unsere Kunstwerke, die wir nähen, knoten, knüpfen, basteln und vieles mehr&#8230; Herzlich Willkommen bei",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de\" class=\"html_stretched responsive av-preloader-active av-preloader-enabled  html_header_top html_logo_left html_main_nav_header html_menu_right html_slim html_header_sticky html_header_shrinking_disabled html_header_transparency html_mobile_menu_tablet html_header_searchicon_disabled html_content_align_center html_header_unstick_top html_header_stretch html_minimal_header html_minimal_header_shadow html_elegant-blog html_burger_menu html_av-overlay-side html_av-overlay-side-minimal html_av-submenu-noclone html_entry_id_212 av-cookies-no-cookie-consent av-no-preview av-default-lightbox html_burger_menu_active\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"robots\" content=\"index, follow\" />\n\n\n<!-- mobile setting -->\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n<!-- Scripts/CSS and wp_head hook -->\n<title>verkleiden &#8211; Just another unseen Sites site</title>\n<meta name='robots' content='max-image-preview:large' />\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"verkleiden &raquo; Feed\" href=\"https://fairkleiden.at/feed/\" />\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"verkleiden &raquo; Kommentar-Feed\" href=\"https://fairkleiden.at/comments/feed/\" />\n<link rel=\"alternate\" title=\"oEmbed (JSON)\" type=\"application/json+oembed\" href=\"https://fairkleiden.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Ffairkleiden.at%2F\" />\n<link rel=\"alternate\" title=\"oEmbed (XML)\" type=\"text/xml+oembed\" href=\"https://fairkleiden.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Ffairkleiden.at%2F&#038;format=xml\" />\n\n<!-- google webfont font replacement -->\n\n\t\t\t<script type='text/javascript'>\n\n\t\t\t\t(function() {\n\n\t\t\t\t\t/*\tcheck if webfonts are disabled by user setting via cookie - or user must opt in.\t*/\n\t\t\t\t\tvar html = document.getElementsByTagName('html')[0];\n\t\t\t\t\tvar cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;\n\t\t\t\t\tvar allow_continue = true;\n\t\t\t\t\tvar silent_accept_cookie = html.classN",
+  "content_hash": "04660b26dd285346",
+  "text_length": 1523
+}

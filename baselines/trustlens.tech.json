@@ -1,0 +1,14 @@
+{
+  "domain": "trustlens.tech",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 464,
+  "title": "TrustLens",
+  "stylesheet_count": 1,
+  "script_count": 1,
+  "text_snippet": "TrustLens",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\" />\n    <meta name=\"theme-color\" content=\"#0f172a\" />\n    <title>TrustLens</title>\n    <script type=\"module\" crossorigin src=\"/assets/index-DC6TeM67.js\"></script>\n    <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CHc81EZ8.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n",
+  "content_hash": "b09f96bce0276e71",
+  "text_length": 9
+}

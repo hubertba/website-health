@@ -133,6 +133,46 @@ def build_alerts(
                 }
             )
 
+        content = entry.get("content") or {}
+        if domain not in maintenance and content.get("issues"):
+            for issue in content["issues"]:
+                if issue.startswith("error_page:"):
+                    alerts.append(
+                        _content_alert(
+                            "error_page",
+                            domain,
+                            entry,
+                            status,
+                            f"Error page detected: {issue.split(':', 1)[1].strip()}",
+                            runbooks,
+                            severity="critical",
+                        )
+                    )
+                elif issue.startswith("size_shrink:"):
+                    alerts.append(
+                        _content_alert(
+                            "content_shrink",
+                            domain,
+                            entry,
+                            status,
+                            f"Page size dropped sharply: {issue.split(':', 1)[1].strip()}",
+                            runbooks,
+                            severity="warning",
+                        )
+                    )
+                elif issue.startswith("missing_stylesheets"):
+                    alerts.append(
+                        _content_alert(
+                            "missing_css",
+                            domain,
+                            entry,
+                            status,
+                            "Stylesheets missing compared to baseline (possible broken theme)",
+                            runbooks,
+                            severity="warning",
+                        )
+                    )
+
     alerts.sort(key=lambda a: (_severity_rank(a["severity"]), a["domain"]))
     return {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
@@ -178,6 +218,33 @@ def _alert(
         "message": message,
         "http_status": http.get("status"),
         "response_ms": http.get("response_ms"),
+        "ssl_days_left": entry.get("ssl", {}).get("days_left"),
+        "runbook": runbooks.get(domain),
+    }
+
+
+def _content_alert(
+    kind: str,
+    domain: str,
+    entry: dict,
+    status: str,
+    message: str,
+    runbooks: dict,
+    severity: str,
+) -> dict:
+    content = entry.get("content") or {}
+    return {
+        "kind": kind,
+        "domain": domain,
+        "server_id": entry.get("server_id"),
+        "status": status,
+        "previous_status": None,
+        "severity": severity,
+        "message": message,
+        "http_status": entry.get("http", {}).get("status"),
+        "response_ms": entry.get("http", {}).get("response_ms"),
+        "size_ratio": content.get("size_ratio"),
+        "matched_patterns": content.get("matched_patterns"),
         "ssl_days_left": entry.get("ssl", {}).get("days_left"),
         "runbook": runbooks.get(domain),
     }

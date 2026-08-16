@@ -1,0 +1,14 @@
+{
+  "domain": "historisch.umiz.at",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 5638,
+  "title": "historisch.umiz.at - Historisches Archiv",
+  "stylesheet_count": 0,
+  "script_count": 0,
+  "text_snippet": "historisch.umiz.at - Historisches Archiv Willkommen bei historisch.umiz.at Hauptbereiche Historische Fotos (Deutsch) Historische Fotos (Ungarisch) Historische Postkarten (Deutsch) Historische Postkarten (Ungarisch) Ortsregister (Deutsch) Ortsregister (Ungarisch) Mundartwörterbuch eduhu Projekt ISNYI Projekt (Ungarisch) ISNYI Projekt (Deutsch) Dokumentendatenbank Publikationen und Forschungsarbeite",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta name=\"description\" content=\"Historische Archive und Ressourcen für die UMIZ-Sammlung mit historischen Fotos, Postkarten und Mundartwörterbuch\">\n    <title>historisch.umiz.at - Historisches Archiv</title>\n    <style>\n        :root {\n            --primary-color: #2c3e50;\n            --secondary-color: #3498db;\n            --background-color: #f8f9fa;\n            --text-color: #333;\n            --hover-color: #2980b9;\n        }\n        \n        body {\n            font-family: 'Segoe UI', Arial, sans-serif;\n            max-width: 1200px;\n            margin: 0 auto;\n            padding: 20px;\n            line-height: 1.6;\n            background-color: var(--background-color);\n            color: var(--text-color);\n        }\n\n        .container {\n            background-color: white;\n            padding: 2rem;\n            border-radius: 10px;\n            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);\n        }\n\n        h1 {\n            color: var(--primary-color);\n            border-bottom: 3px solid var(--secondary-color);\n            padding-bottom: 15px;\n            margin-bottom: 30px;\n            text-align: center;\n        }\n\n        .section {\n            margin: 30px 0;\n        }\n\n        .section h2 {\n            color: var(--primary-color);\n            margin-bottom: 20px;\n            font-size: 1.5rem;\n        }\n\n        .section ul {\n            list-style-type: none;\n            padding: 0;\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n            gap: 1rem;\n        }\n\n        .section li {\n            margin: 5px 0;\n            padding: 10px;\n            border-radius: 5px;\n            transition: background-color 0.2s;\n        }\n\n        .section li:hover {\n            background-color: rgba(52, 152, 219, 0.1);\n        }\n\n        .section a {\n            color: var(--secondary-color);\n            text-decora",
+  "content_hash": "14b5a36fee953e4c",
+  "text_length": 611
+}

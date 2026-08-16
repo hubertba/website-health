@@ -1,0 +1,14 @@
+{
+  "domain": "getsgo.at",
+  "captured_at": "2026-08-16 21:27 UTC",
+  "http_status": 200,
+  "scheme": "https",
+  "size_bytes": 65536,
+  "title": "getsgo",
+  "stylesheet_count": 70,
+  "script_count": 8,
+  "text_snippet": "getsgo SOMMERCAMP 2026 TRAININGSZEITEN SPIELTERMINE ÜBER UNS SPORTSTÄTTEN SPONSORING BURG KONTAKT Menü Menü Link zu Facebook Link zu Instagram Zurück Zurück Zurück Weiter Weiter Weiter 🎉 Jubiläumsshirt – Aktion beendet! 🎉 Liebe GETSGO-Familie, liebe Freundinnen und Freunde, 20 Jahre GETSGO – das möchten wir gemeinsam mit euch feiern! Als besonderes Andenken zu unserem Jubiläum gibt es ein exklusiv",
+  "html_snippet": "<!DOCTYPE html>\n<html lang=\"de\" class=\"html_stretched responsive av-preloader-disabled  html_header_top html_logo_left html_main_nav_header html_menu_right html_slim html_header_sticky html_header_shrinking_disabled html_header_transparency html_header_scrolldown html_mobile_menu_phone html_header_searchicon_disabled html_content_align_center html_header_unstick_top_disabled html_header_stretch html_minimal_header html_minimal_header_shadow html_av-submenu-hidden html_av-submenu-display-click html_av-overlay-side html_av-overlay-side-classic html_av-submenu-noclone html_entry_id_3238 av-cookies-no-cookie-consent av-no-preview av-default-lightbox html_text_menu_active av-mobile-menu-switch-default\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"robots\" content=\"index, follow\" />\n\n\n<!-- mobile setting -->\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n<!-- Scripts/CSS and wp_head hook -->\n<title>getsgo</title>\n<meta name='robots' content='max-image-preview:large' />\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"getsgo &raquo; Feed\" href=\"https://getsgo.at/feed/\" />\n<link rel=\"alternate\" type=\"text/calendar\" title=\"getsgo &raquo; iCal Feed\" href=\"https://getsgo.at/events/?ical=1\" />\n<link rel=\"alternate\" title=\"oEmbed (JSON)\" type=\"application/json+oembed\" href=\"https://getsgo.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fgetsgo.at%2F\" />\n<link rel=\"alternate\" title=\"oEmbed (XML)\" type=\"text/xml+oembed\" href=\"https://getsgo.at/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fgetsgo.at%2F&#038;format=xml\" />\n<style id=\"wp-img-auto-sizes-contain-inline-css\">\nimg:is([sizes=auto i],[sizes^=\"auto,\" i]){contain-intrinsic-size:3000px 1500px}\n/*# sourceURL=wp-img-auto-sizes-contain-inline-css */\n</style>\n<link rel='stylesheet' id='avia-grid-css' href='https://getsgo.at/wp-content/themes/enfold/css/grid.css?ver=7.1.4' media='all' />\n<link rel='stylesheet' id='avia-base-css' href='https://getsgo.at/wp-content/themes/enfold/css/base.css?ver=7.1.4' media='all' />\n<link rel='stylesheet' id='avia-layout-c",
+  "content_hash": "8302d0cf647f6716",
+  "text_length": 1710
+}

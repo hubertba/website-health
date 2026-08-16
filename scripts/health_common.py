@@ -26,6 +26,8 @@ SLOW_RESPONSE_MS = 3000
 SLOW_TTFB_MS = 1500
 HEAVY_BODY_BYTES = 1_000_000
 LATENCY_REGRESSION_FACTOR = 1.5
+CONTENT_SHRINK_RATIO = 0.5
+MIN_BASELINE_SIZE_BYTES = 2048
 SSL_WARN_DAYS = 30
 SSL_CRIT_DAYS = 7
 
@@ -121,6 +123,7 @@ def slim_snapshot(results: dict) -> dict:
             "cold_ms": http.get("cold_ms"),
             "warm_ms": http.get("warm_ms"),
             "size_bytes": http.get("size_bytes"),
+            "content_hash": entry.get("content", {}).get("content_hash"),
             "ssl_days_left": entry.get("ssl", {}).get("days_left"),
         }
     return {
