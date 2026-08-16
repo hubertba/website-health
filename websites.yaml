@@ -3,6 +3,13 @@
 
 meta:
   checked_at: '2026-08-15'
+  proxied:
+    cloudflare:
+      - astro-lernstern.at
+      - fenzpr.com
+      - ff-burgau-burgauberg.at
+      - historisch.ff-burgau-burgauberg.at
+      - mail.weingut-schuetzenhof.at
 servers:
 - id: web
   hostname: web.chilicode.com

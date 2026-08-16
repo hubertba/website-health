@@ -29,6 +29,10 @@ See `requirements-docs/needs/` for **REQ_***, **SPEC_***, **IMPL_***, and **TEST
 ```yaml
 meta:
   checked_at: "2026-08-15"
+  proxied:
+    cloudflare:            # DNS points at CDN, not origin IP — expected
+      - astro-lernstern.at
+      - fenzpr.com
 
 servers:
   - id: web

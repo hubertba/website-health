@@ -64,6 +64,11 @@ def fmt_dns(check: dict | None) -> str:
     if not dns.get("ok"):
         return html.escape(dns.get("error") or "NXDOMAIN")
     addrs = ", ".join(dns.get("addresses", []))
+    proxied = dns.get("proxied")
+    if proxied == "cloudflare":
+        return f'{html.escape(addrs)} <span class="tag proxy">Cloudflare proxy</span>'
+    if proxied:
+        return f'{html.escape(addrs)} <span class="tag proxy">{html.escape(proxied)} proxy</span>'
     if dns.get("matches_server") is False:
         return f'{html.escape(addrs)} <span class="tag warn">≠ server IP</span>'
     return html.escape(addrs)
@@ -367,6 +372,10 @@ def generate_html(inventory: dict, checks: dict | None, trends: dict | None, ale
     .status-pill.inventory {{ background: var(--inv-bg); color: var(--inv); }}
     .tag {{ font-size: .65rem; padding: .05rem .3rem; border-radius: 4px; }}
     .tag.warn {{ background: var(--warn-bg); color: var(--warn); }}
+    .tag.proxy {{ background: #dbeafe; color: #1d4ed8; }}
+    @media (prefers-color-scheme: dark) {{
+      .tag.proxy {{ background: #1e3a5f; color: #93c5fd; }}
+    }}
     .alerts-panel {{ background: var(--down-bg); border: 1px solid var(--down); border-radius: var(--radius);
       padding: .85rem 1rem; margin-bottom: 1rem; }}
     .alerts-panel h2 {{ font-size: 1rem; margin-bottom: .35rem; color: var(--down); }}

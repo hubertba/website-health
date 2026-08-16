@@ -18,6 +18,9 @@ from urllib.request import Request, urlopen
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from health_common import build_proxy_map, detect_proxy_provider
+
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_OUTPUT = ROOT / "check_results.json"
 TIMEOUT = 12
@@ -146,12 +149,27 @@ def overall_status(dns: dict, http: dict, ssl_info: dict) -> str:
     return "ok"
 
 
-def check_domain(domain: str, server_id: str, expected_ip: str | None) -> dict:
+def check_domain(
+    domain: str,
+    server_id: str,
+    expected_ip: str | None,
+    proxy_provider: str | None = None,
+) -> dict:
     dns = check_dns(domain)
     if expected_ip and dns.get("ok"):
-        dns["matches_server"] = expected_ip in dns.get("addresses", [])
+        addresses = dns.get("addresses", [])
+        if proxy_provider:
+            dns["proxied"] = proxy_provider
+            dns["matches_server"] = None
+        elif detect_proxy_provider(addresses):
+            dns["proxied"] = detect_proxy_provider(addresses)
+            dns["matches_server"] = None
+        else:
+            dns["matches_server"] = expected_ip in addresses
     else:
         dns["matches_server"] = None
+        if dns.get("ok") and (proxy_provider or detect_proxy_provider(dns.get("addresses", []))):
+            dns["proxied"] = proxy_provider or detect_proxy_provider(dns.get("addresses", []))
 
     http = check_http(domain)
     ssl_info = check_ssl(domain) if http.get("scheme") == "https" or http.get("status") else check_ssl(domain)
@@ -175,18 +193,19 @@ def check_domain(domain: str, server_id: str, expected_ip: str | None) -> dict:
 
 
 def run_checks(data: dict, workers: int = 16) -> dict:
-    tasks: list[tuple[str, str, str | None]] = []
+    proxy_map = build_proxy_map(data)
+    tasks: list[tuple[str, str, str | None, str | None]] = []
     for server in data.get("servers", []):
         server_id = server.get("id", server.get("hostname", "unknown"))
         expected_ip = server.get("ip")
         for domain in server.get("domains", []):
-            tasks.append((domain, server_id, expected_ip))
+            tasks.append((domain, server_id, expected_ip, proxy_map.get(domain)))
 
     results: dict[str, dict] = {}
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
-            pool.submit(check_domain, domain, server_id, expected_ip): domain
-            for domain, server_id, expected_ip in tasks
+            pool.submit(check_domain, domain, server_id, expected_ip, proxy): domain
+            for domain, server_id, expected_ip, proxy in tasks
         }
         for future in as_completed(futures):
             domain = futures[future]
