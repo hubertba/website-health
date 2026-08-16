@@ -54,6 +54,13 @@ class ContentBaselineTests(unittest.TestCase):
         self.assertTrue(result["ok"])
         self.assertEqual(result["issues"], [])
 
+    def test_skip_roundcube_webmail_domains(self) -> None:
+        from content_baseline import skip_content_check
+
+        self.assertTrue(skip_content_check("mail.example.com", "mail"))
+        self.assertFalse(skip_content_check("trustlens.tech", "mail"))
+        self.assertFalse(skip_content_check("postfixadmin.chilicode.com", "mail"))
+
     def test_baseline_files_are_valid(self) -> None:
         baselines_dir = ROOT / "baselines"
         if not baselines_dir.is_dir():

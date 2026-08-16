@@ -38,6 +38,18 @@ ERROR_TITLE_PATTERNS: tuple[tuple[str, str], ...] = (
 )
 
 
+def skip_content_check(domain: str, server_id: str | None = None) -> bool:
+    """Roundcube webmail login pages vary with sessions and are poor baseline targets."""
+    if domain.startswith("mail."):
+        return True
+    return False
+
+
+def is_roundcube_page(html: str, title: str = "") -> bool:
+    haystack = f"{title}\n{html}".lower()
+    return "roundcube webmail" in haystack
+
+
 def baseline_path(baselines_dir: Path, domain: str) -> Path:
     return baselines_dir / f"{domain}.json"
 
@@ -156,6 +168,15 @@ def compare_content(
     must_contain: list[str] | None = None,
 ) -> dict[str, Any]:
     """Compare fetched page against stored baseline and heuristics."""
+    if skip_content_check(domain):
+        return {
+            "ok": True,
+            "skipped": True,
+            "reason": "roundcube_webmail",
+            "issues": [],
+            "matched_patterns": [],
+        }
+
     html = page.get("html") or ""
     analysis = analyze_html(html)
     issues: list[str] = []

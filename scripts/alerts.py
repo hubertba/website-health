@@ -134,7 +134,7 @@ def build_alerts(
             )
 
         content = entry.get("content") or {}
-        if domain not in maintenance and content.get("issues"):
+        if domain not in maintenance and content.get("issues") and not content.get("skipped"):
             for issue in content["issues"]:
                 if issue.startswith("error_page:"):
                     alerts.append(

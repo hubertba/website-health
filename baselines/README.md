@@ -2,6 +2,8 @@
 
 One JSON file per domain with a **compact snapshot** of the healthy homepage — not the full HTML (which changes too often and would bloat the repo).
 
+Roundcube webmail (`mail.*` domains) is **excluded** from content checks — login pages are session-heavy and produce false positives.
+
 Each file stores:
 
 - `size_bytes`, `title`, `stylesheet_count`, `content_hash`

@@ -194,6 +194,8 @@ def fmt_content(check: dict | None) -> str:
     content = check.get("content")
     if not content:
         return "—"
+    if content.get("skipped"):
+        return '<span class="tag proxy">webmail</span>'
     if content.get("ok"):
         ratio = content.get("size_ratio")
         if ratio is not None:

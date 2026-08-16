@@ -13,7 +13,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from content_baseline import build_baseline_record, fetch_homepage, save_baseline  # noqa: E402
+from content_baseline import build_baseline_record, fetch_homepage, save_baseline, skip_content_check  # noqa: E402
 
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_OUTPUT = ROOT / "baselines"
@@ -27,6 +27,8 @@ def all_domains(data: dict) -> list[str]:
 
 
 def capture_domain(domain: str) -> tuple[str, dict | None, str | None]:
+    if skip_content_check(domain):
+        return domain, None, "skipped (roundcube webmail)"
     page = fetch_homepage(domain)
     if not page.get("html"):
         return domain, None, page.get("error") or "empty body"
@@ -50,6 +52,7 @@ def main() -> int:
         domains = [d for d in domains if d in wanted]
 
     ok = 0
+    skipped = 0
     failed: list[str] = []
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {pool.submit(capture_domain, domain): domain for domain in domains}
@@ -58,10 +61,12 @@ def main() -> int:
             if record:
                 save_baseline(args.output, record)
                 ok += 1
+            elif error and error.startswith("skipped"):
+                skipped += 1
             else:
                 failed.append(f"{domain}: {error}")
 
-    print(f"Captured {ok}/{len(domains)} baselines in {args.output}")
+    print(f"Captured {ok}/{len(domains)} baselines in {args.output} ({skipped} webmail skipped)")
     if failed:
         print("Failed:", ", ".join(failed[:10]), "..." if len(failed) > 10 else "")
         return 1

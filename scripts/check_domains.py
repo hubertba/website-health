@@ -203,7 +203,7 @@ def check_domain(
     mail_dns = check_mail_dns(domain) if check_mail and not domain.startswith("mail.") else None
 
     content = None
-    if http.get("status") and http["status"] < 500:
+    if http.get("status") and http["status"] < 500 and not skip_content_check(domain, server_id):
         page = fetch_homepage(domain, http.get("scheme", "https"))
         baseline = load_baseline(baselines_dir or BASELINES_DIR, domain) if baselines_dir or BASELINES_DIR.is_dir() else None
         content = compare_content(
@@ -212,6 +212,8 @@ def check_domain(
             baseline,
             must_contain=content_markers,
         )
+    elif skip_content_check(domain, server_id):
+        content = {"ok": True, "skipped": True, "reason": "roundcube_webmail", "issues": []}
 
     status = overall_status(
         dns,

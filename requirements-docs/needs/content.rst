@@ -43,6 +43,13 @@ Content baselines
    Domains may define required substrings under ``meta.content_markers`` in
    ``websites.yaml``.
 
+.. req:: Roundcube webmail exclusion
+   :id: REQ_CONTENT_006
+   :status: implemented
+   :tags: content
+
+   HTML content checks shall be skipped for ``mail.*`` Roundcube webmail vhosts.
+
 .. spec:: Baseline vs full HTML diff
    :id: SPEC_CONTENT_001
    :links: REQ_CONTENT_001

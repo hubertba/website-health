@@ -71,6 +71,18 @@ servers:
 | **Multi-URL** | Probes `/` + `/favicon.ico`; custom paths in `meta.probes` |
 | **Cold/warm** | First vs second request on same connection |
 | **Latency trends** | avg/p95/baseline in history; regression alert at +50% |
+| **Content** | Baseline size + error-page patterns (WordPress/502/503); alerts on sharp size drop |
+
+## Content baselines
+
+Each domain has a compact baseline in `baselines/<domain>.json` (snippet + fingerprint, not full HTML).
+
+```bash
+python3 scripts/capture_baselines.py   # refresh after redesigns
+python3 -m unittest tests.test_content_baseline
+```
+
+Full HTML diff is avoided — dynamic sites change too often. Checks use **size ratio**, **error signatures**, and optional `meta.content_markers` in YAML.
 | **Redirects** | Follows up to 10 hops; warns if &gt; 5 |
 | **Security** | HSTS, X-Frame-Options, X-Content-Type-Options on HTTPS |
 | **SSL** | Certificate expiry; `ssl_crit` &lt; 7 days, `ssl_warn` &lt; 30 days |
