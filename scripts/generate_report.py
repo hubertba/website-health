@@ -356,9 +356,9 @@ def _alert_details(
         lines.append(fmt_probes(check))
         lines.append(f'<div><strong>Security:</strong> {fmt_security(check)}</div>')
         lines.append(f'<div><strong>Content:</strong> {fmt_content(check)}</div>')
-        if check.get("content", {}).get("issues"):
+        if (check.get("content") or {}).get("issues"):
             lines.append(
-                f'<div class="muted">{html.escape("; ".join(check["content"]["issues"]))}</div>'
+                f'<div class="muted">{html.escape("; ".join((check.get("content") or {})["issues"]))}</div>'
             )
         if check.get("mail_dns"):
             lines.append(f'<div><strong>Mail DNS:</strong> {fmt_mail_dns(check)}</div>')

@@ -123,7 +123,7 @@ def slim_snapshot(results: dict) -> dict:
             "cold_ms": http.get("cold_ms"),
             "warm_ms": http.get("warm_ms"),
             "size_bytes": http.get("size_bytes"),
-            "content_hash": entry.get("content", {}).get("content_hash"),
+            "content_hash": (entry.get("content") or {}).get("content_hash"),
             "ssl_days_left": entry.get("ssl", {}).get("days_left"),
         }
     return {
