@@ -14,7 +14,8 @@ System overview
      subgraph checks["Health checks"]
        CHECK["check_domains.py"]
        DNS["DNS resolve"]
-       HTTP["HTTP status + latency"]
+       HTTP["HTTP probe + timing"]
+       PERF["Size / compression / HTTP version"]
        SSL["SSL certificate"]
        SEC["Security headers"]
        MAIL["Mail DNS (MX/SPF/DMARC)"]
@@ -43,7 +44,7 @@ System overview
      end
 
      YAML --> CHECK
-     CHECK --> DNS & HTTP & SSL & SEC & MAIL
+     CHECK --> DNS & HTTP & SSL & SEC & MAIL & PERF
      CHECK --> JSON
      JSON --> ALERTS
      SNAP --> ALERTS

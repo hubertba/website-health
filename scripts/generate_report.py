@@ -39,7 +39,8 @@ STATUS_LABELS = {
 
 TABLE_HEADERS = (
     "<th>Domain</th><th>Server</th><th>DNS</th><th>HTTP</th>"
-    "<th>ms</th><th>→</th><th>Sec</th><th>Mail</th><th>SSL</th><th>Trend</th><th>Status</th>"
+    "<th>ms</th><th>TTFB</th><th>Size</th><th>Enc</th><th>Proto</th><th>C/W</th>"
+    "<th>Sec</th><th>Mail</th><th>SSL</th><th>Trend</th><th>Status</th>"
 )
 
 
@@ -109,6 +110,84 @@ def fmt_latency(check: dict | None) -> str:
     return f'<span class="{cls}">{ms}</span>' if cls else str(ms)
 
 
+def fmt_ttfb(check: dict | None) -> str:
+    if not check:
+        return "—"
+    ms = check.get("http", {}).get("ttfb_ms")
+    if ms is None:
+        return "—"
+    cls = "tag warn" if ms > 1500 else ""
+    return f'<span class="{cls}">{ms}</span>' if cls else str(ms)
+
+
+def fmt_size(check: dict | None) -> str:
+    if not check:
+        return "—"
+    size = check.get("http", {}).get("size_bytes")
+    if size is None:
+        return "—"
+    if size >= 1_000_000:
+        return f'<span class="tag warn">{size // 1024}K</span>'
+    if size >= 1024:
+        return f"{size // 1024}K"
+    return str(size)
+
+
+def fmt_compression(check: dict | None) -> str:
+    if not check:
+        return "—"
+    comp = check.get("http", {}).get("compression") or {}
+    enc = comp.get("content_encoding")
+    if comp.get("compressed"):
+        return html.escape(enc or "yes")
+    if comp.get("needs_compression"):
+        return '<span class="tag warn">none</span>'
+    return "—"
+
+
+def fmt_http_version(check: dict | None) -> str:
+    if not check:
+        return "—"
+    ver = check.get("http", {}).get("http_version")
+    return html.escape(ver) if ver else "—"
+
+
+def fmt_cold_warm(check: dict | None) -> str:
+    if not check:
+        return "—"
+    http = check.get("http", {})
+    cold = http.get("cold_ms")
+    warm = http.get("warm_ms")
+    if cold is None:
+        return "—"
+    if warm is None:
+        return str(cold)
+    return f"{cold}/{warm}"
+
+
+def fmt_probes(check: dict | None) -> str:
+    if not check:
+        return ""
+    probes = check.get("http", {}).get("probes") or []
+    if len(probes) <= 1:
+        return ""
+    parts = []
+    for p in probes:
+        parts.append(f"{p.get('path')}: {p.get('status')} ({p.get('response_ms')}ms)")
+    return f'<div><strong>Probes:</strong> {html.escape(", ".join(parts))}</div>'
+
+
+def fmt_timing_detail(check: dict | None) -> str:
+    if not check:
+        return ""
+    timing = check.get("http", {}).get("timing") or {}
+    if not timing:
+        return ""
+    keys = ("dns_ms", "connect_ms", "tls_ms", "ttfb_ms", "download_ms", "total_ms")
+    parts = [f"{k.replace('_ms', '')}={timing[k]}" for k in keys if timing.get(k) is not None]
+    return f'<div><strong>Timing:</strong> {html.escape(", ".join(parts))}</div>' if parts else ""
+
+
 def fmt_redirects(check: dict | None) -> str:
     if not check:
         return "—"
@@ -160,6 +239,13 @@ def fmt_trend(domain: str, trends: dict | None) -> str:
     if not info:
         return "—"
     parts = [f'{info.get("uptime_pct", 0)}% uptime']
+    if info.get("latency_avg_ms") is not None:
+        lat = f'avg {info["latency_avg_ms"]}ms'
+        if info.get("latency_p95_ms") is not None:
+            lat += f' p95 {info["latency_p95_ms"]}ms'
+        if info.get("latency_regression"):
+            lat = f'<span class="tag warn">{lat} ↑</span>'
+        parts.append(lat)
     if info.get("changed") and info.get("previous_status"):
         parts.append(f'{info["previous_status"]}→{info["current_status"]}')
     elif info.get("current_status") not in {"ok", "http_only"}:
@@ -243,8 +329,11 @@ def _alert_details(
     if check:
         lines.append(f'<div><strong>DNS:</strong> {fmt_dns(check)}</div>')
         lines.append(f'<div><strong>HTTP:</strong> {fmt_http(check)}</div>')
-        lines.append(f'<div><strong>Latency:</strong> {fmt_latency(check)} ms</div>')
-        lines.append(f'<div><strong>Redirects:</strong> {fmt_redirects(check)}</div>')
+        lines.append(f'<div><strong>Latency:</strong> {fmt_latency(check)} ms · TTFB {fmt_ttfb(check)} ms</div>')
+        lines.append(fmt_timing_detail(check))
+        lines.append(f'<div><strong>Size:</strong> {fmt_size(check)} · Enc {fmt_compression(check)} · {fmt_http_version(check)}</div>')
+        lines.append(f'<div><strong>Cold/Warm:</strong> {fmt_cold_warm(check)} ms</div>')
+        lines.append(fmt_probes(check))
         lines.append(f'<div><strong>Security:</strong> {fmt_security(check)}</div>')
         lines.append(f'<div><strong>SSL:</strong> {fmt_ssl(check)}</div>')
         if check.get("mail_dns"):
@@ -337,7 +426,11 @@ def domain_row(
       <td class="mono">{fmt_dns(check)}</td>
       <td class="mono">{fmt_http(check)}</td>
       <td class="mono">{fmt_latency(check)}</td>
-      <td class="mono">{fmt_redirects(check)}</td>
+      <td class="mono">{fmt_ttfb(check)}</td>
+      <td class="mono">{fmt_size(check)}</td>
+      <td class="mono">{fmt_compression(check)}</td>
+      <td class="mono">{fmt_http_version(check)}</td>
+      <td class="mono">{fmt_cold_warm(check)}</td>
       <td class="mono">{fmt_security(check)}</td>
       <td class="mono">{fmt_mail_dns(check)}</td>
       <td class="mono">{fmt_ssl(check)}</td>
@@ -418,6 +511,12 @@ def write_exports(checks: dict | None, inventory: dict, export_dir: Path) -> Non
                 "http_status": http.get("status"),
                 "http_scheme": http.get("scheme"),
                 "response_ms": http.get("response_ms"),
+                "ttfb_ms": http.get("ttfb_ms"),
+                "cold_ms": http.get("cold_ms"),
+                "warm_ms": http.get("warm_ms"),
+                "size_bytes": http.get("size_bytes"),
+                "http_version": http.get("http_version"),
+                "compressed": (http.get("compression") or {}).get("compressed"),
                 "redirect_count": http.get("redirect_count"),
                 "ssl_days_left": ssl_info.get("days_left"),
                 "ssl_expires": ssl_info.get("expires"),
@@ -513,7 +612,7 @@ def generate_html(
     }}
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: system-ui, sans-serif; background: var(--bg); color: var(--text);
-      line-height: 1.45; padding: 1rem; max-width: 1200px; margin: 0 auto; }}
+      line-height: 1.45; padding: 1rem; max-width: 1400px; margin: 0 auto; }}
     .top-bar {{ display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; margin-bottom: .5rem; }}
     h1 {{ font-size: 1.4rem; margin-bottom: .25rem; }}
     .subtitle {{ color: var(--muted); font-size: .9rem; margin-bottom: 1rem; }}

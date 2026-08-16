@@ -13,7 +13,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from health_common import ALERT_STATUSES, build_maintenance_set, build_runbook_map, is_recovery, is_regression
+from health_common import ALERT_STATUSES, LATENCY_REGRESSION_FACTOR, build_maintenance_set, build_runbook_map, is_recovery, is_regression
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CHECKS = ROOT / "check_results.json"
@@ -21,6 +21,7 @@ DEFAULT_OUTPUT = ROOT / "alerts.json"
 DEFAULT_INVENTORY = ROOT / "websites.yaml"
 HISTORY_DIR = ROOT / "history"
 SNAPSHOTS_DIR = HISTORY_DIR / "snapshots"
+TRENDS_FILE = HISTORY_DIR / "trends.json"
 
 
 def load_json(path: Path) -> dict:
@@ -37,7 +38,13 @@ def latest_snapshot_before_current() -> dict | None:
     return load_json(snapshots[-1])
 
 
-def build_alerts(current: dict, previous: dict | None, maintenance: set[str], runbooks: dict) -> dict:
+def build_alerts(
+    current: dict,
+    previous: dict | None,
+    maintenance: set[str],
+    runbooks: dict,
+    trends: dict | None = None,
+) -> dict:
     alerts: list[dict] = []
     suppressed = 0
     curr_domains = current.get("domains", {})
@@ -94,6 +101,36 @@ def build_alerts(current: dict, previous: dict | None, maintenance: set[str], ru
                     severity=_severity(status),
                     runbooks=runbooks,
                 )
+            )
+
+        trend_info = (trends or {}).get("domains", {}).get(domain, {})
+        current_ms = entry.get("http", {}).get("response_ms")
+        baseline_ms = trend_info.get("latency_baseline_ms")
+        if (
+            domain not in maintenance
+            and current_ms
+            and baseline_ms
+            and current_ms > baseline_ms * LATENCY_REGRESSION_FACTOR
+            and status == "ok"
+        ):
+            alerts.append(
+                {
+                    "kind": "latency_regression",
+                    "domain": domain,
+                    "server_id": entry.get("server_id"),
+                    "status": status,
+                    "previous_status": None,
+                    "severity": "warning",
+                    "message": (
+                        f"Latency regression: {current_ms}ms vs {baseline_ms}ms baseline "
+                        f"(>{int(LATENCY_REGRESSION_FACTOR * 100)}%)"
+                    ),
+                    "http_status": entry.get("http", {}).get("status"),
+                    "response_ms": current_ms,
+                    "ttfb_ms": entry.get("http", {}).get("ttfb_ms"),
+                    "ssl_days_left": entry.get("ssl", {}).get("days_left"),
+                    "runbook": runbooks.get(domain),
+                }
             )
 
     alerts.sort(key=lambda a: (_severity_rank(a["severity"]), a["domain"]))
@@ -245,7 +282,8 @@ def main() -> int:
 
     current = load_json(args.checks)
     previous = latest_snapshot_before_current()
-    alerts_data = build_alerts(current, previous, maintenance, runbooks)
+    trends = load_json(TRENDS_FILE) if TRENDS_FILE.is_file() else None
+    alerts_data = build_alerts(current, previous, maintenance, runbooks, trends)
 
     args.output.write_text(json.dumps(alerts_data, indent=2), encoding="utf-8")
     print(

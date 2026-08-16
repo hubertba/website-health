@@ -8,14 +8,10 @@ import json
 import socket
 import ssl
 import sys
-import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin
-from urllib.request import Request, urlopen
 
 import dns.exception
 import dns.resolver
@@ -24,20 +20,21 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from health_common import (  # noqa: E402
+    DEFAULT_PROBE_PATHS,
+    HEAVY_BODY_BYTES,
     SLOW_RESPONSE_MS,
+    SLOW_TTFB_MS,
     SSL_CRIT_DAYS,
     SSL_WARN_DAYS,
+    build_probe_map,
     build_proxy_map,
     detect_proxy_provider,
 )
+from http_probe import normalize_probe_paths, probe_domain  # noqa: E402
 
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_OUTPUT = ROOT / "check_results.json"
 TIMEOUT = 12
-MAX_REDIRECTS = 10
-USER_AGENT = "website-health-checker/2.0"
-
-SECURITY_HEADERS = ("strict-transport-security", "x-frame-options", "x-content-type-options")
 
 
 def load_inventory(path: Path) -> dict:
@@ -96,147 +93,9 @@ def check_mail_dns(domain: str) -> dict:
     return result
 
 
-def _request_head(url: str) -> tuple[HTTPError | None, dict | None, float]:
-    """Return (error, headers_dict, elapsed_ms) for a HEAD request."""
-    start = time.perf_counter()
-    request = Request(url, method="HEAD", headers={"User-Agent": USER_AGENT})
-    try:
-        with urlopen(request, timeout=TIMEOUT) as response:
-            elapsed = round((time.perf_counter() - start) * 1000)
-            headers = {k.lower(): v for k, v in response.headers.items()}
-            return None, {"status": response.status, "url": response.geturl(), "headers": headers}, elapsed
-    except HTTPError as exc:
-        elapsed = round((time.perf_counter() - start) * 1000)
-        headers = {k.lower(): v for k, v in exc.headers.items()} if exc.headers else {}
-        return exc, {"status": exc.code, "url": exc.geturl() or url, "headers": headers}, elapsed
-    except URLError as exc:
-        elapsed = round((time.perf_counter() - start) * 1000)
-        return exc, None, elapsed
-
-
-def fetch_status(url: str) -> dict:
-    chain: list[dict] = []
-    current = url
-    total_ms = 0
-    redirect_codes = {301, 302, 303, 307, 308}
-
-    for hop in range(MAX_REDIRECTS + 1):
-        error, info, elapsed = _request_head(current)
-        total_ms += elapsed
-
-        if info:
-            chain.append({"url": current, "status": info["status"]})
-            if error is None or not isinstance(error, HTTPError) or error.code not in redirect_codes:
-                security = _check_security_headers(info.get("headers", {}))
-                return {
-                    "ok": info["status"] < 500,
-                    "status": info["status"],
-                    "url": info["url"],
-                    "final_url": info["url"],
-                    "redirects": chain[:-1],
-                    "redirect_count": len(chain) - 1,
-                    "response_ms": total_ms,
-                    "security": security,
-                    "error": None if info["status"] < 500 else str(error),
-                }
-
-        if isinstance(error, HTTPError) and error.code in redirect_codes:
-            location = error.headers.get("Location") if error.headers else None
-            if not location:
-                return _http_error_result(url, chain, total_ms, f"redirect {error.code} without Location")
-            next_url = urljoin(current, location)
-            chain.append({"url": current, "status": error.code, "location": next_url})
-            current = next_url
-            continue
-
-        if isinstance(error, URLError) and ("405" in str(error) or "Method Not Allowed" in str(error)):
-            return _fetch_get_fallback(url, chain, total_ms)
-
-        return _http_error_result(url, chain, total_ms, str(error) if error else "unknown error")
-
-    return _http_error_result(url, chain, total_ms, f"more than {MAX_REDIRECTS} redirects")
-
-
-def _fetch_get_fallback(url: str, chain: list[dict], prior_ms: int) -> dict:
-    start = time.perf_counter()
-    request = Request(url, method="GET", headers={"User-Agent": USER_AGENT})
-    try:
-        with urlopen(request, timeout=TIMEOUT) as response:
-            total_ms = prior_ms + round((time.perf_counter() - start) * 1000)
-            headers = {k.lower(): v for k, v in response.headers.items()}
-            security = _check_security_headers(headers)
-            return {
-                "ok": True,
-                "status": response.status,
-                "url": response.geturl(),
-                "final_url": response.geturl(),
-                "redirects": chain,
-                "redirect_count": len(chain),
-                "response_ms": total_ms,
-                "security": security,
-                "error": None,
-            }
-    except HTTPError as exc:
-        total_ms = prior_ms + round((time.perf_counter() - start) * 1000)
-        headers = {k.lower(): v for k, v in exc.headers.items()} if exc.headers else {}
-        security = _check_security_headers(headers)
-        return {
-            "ok": exc.code < 500,
-            "status": exc.code,
-            "url": exc.geturl() or url,
-            "final_url": exc.geturl() or url,
-            "redirects": chain,
-            "redirect_count": len(chain),
-            "response_ms": total_ms,
-            "security": security,
-            "error": None if exc.code < 500 else str(exc),
-        }
-    except URLError as exc:
-        total_ms = prior_ms + round((time.perf_counter() - start) * 1000)
-        return _http_error_result(url, chain, total_ms, str(exc))
-
-
-def _http_error_result(url: str, chain: list[dict], total_ms: int, error: str) -> dict:
-    return {
-        "ok": False,
-        "status": None,
-        "url": url,
-        "final_url": url,
-        "redirects": chain,
-        "redirect_count": len(chain),
-        "response_ms": total_ms,
-        "security": {},
-        "error": error,
-    }
-
-
-def _check_security_headers(headers: dict) -> dict:
-    present = {h: headers.get(h) for h in SECURITY_HEADERS if headers.get(h)}
-    missing = [h for h in SECURITY_HEADERS if h not in present]
-    insecure_redirect = False
-    return {
-        "present": present,
-        "missing": missing,
-        "ok": len(missing) == 0,
-        "insecure_redirect": insecure_redirect,
-    }
-
-
-def check_http(domain: str) -> dict:
-    https = fetch_status(f"https://{domain}/")
-    if https["ok"] and https.get("status"):
-        https["scheme"] = "https"
-        return https
-
-    http = fetch_status(f"http://{domain}/")
-    http["scheme"] = "http"
-    if http["ok"] and http.get("status"):
-        return http
-
-    if https.get("status"):
-        https["scheme"] = "https"
-        return https
-    return http
+def check_http(domain: str, probe_paths: list[dict]) -> dict:
+    paths = normalize_probe_paths(probe_paths, DEFAULT_PROBE_PATHS)
+    return probe_domain(domain, paths)
 
 
 def check_ssl(domain: str) -> dict:
@@ -274,12 +133,7 @@ def check_ssl(domain: str) -> dict:
         }
 
 
-def overall_status(
-    dns: dict,
-    http: dict,
-    ssl_info: dict,
-    mail_dns: dict | None = None,
-) -> str:
+def overall_status(dns: dict, http: dict, ssl_info: dict) -> str:
     if not dns.get("ok"):
         return "dns_fail"
     if http.get("status") and http["status"] >= 500:
@@ -294,8 +148,11 @@ def overall_status(
         return "ssl_crit"
     if ssl_info.get("warn"):
         return "ssl_warn"
-    if http.get("response_ms", 0) > SLOW_RESPONSE_MS:
+    if http.get("response_ms", 0) > SLOW_RESPONSE_MS or http.get("ttfb_ms", 0) > SLOW_TTFB_MS:
         return "slow"
+    compression = http.get("compression") or {}
+    if compression.get("needs_compression") or (http.get("size_bytes") or 0) > HEAVY_BODY_BYTES:
+        return "warn"
     if http.get("redirect_count", 0) > 5:
         return "warn"
     if http["status"] >= 400:
@@ -309,6 +166,7 @@ def check_domain(
     expected_ip: str | None,
     proxy_provider: str | None = None,
     check_mail: bool = False,
+    probe_paths: list | None = None,
 ) -> dict:
     dns = check_dns(domain)
     if expected_ip and dns.get("ok"):
@@ -326,7 +184,7 @@ def check_domain(
         if dns.get("ok") and (proxy_provider or detect_proxy_provider(dns.get("addresses", []))):
             dns["proxied"] = proxy_provider or detect_proxy_provider(dns.get("addresses", []))
 
-    http = check_http(domain)
+    http = check_http(domain, probe_paths or [])
     ssl_info = check_ssl(domain)
 
     if http.get("scheme") == "http" and http.get("ok"):
@@ -334,7 +192,7 @@ def check_domain(
 
     mail_dns = check_mail_dns(domain) if check_mail and not domain.startswith("mail.") else None
 
-    status = overall_status(dns, http, ssl_info if ssl_info.get("ok") is not False else ssl_info, mail_dns)
+    status = overall_status(dns, http, ssl_info if ssl_info.get("ok") is not False else ssl_info)
     if http.get("scheme") == "http" and http.get("ok"):
         status = "http_only" if dns.get("ok") else "dns_fail"
 
@@ -351,7 +209,8 @@ def check_domain(
 
 def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = None) -> dict:
     proxy_map = build_proxy_map(data)
-    tasks: list[tuple[str, str, str | None, str | None, bool]] = []
+    probe_map = build_probe_map(data)
+    tasks: list[tuple[str, str, str | None, str | None, bool, list | None]] = []
     for server in data.get("servers", []):
         server_id = server.get("id", server.get("hostname", "unknown"))
         expected_ip = server.get("ip")
@@ -359,13 +218,13 @@ def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = N
         for domain in server.get("domains", []):
             if domain_filter and domain not in domain_filter:
                 continue
-            tasks.append((domain, server_id, expected_ip, proxy_map.get(domain), check_mail))
+            tasks.append((domain, server_id, expected_ip, proxy_map.get(domain), check_mail, probe_map.get(domain)))
 
     results: dict[str, dict] = {}
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
-            pool.submit(check_domain, domain, server_id, expected_ip, proxy, check_mail): domain
-            for domain, server_id, expected_ip, proxy, check_mail in tasks
+            pool.submit(check_domain, domain, server_id, expected_ip, proxy, check_mail, paths): domain
+            for domain, server_id, expected_ip, proxy, check_mail, paths in tasks
         }
         for future in as_completed(futures):
             domain = futures[future]

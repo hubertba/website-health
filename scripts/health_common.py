@@ -23,6 +23,9 @@ ALERT_STATUSES = frozenset(
 )
 
 SLOW_RESPONSE_MS = 3000
+SLOW_TTFB_MS = 1500
+HEAVY_BODY_BYTES = 1_000_000
+LATENCY_REGRESSION_FACTOR = 1.5
 SSL_WARN_DAYS = 30
 SSL_CRIT_DAYS = 7
 
@@ -89,17 +92,35 @@ def build_runbook_map(data: dict) -> dict[str, list[str]]:
     return runbooks
 
 
+DEFAULT_PROBE_PATHS = [{"path": "/"}, {"path": "/favicon.ico"}]
+
+
+def build_probe_map(data: dict) -> dict[str, list[dict]]:
+    """Domain -> list of probe path specs from meta.probes."""
+    probes: dict[str, list[dict]] = {}
+    raw = data.get("meta", {}).get("probes") or {}
+    for domain, paths in raw.items():
+        if isinstance(paths, list):
+            probes[domain] = paths
+    return probes
+
+
 def slim_snapshot(results: dict) -> dict:
     """Compact snapshot for history storage."""
     domains = {}
     for domain, entry in results.get("domains", {}).items():
         http = entry.get("http", {})
+        timing = http.get("timing") or {}
         domains[domain] = {
             "status": entry.get("status"),
             "server_id": entry.get("server_id"),
             "http_status": http.get("status"),
             "http_scheme": http.get("scheme"),
             "response_ms": http.get("response_ms"),
+            "ttfb_ms": http.get("ttfb_ms"),
+            "cold_ms": http.get("cold_ms"),
+            "warm_ms": http.get("warm_ms"),
+            "size_bytes": http.get("size_bytes"),
             "ssl_days_left": entry.get("ssl", {}).get("days_left"),
         }
     return {
@@ -107,3 +128,11 @@ def slim_snapshot(results: dict) -> dict:
         "summary": results.get("summary", {}),
         "domains": domains,
     }
+
+
+def percentile(values: list[int], pct: float) -> int | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    idx = max(0, min(len(ordered) - 1, int(round((pct / 100) * (len(ordered) - 1)))))
+    return ordered[idx]

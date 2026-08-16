@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from health_common import OK_STATUS, slim_snapshot
+from health_common import LATENCY_REGRESSION_FACTOR, OK_STATUS, percentile, slim_snapshot
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CHECKS = ROOT / "check_results.json"
@@ -99,11 +99,14 @@ def compute_trends(limit: int = MAX_SNAPSHOTS) -> dict:
     trends: dict[str, dict] = {}
     for domain in sorted(all_domains):
         history: list[dict] = []
+        latency_samples: list[int] = []
         for snap_path in selected:
             snap = load_snapshot(snap_path)
             entry = snap.get("domains", {}).get(domain)
             if entry:
                 history.append({"at": snap.get("checked_at"), "status": entry.get("status")})
+                if entry.get("response_ms") is not None:
+                    latency_samples.append(int(entry["response_ms"]))
 
         if not history:
             continue
@@ -120,6 +123,15 @@ def compute_trends(limit: int = MAX_SNAPSHOTS) -> dict:
             else:
                 break
 
+        latency_avg = round(sum(latency_samples) / len(latency_samples)) if latency_samples else None
+        latency_p95 = percentile(latency_samples, 95)
+        latency_current = latency_samples[-1] if latency_samples else None
+        baseline_samples = latency_samples[:-1][-7:]
+        latency_baseline = round(sum(baseline_samples) / len(baseline_samples)) if len(baseline_samples) >= 2 else None
+        latency_regression = False
+        if latency_baseline and latency_current:
+            latency_regression = latency_current > latency_baseline * LATENCY_REGRESSION_FACTOR
+
         trends[domain] = {
             "current_status": current,
             "previous_status": previous,
@@ -127,6 +139,11 @@ def compute_trends(limit: int = MAX_SNAPSHOTS) -> dict:
             "checks": len(history),
             "status_since": since,
             "changed": previous is not None and previous != current,
+            "latency_avg_ms": latency_avg,
+            "latency_p95_ms": latency_p95,
+            "latency_current_ms": latency_current,
+            "latency_baseline_ms": latency_baseline,
+            "latency_regression": latency_regression,
         }
 
     return {

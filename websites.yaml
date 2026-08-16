@@ -6,6 +6,13 @@ meta:
   maintenance:
     - fairspeisen.com
     - shophelfer.at
+  probes:
+    trustlens.tech:
+      - path: /
+      - path: /favicon.ico
+    app.trustlens.tech:
+      - path: /
+        max_ms: 3000
   runbooks:
     fairspeisen.com:
       - cd /var/www/pages/fairspeisen && docker compose up -d

@@ -64,7 +64,13 @@ servers:
 |-------|----------------|
 | **DNS** | Resolves A/AAAA records; compares to server `ip` when set |
 | **HTTP** | Tries HTTPS first, falls back to HTTP; reports status code |
-| **Latency** | Response time in ms; flags &gt; 3000 ms as `slow` |
+| **Latency** | DNS/connect/TLS/TTFB/download breakdown; `slow` when total > 3000 ms or TTFB > 1500 ms |
+| **Size** | Response body size; warns when > 1 MB |
+| **Compression** | Detects gzip/br; flags large uncompressed bodies |
+| **HTTP version** | Records HTTP/1.1 or HTTP/2 (ALPN) |
+| **Multi-URL** | Probes `/` + `/favicon.ico`; custom paths in `meta.probes` |
+| **Cold/warm** | First vs second request on same connection |
+| **Latency trends** | avg/p95/baseline in history; regression alert at +50% |
 | **Redirects** | Follows up to 10 hops; warns if &gt; 5 |
 | **Security** | HSTS, X-Frame-Options, X-Content-Type-Options on HTTPS |
 | **SSL** | Certificate expiry; `ssl_crit` &lt; 7 days, `ssl_warn` &lt; 30 days |
