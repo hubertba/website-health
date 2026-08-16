@@ -1,12 +1,12 @@
 {
-  "computed_at": "2026-08-16 20:00 UTC",
-  "snapshot_count": 2,
+  "computed_at": "2026-08-16 20:02 UTC",
+  "snapshot_count": 3,
   "domains": {
     "360demo.chilicode.com": {
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -14,7 +14,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -22,7 +22,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -30,7 +30,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -38,7 +38,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -46,7 +46,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -54,7 +54,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -62,7 +62,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -70,7 +70,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -78,7 +78,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -86,7 +86,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -94,7 +94,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -102,7 +102,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -110,7 +110,7 @@
       "current_status": "down",
       "previous_status": "down",
       "uptime_pct": 0.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -118,7 +118,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -126,7 +126,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -134,7 +134,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -142,7 +142,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -150,7 +150,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -158,7 +158,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -166,7 +166,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -174,7 +174,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -182,7 +182,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -190,7 +190,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -198,7 +198,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -206,7 +206,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -214,7 +214,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -222,7 +222,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -230,7 +230,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -238,7 +238,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -246,7 +246,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -254,7 +254,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -262,7 +262,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -270,7 +270,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -278,7 +278,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -286,7 +286,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -294,7 +294,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -302,7 +302,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -310,7 +310,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -318,7 +318,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -326,7 +326,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -334,7 +334,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -342,7 +342,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -350,7 +350,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -358,7 +358,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -366,7 +366,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -374,7 +374,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -382,7 +382,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -390,7 +390,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -398,7 +398,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -406,7 +406,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -414,7 +414,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -422,7 +422,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -430,7 +430,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -438,7 +438,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -446,7 +446,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -454,7 +454,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -462,7 +462,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -470,7 +470,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -478,7 +478,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -486,7 +486,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -494,7 +494,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -502,7 +502,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -510,7 +510,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -518,7 +518,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -526,7 +526,7 @@
       "current_status": "ssl_warn",
       "previous_status": "ssl_warn",
       "uptime_pct": 0.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -534,7 +534,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -542,7 +542,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -550,7 +550,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -558,7 +558,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -566,7 +566,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -574,7 +574,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -582,7 +582,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -590,7 +590,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -598,7 +598,7 @@
       "current_status": "down",
       "previous_status": "down",
       "uptime_pct": 0.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -606,7 +606,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -614,7 +614,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -622,7 +622,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -630,7 +630,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -638,7 +638,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -646,7 +646,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -654,7 +654,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -662,7 +662,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -670,7 +670,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -678,7 +678,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -686,7 +686,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -694,7 +694,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -702,7 +702,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -710,7 +710,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -718,7 +718,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -726,7 +726,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     },
@@ -734,7 +734,7 @@
       "current_status": "ok",
       "previous_status": "ok",
       "uptime_pct": 100.0,
-      "checks": 2,
+      "checks": 3,
       "status_since": "2026-08-16 19:59 UTC",
       "changed": false
     }
