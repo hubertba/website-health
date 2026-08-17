@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import os
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -24,6 +25,14 @@ if TYPE_CHECKING:
 
 PROVIDER_NAME = "world4you"
 ADDRESS_TYPES = frozenset({"A", "AAAA"})
+CHECKABLE_TYPES = frozenset({"A", "AAAA", "CNAME"})
+
+
+@dataclass
+class ProviderData:
+    packages: list[str]
+    hostnames: list[str]
+    address_index: dict[str, list[str]]
 
 
 def credentials_from_env() -> tuple[str, str] | None:
@@ -51,6 +60,20 @@ def connect() -> MyWorld4You | None:
     return session
 
 
+def list_hostnames(session: MyWorld4You) -> list[str]:
+    """All package apex domains and checkable DNS hostnames from World4You."""
+    hostnames: set[str] = set()
+    for package in session.packages:
+        hostnames.add(package.domain.lower())
+        for record in package.resource_records:
+            fqdn = record.fqdn.lower()
+            if fqdn.startswith("_"):
+                continue
+            if record.type in CHECKABLE_TYPES:
+                hostnames.add(fqdn)
+    return sorted(hostnames)
+
+
 def build_address_index(session: MyWorld4You) -> dict[str, list[str]]:
     """Map FQDN -> sorted list of A/AAAA values from all packages."""
     index: dict[str, set[str]] = {}
@@ -58,8 +81,20 @@ def build_address_index(session: MyWorld4You) -> dict[str, list[str]]:
         for record in package.resource_records:
             if record.type not in ADDRESS_TYPES:
                 continue
-            index.setdefault(record.fqdn, set()).add(record.value)
+            index.setdefault(record.fqdn.lower(), set()).add(record.value)
     return {fqdn: sorted(addresses) for fqdn, addresses in index.items()}
+
+
+def load_provider_data() -> ProviderData:
+    """Log in once and return package list, hostnames, and address index."""
+    session = connect()
+    if session is None:
+        raise RuntimeError("World4You credentials are not configured")
+    return ProviderData(
+        packages=sorted(package.domain.lower() for package in session.packages),
+        hostnames=list_hostnames(session),
+        address_index=build_address_index(session),
+    )
 
 
 def skipped_result(reason: str) -> dict:
@@ -143,7 +178,4 @@ def load_provider_index() -> dict[str, list[str]] | None:
     """Fetch all A/AAAA records from World4You, or None when credentials are absent."""
     if credentials_from_env() is None:
         return None
-    session = connect()
-    if session is None:
-        return None
-    return build_address_index(session)
+    return load_provider_data().address_index

@@ -32,7 +32,13 @@ from health_common import (  # noqa: E402
 )
 from content_baseline import compare_content, fetch_homepage, load_baseline, skip_content_check  # noqa: E402
 from http_probe import normalize_probe_paths, probe_domain  # noqa: E402
-from world4you_dns import compare_provider_dns, credentials_from_env, load_provider_index  # noqa: E402
+from inventory import build_effective_inventory, iter_domain_tasks  # noqa: E402
+from world4you_dns import (  # noqa: E402
+    ProviderData,
+    compare_provider_dns,
+    credentials_from_env,
+    load_provider_data,
+)
 
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_OUTPUT = ROOT / "check_results.json"
@@ -271,8 +277,8 @@ def build_content_markers_map(data: dict) -> dict[str, list[str]]:
     return markers
 
 
-def load_provider_context(data: dict) -> tuple[dict[str, list[str]] | None, dict]:
-    """Load World4You DNS records when enabled and credentials are present."""
+def load_provider_context(data: dict) -> tuple[ProviderData | None, dict]:
+    """Load World4You packages and DNS records when enabled and credentials are present."""
     provider_name = (data.get("meta", {}).get("dns_provider") or "").lower()
     meta = {"provider": provider_name or None, "configured": False, "enabled": provider_name == "world4you"}
     if provider_name != "world4you":
@@ -285,10 +291,13 @@ def load_provider_context(data: dict) -> tuple[dict[str, list[str]] | None, dict
         return None, meta
 
     try:
-        index = load_provider_index()
+        provider = load_provider_data()
         meta["ok"] = True
-        meta["managed_domains"] = len(index or {})
-        return index, meta
+        meta["packages"] = provider.packages
+        meta["package_count"] = len(provider.packages)
+        meta["hostname_count"] = len(provider.hostnames)
+        meta["managed_domains"] = len(provider.address_index)
+        return provider, meta
     except Exception as exc:  # noqa: BLE001 — surface provider errors without aborting checks
         meta["ok"] = False
         meta["error"] = str(exc)
@@ -300,21 +309,31 @@ def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = N
     probe_map = build_probe_map(data)
     content_markers_map = build_content_markers_map(data)
     baselines_dir = BASELINES_DIR
-    provider_index, provider_meta = load_provider_context(data)
+    provider, provider_meta = load_provider_context(data)
+    inventory = build_effective_inventory(
+        data,
+        provider,
+        provider_configured=bool(provider_meta.get("configured")),
+    )
     check_provider = bool(provider_meta.get("enabled"))
+    provider_index = provider.address_index if provider else None
     tasks: list[
         tuple[str, str, str | None, str | None, bool, list | None, list[str] | None]
     ] = []
-    for server in data.get("servers", []):
-        server_id = server.get("id", server.get("hostname", "unknown"))
-        expected_ip = server.get("ip")
-        check_mail = server_id == "mail"
-        for domain in server.get("domains", []):
-            if domain_filter and domain not in domain_filter:
-                continue
-            tasks.append(
-                (domain, server_id, expected_ip, proxy_map.get(domain), check_mail, probe_map.get(domain), content_markers_map.get(domain))
+    for domain, server_id, expected_ip, check_mail in iter_domain_tasks(inventory):
+        if domain_filter and domain not in domain_filter:
+            continue
+        tasks.append(
+            (
+                domain,
+                server_id,
+                expected_ip,
+                proxy_map.get(domain),
+                check_mail,
+                probe_map.get(domain),
+                content_markers_map.get(domain),
             )
+        )
 
     results: dict[str, dict] = {}
     with ThreadPoolExecutor(max_workers=workers) as pool:
@@ -358,6 +377,8 @@ def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = N
         "checked_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "summary": summary,
         "dns_provider": provider_meta,
+        "inventory_source": "world4you" if provider and provider_meta.get("ok") else "yaml",
+        "inventory": {"servers": inventory.get("servers", [])},
         "domains": results,
     }
 

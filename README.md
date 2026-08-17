@@ -44,6 +44,21 @@ Enable in `websites.yaml`:
 ```yaml
 meta:
   dns_provider: world4you
+  # inventory_from_provider: true   # default when credentials are set
+```
+
+When credentials are configured, the checker **discovers domains from World4You**
+(all package apex domains plus A/AAAA/CNAME hostnames in DNS records) instead of
+relying only on the manual domain lists in `websites.yaml`. YAML still defines
+server IPs, maintenance, runbooks, probes, and explicit overrides.
+
+Preview the discovered list:
+
+```bash
+export WORLD4YOU_USERNAME=12345
+export WORLD4YOU_PASSWORD='...'
+python3 scripts/list_world4you_domains.py
+python3 scripts/list_world4you_domains.py --json
 ```
 
 ### Cursor Cloud
@@ -95,7 +110,7 @@ servers:
 | Check | What it does |
 |-------|----------------|
 | **DNS** | Resolves A/AAAA records; compares to server `ip` when set |
-| **DNS provider** | When `meta.dns_provider: world4you` and credentials are set, compares World4You A/AAAA with live DNS |
+| **DNS provider** | When `meta.dns_provider: world4you` and credentials are set, discovers domains from World4You and compares authoritative A/AAAA with live DNS |
 | **HTTP** | Tries HTTPS first, falls back to HTTP; reports status code |
 | **Latency** | DNS/connect/TLS/TTFB/download breakdown; `slow` when total > 3000 ms or TTFB > 1500 ms |
 | **Size** | Response body size; warns when > 1 MB |

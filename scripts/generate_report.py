@@ -989,6 +989,8 @@ def main() -> int:
 
     inventory = load_yaml(args.input)
     checks = load_checks(args.checks)
+    if checks and checks.get("inventory", {}).get("servers"):
+        inventory = {**inventory, "servers": checks["inventory"]["servers"]}
     trends = load_optional_json(args.trends)
     alerts = load_optional_json(args.alerts)
     out = generate_html(inventory, checks, trends, alerts)

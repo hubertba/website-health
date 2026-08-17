@@ -13,9 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from world4you_dns import (  # noqa: E402
+    ProviderData,
     build_address_index,
     compare_provider_dns,
     credentials_from_env,
+    list_hostnames,
     skipped_result,
 )
 
@@ -28,7 +30,8 @@ class FakeRecord:
 
 
 class FakePackage:
-    def __init__(self, records: list[FakeRecord]):
+    def __init__(self, records: list[FakeRecord], domain: str = "example.com"):
+        self.domain = domain
         self._records = records
 
     @property
@@ -112,6 +115,23 @@ class BuildIndexTests(unittest.TestCase):
         )
         index = build_address_index(session)
         self.assertEqual(index["example.com"], ["1.2.3.4", "2001:db8::1"])
+
+    def test_list_hostnames_skips_underscore_records(self):
+        session = FakeSession(
+            [
+                FakePackage(
+                    [
+                        FakeRecord("TXT", "_dmarc.example.com", "v=DMARC1"),
+                        FakeRecord("A", "www.example.com", "1.2.3.4"),
+                    ]
+                )
+            ]
+        )
+        session.packages[0].domain = "example.com"
+        hostnames = list_hostnames(session)
+        self.assertIn("example.com", hostnames)
+        self.assertIn("www.example.com", hostnames)
+        self.assertNotIn("_dmarc.example.com", hostnames)
 
 
 class SkippedResultTests(unittest.TestCase):
