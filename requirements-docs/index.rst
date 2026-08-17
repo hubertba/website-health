@@ -13,6 +13,7 @@ Requirements for the domain health monitoring tool, documented with `sphinx-need
    needs/performance
    needs/content
    needs/mail
+   needs/dns-provider
    needs/history
    needs/alerts
    needs/export

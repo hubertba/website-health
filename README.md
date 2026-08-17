@@ -28,7 +28,39 @@ open docs/docs/index.html
 
 Published at **https://hubertba.github.io/website-health/docs/** (Mermaid diagrams in `diagrams.rst`).
 
-See `requirements-docs/needs/` for requirements covering core checks, security/performance, mail DNS, history/trends, alerts, and exports.
+See `requirements-docs/needs/` for requirements covering core checks, security/performance, mail DNS, DNS provider drift, history/trends, alerts, and exports.
+
+## Secrets (World4You DNS provider)
+
+DNS provider checks use the [World4You API](https://github.com/NerLOR/World4YouApi). Credentials are **never** stored in the repo.
+
+| Variable | Description |
+|----------|-------------|
+| `WORLD4YOU_USERNAME` | Your World4You customer number |
+| `WORLD4YOU_PASSWORD` | Account password |
+
+Enable in `websites.yaml`:
+
+```yaml
+meta:
+  dns_provider: world4you
+```
+
+### Cursor Cloud
+
+1. Open [Cloud Agents → Secrets](https://cursor.com/dashboard/cloud-agents) (or your environment’s Secrets tab).
+2. Add `WORLD4YOU_USERNAME` as an **Environment Variable** (non-sensitive ID).
+3. Add `WORLD4YOU_PASSWORD` as a **Runtime Secret** (redacted from agent output and commits).
+4. If you use a saved environment, start a fresh agent or **Update Existing Env** after changing secrets so they are injected.
+5. Do **not** put values in `.cursor/environment.json` or committed files.
+
+Secrets are encrypted at rest and exposed to the agent as environment variables. See [Cloud Agent setup — Environment variables and secrets](https://cursor.com/docs/cloud-agent/setup#environment-variables-and-secrets).
+
+### GitHub Actions (scheduled report)
+
+Add the same two names under **Settings → Secrets and variables → Actions** in the repository. The workflow passes them to `check_domains.py` automatically.
+
+When credentials are missing, all other checks still run; World4You comparison is skipped.
 
 ## `websites.yaml` (server + domains + meta)
 
@@ -63,6 +95,7 @@ servers:
 | Check | What it does |
 |-------|----------------|
 | **DNS** | Resolves A/AAAA records; compares to server `ip` when set |
+| **DNS provider** | When `meta.dns_provider: world4you` and credentials are set, compares World4You A/AAAA with live DNS |
 | **HTTP** | Tries HTTPS first, falls back to HTTP; reports status code |
 | **Latency** | DNS/connect/TLS/TTFB/download breakdown; `slow` when total > 3000 ms or TTFB > 1500 ms |
 | **Size** | Response body size; warns when > 1 MB |

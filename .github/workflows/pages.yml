@@ -47,6 +47,9 @@ jobs:
         run: pip install -r requirements.txt -r requirements-docs.txt
 
       - name: Check domains (DNS, HTTP, SSL, mail DNS)
+        env:
+          WORLD4YOU_USERNAME: ${{ secrets.WORLD4YOU_USERNAME }}
+          WORLD4YOU_PASSWORD: ${{ secrets.WORLD4YOU_PASSWORD }}
         run: |
           FILTER="${{ github.event.inputs.domain_filter }}"
           if [ -n "$FILTER" ]; then

@@ -87,6 +87,9 @@ def fmt_dns(check: dict | None) -> str:
         return f'{html.escape(addrs)} <span class="tag proxy">{html.escape(proxied)} proxy</span>'
     if dns.get("matches_server") is False:
         return f'{html.escape(addrs)} <span class="tag warn">≠ server IP</span>'
+    provider = check.get("dns_provider") or {}
+    if provider.get("managed") and provider.get("issues"):
+        return f'{html.escape(addrs)} <span class="tag warn" title="{html.escape("; ".join(provider["issues"]))}">W4Y drift</span>'
     return html.escape(addrs)
 
 
@@ -348,6 +351,14 @@ def _alert_details(
         lines.append(f'<div><strong>Previous:</strong> <code>{html.escape(prev)}</code></div>')
     if check:
         lines.append(f'<div><strong>DNS:</strong> {fmt_dns(check)}</div>')
+        provider = check.get("dns_provider") or {}
+        if provider.get("managed"):
+            provider_addrs = ", ".join(provider.get("addresses") or [])
+            lines.append(f'<div><strong>World4You DNS:</strong> {html.escape(provider_addrs or "—")}</div>')
+            if provider.get("issues"):
+                lines.append(
+                    f'<div class="muted">{html.escape("; ".join(provider["issues"]))}</div>'
+                )
         lines.append(f'<div><strong>HTTP:</strong> {fmt_http(check)}</div>')
         lines.append(f'<div><strong>Latency:</strong> {fmt_latency(check)} ms · TTFB {fmt_ttfb(check)} ms</div>')
         lines.append(fmt_timing_detail(check))
@@ -527,6 +538,7 @@ def write_exports(checks: dict | None, inventory: dict, export_dir: Path) -> Non
             http = entry.get("http", {})
             ssl_info = entry.get("ssl", {})
             mail = entry.get("mail_dns") or {}
+            provider = entry.get("dns_provider") or {}
             rows.append({
                 "domain": domain,
                 "server_id": server_id,
@@ -534,6 +546,9 @@ def write_exports(checks: dict | None, inventory: dict, export_dir: Path) -> Non
                 "maintenance": domain in maintenance,
                 "dns_ok": entry.get("dns", {}).get("ok"),
                 "dns_addresses": ",".join(entry.get("dns", {}).get("addresses", [])),
+                "dns_provider_managed": provider.get("managed"),
+                "dns_provider_addresses": ",".join(provider.get("addresses") or []),
+                "dns_provider_drift": bool(provider.get("issues")),
                 "http_status": http.get("status"),
                 "http_scheme": http.get("scheme"),
                 "response_ms": http.get("response_ms"),

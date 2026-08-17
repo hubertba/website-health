@@ -3,6 +3,7 @@
 
 meta:
   checked_at: '2026-08-17'
+  dns_provider: world4you
   maintenance:
     - fairspeisen.com
     - shophelfer.at

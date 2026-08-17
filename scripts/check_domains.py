@@ -32,6 +32,7 @@ from health_common import (  # noqa: E402
 )
 from content_baseline import compare_content, fetch_homepage, load_baseline, skip_content_check  # noqa: E402
 from http_probe import normalize_probe_paths, probe_domain  # noqa: E402
+from world4you_dns import compare_provider_dns, credentials_from_env, load_provider_index  # noqa: E402
 
 DEFAULT_INPUT = ROOT / "websites.yaml"
 DEFAULT_OUTPUT = ROOT / "check_results.json"
@@ -168,6 +169,16 @@ def overall_status(dns: dict, http: dict, ssl_info: dict, content: dict | None =
     return "ok"
 
 
+def apply_provider_status(status: str, dns_provider: dict | None) -> str:
+    if status != "ok" or not dns_provider:
+        return status
+    if dns_provider.get("skipped") or not dns_provider.get("managed"):
+        return status
+    if dns_provider.get("issues"):
+        return "warn"
+    return status
+
+
 def check_domain(
     domain: str,
     server_id: str,
@@ -177,6 +188,8 @@ def check_domain(
     probe_paths: list | None = None,
     baselines_dir: Path | None = None,
     content_markers: list[str] | None = None,
+    provider_index: dict[str, list[str]] | None = None,
+    check_provider: bool = False,
 ) -> dict:
     dns = check_dns(domain)
     if expected_ip and dns.get("ok"):
@@ -215,6 +228,16 @@ def check_domain(
     elif skip_content_check(domain, server_id):
         content = {"ok": True, "skipped": True, "reason": "roundcube_webmail", "issues": []}
 
+    dns_provider = None
+    if check_provider:
+        dns_provider = compare_provider_dns(
+            domain,
+            dns.get("addresses", []) if dns.get("ok") else [],
+            provider_index,
+            expected_ip=expected_ip,
+            proxied=proxy_provider or dns.get("proxied"),
+        )
+
     status = overall_status(
         dns,
         http,
@@ -223,11 +246,13 @@ def check_domain(
     )
     if http.get("scheme") == "http" and http.get("ok"):
         status = "http_only" if dns.get("ok") else "dns_fail"
+    status = apply_provider_status(status, dns_provider)
 
     return {
         "domain": domain,
         "server_id": server_id,
         "dns": dns,
+        "dns_provider": dns_provider,
         "http": http,
         "ssl": ssl_info,
         "mail_dns": mail_dns,
@@ -246,12 +271,40 @@ def build_content_markers_map(data: dict) -> dict[str, list[str]]:
     return markers
 
 
+def load_provider_context(data: dict) -> tuple[dict[str, list[str]] | None, dict]:
+    """Load World4You DNS records when enabled and credentials are present."""
+    provider_name = (data.get("meta", {}).get("dns_provider") or "").lower()
+    meta = {"provider": provider_name or None, "configured": False, "enabled": provider_name == "world4you"}
+    if provider_name != "world4you":
+        return None, meta
+
+    meta["configured"] = credentials_from_env() is not None
+    if not meta["configured"]:
+        meta["skipped"] = True
+        meta["reason"] = "WORLD4YOU_USERNAME and WORLD4YOU_PASSWORD not set"
+        return None, meta
+
+    try:
+        index = load_provider_index()
+        meta["ok"] = True
+        meta["managed_domains"] = len(index or {})
+        return index, meta
+    except Exception as exc:  # noqa: BLE001 — surface provider errors without aborting checks
+        meta["ok"] = False
+        meta["error"] = str(exc)
+        return None, meta
+
+
 def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = None) -> dict:
     proxy_map = build_proxy_map(data)
     probe_map = build_probe_map(data)
     content_markers_map = build_content_markers_map(data)
     baselines_dir = BASELINES_DIR
-    tasks: list[tuple[str, str, str | None, str | None, bool, list | None, list[str] | None]] = []
+    provider_index, provider_meta = load_provider_context(data)
+    check_provider = bool(provider_meta.get("enabled"))
+    tasks: list[
+        tuple[str, str, str | None, str | None, bool, list | None, list[str] | None]
+    ] = []
     for server in data.get("servers", []):
         server_id = server.get("id", server.get("hostname", "unknown"))
         expected_ip = server.get("ip")
@@ -276,6 +329,8 @@ def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = N
                 paths,
                 baselines_dir,
                 markers,
+                provider_index,
+                check_provider,
             ): domain
             for domain, server_id, expected_ip, proxy, check_mail, paths, markers in tasks
         }
@@ -294,11 +349,15 @@ def run_checks(data: dict, workers: int = 16, domain_filter: set[str] | None = N
         "slow": sum(1 for r in results.values() if r["status"] == "slow"),
         "http_only": sum(1 for r in results.values() if r["status"] == "http_only"),
         "warn": sum(1 for r in results.values() if r["status"] == "warn"),
+        "dns_provider_drift": sum(
+            1 for r in results.values() if (r.get("dns_provider") or {}).get("issues")
+        ),
     }
 
     return {
         "checked_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "summary": summary,
+        "dns_provider": provider_meta,
         "domains": results,
     }
 

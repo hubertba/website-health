@@ -173,6 +173,26 @@ def build_alerts(
                         )
                     )
 
+        provider = entry.get("dns_provider") or {}
+        if domain not in maintenance and provider.get("managed") and provider.get("issues"):
+            for issue in provider["issues"]:
+                alerts.append(
+                    {
+                        "kind": "dns_provider_drift",
+                        "domain": domain,
+                        "server_id": entry.get("server_id"),
+                        "status": status,
+                        "previous_status": prev_status,
+                        "severity": "warning",
+                        "message": f"World4You DNS drift: {issue}",
+                        "http_status": entry.get("http", {}).get("status"),
+                        "response_ms": entry.get("http", {}).get("response_ms"),
+                        "ttfb_ms": entry.get("http", {}).get("ttfb_ms"),
+                        "ssl_days_left": entry.get("ssl", {}).get("days_left"),
+                        "runbook": runbooks.get(domain),
+                    }
+                )
+
     alerts.sort(key=lambda a: (_severity_rank(a["severity"]), a["domain"]))
     return {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
