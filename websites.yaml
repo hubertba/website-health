@@ -2,7 +2,7 @@
 # Run: python3 scripts/check_domains.py && python3 scripts/generate_report.py
 
 meta:
-  checked_at: '2026-08-15'
+  checked_at: '2026-08-17'
   maintenance:
     - fairspeisen.com
     - shophelfer.at
